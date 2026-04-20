@@ -12,22 +12,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR
 /* ── 탭1 스타일 ── */
 
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f8f8f6;color:#1a1a1a;font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#1a1a2e;color:#e8e8e6;font-size:14px}
 
 /* ── 상단 네비 ── */
-.nav{background:#fff;border-bottom:1px solid #e8e8e6;box-shadow:0 1px 3px rgba(0,0,0,.06);position:sticky;top:0;z-index:200}
+.nav{background:#12122a;border-bottom:1px solid #2a2a4e;box-shadow:0 1px 3px rgba(0,0,0,.06);position:sticky;top:0;z-index:200}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:0}
-.nav-logo{font-size:15px;font-weight:700;color:#1a1a1a;padding:14px 20px 14px 0;border-right:1px solid #e8e8e6;margin-right:8px;white-space:nowrap}
+.nav-logo{font-size:15px;font-weight:700;color:#e8e8ff;padding:14px 20px 14px 0;border-right:1px solid #e8e8e6;margin-right:8px;white-space:nowrap}
 .nav-logo span{font-size:11px;font-weight:400;color:#999;display:block;margin-top:1px}
 .nav-tabs{display:flex;gap:0;flex:1}
-.nav-tab{padding:16px 20px;font-size:13px;font-weight:500;color:#888;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.nav-tab:hover{color:#1a1a1a;background:#f8f8f6}
-.nav-tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:600}
+.nav-tab{padding:16px 20px;font-size:13px;font-weight:500;color:#8888aa;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.nav-tab:hover{color:#fff;background:#2a2a4e}
+.nav-tab.on{color:#fff;border-bottom-color:#6c8fff;font-weight:600}
 .nav-tab .tab-badge{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600}
-.nav-tab.on .tab-badge{background:#1a1a1a;color:#fff}
-.nav-tab:not(.on) .tab-badge{background:#f0f0ee;color:#888}
+.nav-tab.on .tab-badge{background:#6c8fff;color:#fff}
+.nav-tab:not(.on) .tab-badge{background:#2a2a4e;color:#8888aa}
 .nav-tab.disabled{opacity:.4;cursor:not-allowed}
-.nav-right{margin-left:auto;font-size:11px;color:#bbb;padding-left:16px}
+.nav-right{margin-left:auto;font-size:11px;color:#666;padding-left:16px}
 
 /* ── 탭 패널 ── */
 
@@ -37,26 +37,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
    탭1: CS 온톨로지 분석
 ═══════════════════════════ */
 .page{max-width:1100px;margin:0 auto;padding:28px 24px}
-h1{font-size:22px;font-weight:700;margin-bottom:4px}
-h2{font-size:16px;font-weight:600;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid #e0e0de}
-h3{font-size:14px;font-weight:600;margin-bottom:8px}
+h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#e8e8ff}
+h2{font-size:16px;font-weight:600;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid #3a3a5e;color:#c8c8ff}
+h3{font-size:14px;font-weight:600;margin-bottom:8px;color:#c8c8ff}
 .badge{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px}
 .bg{background:#e1f5ee;color:#0f6e56}.bb{background:#e6f1fb;color:#185fa5}.bo{background:#fff3dc;color:#854F0B}.br{background:#fee;color:#c00}
 .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-.kc{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6}
-.kc .l{font-size:11px;color:#888;margin-bottom:4px}
+.kc{background:#252540;border-color:#3a3a5e;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6}
+.kc .l{font-size:11px;color:#8888aa;margin-bottom:4px}
 .kc .v{font-size:22px;font-weight:700}
-.kc .s{font-size:11px;color:#aaa;margin-top:2px}
+.kc .s{font-size:11px;color:#6666aa;margin-top:2px}
 .sec{margin-bottom:28px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px}
+.card{background:#252540;border-color:#3a3a5e;border-radius:10px;border:1px solid #e8e8e6;padding:16px}
 .p-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.p-tab{padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666}
-.p-tab.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.p-tab{padding:5px 14px;font-size:13px;border:1px solid #3a3a5e;border-radius:20px;cursor:pointer;background:#1e1e35;color:#aaa}
+.p-tab.on{background:#6c8fff;color:#fff;border-color:#6c8fff}
 .pp{display:none}.pp.on{display:block}
 .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
 .bl{font-size:12px;color:#333;min-width:130px;flex-shrink:0}
-.bw{flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden}
+.bw{flex:1;background:#2a2a4e;border-radius:3px;height:20px;overflow:hidden}
 .bf{height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:11px;color:#fff;font-weight:600;white-space:nowrap;min-width:24px}
 .bc{font-size:11px;color:#888;min-width:48px;text-align:right;flex-shrink:0}
 .mx{width:100%;border-collapse:collapse;font-size:12px}
@@ -66,17 +66,17 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 .mx .mid{background:#fff8e6;color:#854F0B;font-weight:600}
 .mx .low{background:#f0fbf6;color:#0f6e56}
 .mx .lab{text-align:left;font-size:12px;color:#333;background:#fafaf8;white-space:normal;min-width:120px}
-.ib{background:#f8f8f6;border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px}
+.ib{background:#1e1e35;border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px}
 .ib.g{border-color:#1D9E75;background:#f0fbf6}
 .ib.r{border-color:#D85A30;background:#fef5f0}
 .ib.o{border-color:#BA7517;background:#fffaf0}
 .ib .it{font-size:13px;font-weight:600;margin-bottom:3px}
 .ib .id{font-size:12px;color:#444;line-height:1.6}
-.quote{background:#f8f8f6;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #ddd}
+.quote{background:#1e1e35;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #ddd}
 .quote .qt{font-size:12px;color:#333;line-height:1.6;margin-bottom:4px}
 .quote .qr{font-size:11px;color:#888;font-style:italic}
 .quote .ql{font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;display:inline-block;margin-bottom:5px}
-.res-block{border:1px solid #e8e8e6;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.res-block{border:1px solid #3a3a5e;border-radius:10px;overflow:hidden;margin-bottom:14px}
 .res-hdr{padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .res-body{padding:14px 16px}
 .pat-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f3;align-items:flex-start}
@@ -84,7 +84,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 .pat-pct{min-width:38px;font-size:13px;font-weight:700;flex-shrink:0;padding-top:1px}
 .pat-name{font-size:13px;font-weight:500}
 .pat-cnt{font-size:11px;color:#aaa;margin-left:6px}
-.pat-bar{margin-top:3px;background:#f0f0ee;height:4px;border-radius:2px}
+.pat-bar{margin-top:3px;background:#3a3a5e;height:4px;border-radius:2px}
 .pat-fill{height:4px;border-radius:2px}
 .sc-box{background:#fff;border:1px solid #e8e8e6;border-radius:10px;overflow:hidden;margin-bottom:12px}
 .sc-hdr{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0f0ee}
@@ -240,7 +240,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
   position: fixed;
   top: 51px; left: 0; right: 0; bottom: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   overflow: hidden;
 }
 
@@ -262,7 +262,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
   </div>
 </nav>
 
-<div id="p0" style="display:block"><div class="page">
+<div id="p0" style="display:block;background:#1a1a2e;color:#e8e8e6;min-height:calc(100vh - 51px)"><div class="page">
 <h1>CS 온톨로지 분석 — 상세 리포트</h1>
 <div style="font-size:13px;color:#666;margin-bottom:8px">유저 자유 텍스트 기반 5객체 분류 (Actor / Product / Event / Intent / Sentiment)</div>
 <div style="margin-bottom:24px">
@@ -488,8 +488,8 @@ PUBG Mobile Support</div>
 </div>
 <div style="display:flex;flex:1;min-height:0">
   <!-- 범례 -->
-  <div style="width:190px;flex-shrink:0;background:#fff;border-right:1px solid #e8e8e6;padding:14px;overflow-y:auto">
-    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">노드 그룹</div>
+  <div style="width:190px;flex-shrink:0;background:#1e1e35;border-right:1px solid #3a3a5e;padding:14px;overflow-y:auto">
+    <div style="font-size:10px;font-weight:700;color:#8888aa;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">노드 그룹</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="lgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('product',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>Product</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('event',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>Event</div>
@@ -524,7 +524,7 @@ PUBG Mobile Support</div>
   <div id="dp-filter-section" style="border-top:1px solid #e8e8e6;padding:10px 16px;background:#fafaf8;display:flex;gap:8px;align-items:flex-start"></div>
 </div>
 </div>
-<div id="p2" style="display:none"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+<div id="p2" style="display:none;background:#1a1a2e;color:#e8e8e6;min-height:calc(100vh - 51px)"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
 
 <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">챗봇 플로우 문제점 분석</h1>
 <div style="font-size:13px;color:#666;margin-bottom:8px">Claude API 실제 대화 흐름 기반 · 2,000건 샘플 분석</div>
@@ -569,7 +569,7 @@ PUBG Mobile Support</div>
 <!-- 상담원 전환 원인 -->
 <div id="cf1">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a">🇰🇷 KO 상담원 전환 원인 (500건)</h3>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
         <div style="font-size:12px;color:#333;min-width:160px">복잡한 케이스</div>
@@ -598,7 +598,7 @@ PUBG Mobile Support</div>
       </div>
     </div>
 
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a">🌐 EN 상담원 전환 원인 (500건)</h3>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
         <div style="font-size:12px;color:#333;min-width:160px">🚨 언어 장벽</div>
@@ -653,7 +653,7 @@ PUBG Mobile Support</div>
 <!-- 중도포기 원인 -->
 <div id="cf2" style="display:none">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🇰🇷 KO 중도포기 원인 (500건)</h3>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">대기 타임아웃</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;width:100%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">157건</div></div><div style="font-size:11px;color:#888;min-width:36px">31.4%</div></div>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">FAQ 도움 안됨</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;width:91%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">143건</div></div><div style="font-size:11px;color:#888;min-width:36px">28.6%</div></div>
@@ -662,7 +662,7 @@ PUBG Mobile Support</div>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">해결책 없이 통보</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:10%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">16건</div></div><div style="font-size:11px;color:#888;min-width:36px">3.2%</div></div>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">외부 플랫폼 유도</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:10%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">16건</div></div><div style="font-size:11px;color:#888;min-width:36px">3.2%</div></div>
     </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🌐 EN 중도포기 원인 (500건)</h3>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">대기 타임아웃</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;width:100%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">240건</div></div><div style="font-size:11px;color:#888;min-width:36px">48.0%</div></div>
       <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">카테고리 없음</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;width:51%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">123건</div></div><div style="font-size:11px;color:#888;min-width:36px">24.6%</div></div>
@@ -676,7 +676,7 @@ PUBG Mobile Support</div>
 <!-- 챗봇 문제점 -->
 <div id="cf3" style="display:none">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🇰🇷 KO 챗봇 문제점</h3>
       <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px">상담원처리</div>
       <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">문제 없음 (유저 요인)</span><span style="font-weight:600">281건</span></div>
@@ -689,7 +689,7 @@ PUBG Mobile Support</div>
       <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">67건</span></div>
       <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">일반적 응답</span><span style="font-weight:600">63건</span></div>
     </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🌐 EN 챗봇 문제점</h3>
       <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px">상담원처리</div>
       <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">🚨 언어 불일치</span><span style="font-weight:600">413건 (82.6%)</span></div>
@@ -707,7 +707,7 @@ PUBG Mobile Support</div>
 <!-- 개선 제안 -->
 <div id="cf4" style="display:none">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🟢 즉시 구현 가능</h3>
       <div style="font-size:12px;color:#888;margin-bottom:12px">자동화가능 67.4% (1,348건)</div>
       <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
@@ -723,7 +723,7 @@ PUBG Mobile Support</div>
         <div style="font-size:12px;color:#444;line-height:1.6">KO missing_faq 117+67건. 플랫폼 변경 시나리오, 제재 유형별 세부 카테고리 추가.</div>
       </div>
     </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+    <div style="background:#1e1e35;border-radius:10px;border:1px solid #3a3a5e;padding:16px;color:#e8e8e6">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🔴 중기 구현 필요</h3>
       <div style="font-size:12px;color:#888;margin-bottom:12px">상담원 필수 32.6% (652건)</div>
       <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
@@ -762,19 +762,19 @@ PUBG Mobile Support</div>
 </div>
 </div></div>
 <div id="p3" style="display:none">
-<div style="display:flex;flex:1;min-height:0">
+<div style="display:flex;flex:1;min-height:0;height:100%">
   <!-- 범례 -->
-  <div style="width:190px;flex-shrink:0;background:#fff;border-right:1px solid #e8e8e6;padding:14px;overflow-y:auto">
-    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">노드 그룹</div>
+  <div style="width:190px;flex-shrink:0;background:#1e1e35;border-right:1px solid #3a3a5e;padding:14px;overflow-y:auto">
+    <div style="font-size:10px;font-weight:700;color:#8888aa;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">노드 그룹</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('transfer',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>전환 원인</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('problem',this)"><div style="width:9px;height:9px;border-radius:50%;background:#7F77DD;flex-shrink:0"></div>챗봇 문제점</div>
     <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('resolution',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>해결 유형</div>
     <div style="margin-bottom:12px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('lang',this)"><div style="width:9px;height:9px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>언어</div>
     <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">주요 지표</div>
-    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">EN 최대 문제</div><div style="font-size:14px;font-weight:700;color:#D85A30">언어 장벽 80%</div></div>
-    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">KO 최대 문제</div><div style="font-size:14px;font-weight:700;color:#BA7517">대안 없음 39%</div></div>
-    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
+    <div style="background:#252540;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #3a3a5e"><div style="font-size:10px;color:#8888aa;margin-bottom:2px">EN 최대 문제</div><div style="font-size:14px;font-weight:700;color:#D85A30">언어 장벽 80%</div></div>
+    <div style="background:#252540;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #3a3a5e"><div style="font-size:10px;color:#8888aa;margin-bottom:2px">KO 최대 문제</div><div style="font-size:14px;font-weight:700;color:#BA7517">대안 없음 39%</div></div>
+    <div style="background:#252540;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #3a3a5e"><div style="font-size:10px;color:#8888aa;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
   </div>
   <!-- 그래프 캔버스 -->
   <div style="flex:1;position:relative;background:#1e1e2e;overflow:hidden" id="cf-area">
@@ -783,10 +783,10 @@ PUBG Mobile Support</div>
     <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#999;background:#2a2a3e;padding:4px 14px;border-radius:20px;border:1px solid #3a3a4e;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
   </div>
   <!-- 우측 인사이트 -->
-  <div style="width:280px;flex-shrink:0;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column">
-    <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0">
-      <div style="font-size:13px;font-weight:700;margin-bottom:2px">⚡ Quick Insight</div>
-      <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하면 상세 분석이 업데이트됩니다</div>
+  <div style="width:280px;flex-shrink:0;background:#1e1e35;border-left:1px solid #3a3a5e;display:flex;flex-direction:column">
+    <div style="padding:14px 16px;border-bottom:1px solid #3a3a5e;flex-shrink:0">
+      <div style="font-size:13px;font-weight:700;margin-bottom:2px;color:#e8e8ff">⚡ Quick Insight</div>
+      <div style="font-size:11px;color:#666" id="cf-ip-sub">노드를 선택하면 상세 분석이 업데이트됩니다</div>
     </div>
     <div style="flex:1;overflow-y:auto;padding:12px 16px" id="cf-ip-body"></div>
   </div>
