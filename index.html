@@ -9,28 +9,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* 소프트 다크 — 눈이 편한 남색 계열 */
-  --bg: #13131f;
-  --bg2: #1a1b2e;
-  --bg3: #21223a;
-  --bg4: #2a2b45;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --text: #d4d4e8;
-  --text2: #8888aa;
-  --text3: #55557a;
-  --accent: #6272ea;
-  --accent2: #8b96f5;
-  --red: #f07070;
-  --orange: #e8965a;
-  --green: #5ecb8a;
-  --yellow: #e8c96a;
-  --purple: #b08ad4;
-  --node-product: #5a9fe8;
-  --node-event: #e87060;
-  --node-intent: #5ecb8a;
-  --node-sentiment: #e8a85a;
-  --node-resolution: #b08ad4;
+  --bg: #070710;
+  --bg2: #0d0d1f;
+  --bg3: #12122a;
+  --bg4: #1a1a35;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e2e2f0;
+  --text2: #9090b0;
+  --text3: #5a5a7a;
+  --accent: #5c6fff;
+  --accent2: #7c8fff;
+  --red: #ff4f6a;
+  --orange: #ff8a3d;
+  --green: #3dffa0;
+  --yellow: #ffd43b;
+  --purple: #c084fc;
+  --node-product: #4a9eff;
+  --node-event: #ff6b5a;
+  --node-intent: #3dffa0;
+  --node-sentiment: #ffa94d;
+  --node-resolution: #c084fc;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -80,9 +79,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .nav-meta { margin-left: auto; font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
 
 /* ── 패널 ── */
-/* panel display controlled by JS */
 
 
+#p1
 
 /* ── KG 레이아웃 ── */
 #p1, #p3 {
@@ -426,10 +425,10 @@ h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 10px;
     <span class="title">PUBG Mobile CS 분석</span>
   </div>
   <div class="nav-tabs" id="ntabs">
-    <div class="nav-tab on" onclick="TAB(0)">📊 CS 온톨로지 분석 <span class="n-badge">1,000건</span></div>
-    <div class="nav-tab" onclick="TAB(1)">🕸 CS Knowledge Graph <span class="n-badge">33노드</span></div>
-    <div class="nav-tab" onclick="TAB(2)">🤖 챗봇 플로우 분석 <span class="n-badge">2,000건</span></div>
-    <div class="nav-tab" onclick="TAB(3)">🕸 챗봇 Knowledge Graph <span class="n-badge">20노드</span></div>
+    <div class="nav-tab on" onclick="SW(0)">📊 CS 온톨로지 분석 <span class="n-badge">1,000건</span></div>
+    <div class="nav-tab" onclick="SW(1)">🕸 CS Knowledge Graph <span class="n-badge">33노드</span></div>
+    <div class="nav-tab" onclick="SW(2)">🤖 챗봇 플로우 분석 <span class="n-badge">2,000건</span></div>
+    <div class="nav-tab" onclick="SW(3)">🕸 챗봇 Knowledge Graph <span class="n-badge">20노드</span></div>
   </div>
   <div class="nav-meta">2026 Q1 · 90,389건 · Claude API</div>
 </nav>
@@ -797,26 +796,75 @@ PUBG Mobile Support</div>
     <div style="display:flex;height:100%" id="cf-dp-inner"></div>
   </div>
 </div>
-
-
 <script>
-function TAB(n) {
-  var displays = ["block","flex","block","flex"];
-  ["p0","p1","p2","p3"].forEach(function(id,i) {
-    var el = document.getElementById(id);
-    if (el) el.style.display = i===n ? displays[i] : "none";
-  });
-  var ts = document.querySelectorAll("#ntabs .nav-tab");
-  for (var j=0; j<ts.length; j++) ts[j].classList[j===n?"add":"remove"]("on");
-  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){ if(typeof initKGGraph==="function") initKGGraph(); },400); }
-  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){ if(typeof initCFGraph==="function") initCFGraph(); },400); }
+
+/* ══════════════════════════════════
+   탭 전환 — 핵심 함수 (SW)
+══════════════════════════════════ */
+function SW(n) {
+  var show = ["block","flex","block","flex"];
+  var ids  = ["p0","p1","p2","p3"];
+  for (var i = 0; i < 4; i++) {
+    var el = document.getElementById(ids[i]);
+    if (el) el.style.display = (i === n) ? show[i] : "none";
+  }
+  var tabs = document.querySelectorAll("#ntabs .nav-tab");
+  for (var j = 0; j < tabs.length; j++) {
+    if (j === n) tabs[j].classList.add("on");
+    else tabs[j].classList.remove("on");
+  }
+  if (n === 1 && !window.__kg1) {
+    window.__kg1 = 1;
+    setTimeout(function() { if (typeof initKGGraph === "function") initKGGraph(); }, 400);
+  }
+  if (n === 3 && !window.__kg3) {
+    window.__kg3 = 1;
+    setTimeout(function() { if (typeof initCFGraph === "function") initCFGraph(); }, 400);
+  }
 }
-function swP(id,el){document.querySelectorAll(".pp").forEach(function(p){p.classList.remove("on");});document.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});document.getElementById(id).classList.add("on");el.classList.add("on");}
-function swLang(id,el){["lko","len"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
-function swEx(id,el){["ex-auto","ex-manual"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
-function swCF(id,el){["cf1","cf2","cf3","cf4"].forEach(function(cid){document.getElementById(cid).style.display=(cid===id?"block":"none");});document.querySelectorAll("#cf-tabs .sub-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
-function closeDp(){var d=document.getElementById("detail-panel");if(d)d.classList.remove("open");}
-function closeCfDp(){var d=document.getElementById("cf-dp");if(d)d.style.height="0";}
+
+/* 서브탭 함수들 */
+function swP(id,el){
+  document.querySelectorAll(".pp").forEach(function(p){p.classList.remove("on");});
+  document.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});
+  document.getElementById(id).classList.add("on");
+  el.classList.add("on");
+}
+function swLang(id,el){
+  ["lko","len"].forEach(function(x){document.getElementById(x).style.display="none";});
+  document.getElementById(id).style.display="block";
+  el.parentElement.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});
+  el.classList.add("on");
+}
+function swEx(id,el){
+  ["ex-auto","ex-manual"].forEach(function(x){document.getElementById(x).style.display="none";});
+  document.getElementById(id).style.display="block";
+  el.parentElement.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});
+  el.classList.add("on");
+}
+function swCF(id,el){
+  ["cf1","cf2","cf3","cf4"].forEach(function(cid){
+    document.getElementById(cid).style.display=(cid===id?"block":"none");
+  });
+  document.querySelectorAll("#cf-tabs .sub-tab").forEach(function(t){t.classList.remove("on");});
+  el.classList.add("on");
+}
+function closeDp(){
+  var d=document.getElementById("detail-panel");
+  if(d) d.classList.remove("open");
+}
+function closeCfDp(){
+  var d=document.getElementById("cf-dp");
+  if(d) d.style.height="0";
+}
+
+
+function _old_swP(x){document.querySelectorAll(".pp").forEach(function(p){p.classList.remove("on");});document.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});document.getElementById(id).classList.add("on");el.classList.add("on");}
+function _old_swLang(x){["lko","len"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
+function _old_swEx(x){["ex-auto","ex-manual"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".sub-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
+function _old_swCF(x){["cf1","cf2","cf3","cf4"].forEach(function(cid){document.getElementById(cid).style.display=(cid===id?"block":"none");});document.querySelectorAll("#cf-tabs .sub-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
+function _old_closeDp(x){var d=document.getElementById("detail-panel");if(d)d.classList.remove("open");}
+function _old_closeCfDp(x){var d=document.getElementById("cf-dp");if(d)d.style.height="0";}
 
 
 
@@ -1222,7 +1270,7 @@ function renderFilterSection(d, det, selectedSent, col){
   Object.entries(sd).forEach(([key,val])=>{
     var maxV=Math.max(...Object.values(val));
     var barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
+    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:var(--text3)">${cNames[key]||key}</span></div>`;
     Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
       var w=Math.round(v/maxV*100);
       comboHtml+=`<div class="filter-bar-row">
@@ -1514,7 +1562,7 @@ function renderFilterSection(d, det, selectedSent, col){
   Object.entries(sd).forEach(([key,val])=>{
     var maxV=Math.max(...Object.values(val));
     var barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
+    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:var(--text3)">${cNames[key]||key}</span></div>`;
     Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
       var w=Math.round(v/maxV*100);
       comboHtml+=`<div class="filter-bar-row">
@@ -1741,7 +1789,7 @@ function initCFGraph(){
 function showCfTip(e,d) {
   var tt = document.getElementById('cf-kg-tt');
   var area = document.getElementById('cf-kg-svg').parentElement.getBoundingClientRect();
-  tt.innerHTML = `<div style="font-weight:700;font-size:13px;color:${CF_GC[d.group]};margin-bottom:3px">${d.label}</div><div style="color:#888;font-size:11px">${CF_GL[d.group]} · ${d.count}건</div>`;
+  tt.innerHTML = `<div style="font-weight:700;font-size:13px;color:${CF_GC[d.group]};margin-bottom:3px">${d.label}</div><div style="color:var(--text3);font-size:11px">${CF_GL[d.group]} · ${d.count}건</div>`;
   tt.style.left = (e.clientX-area.left+14)+'px';
   tt.style.top = (e.clientY-area.top-10)+'px';
   tt.style.opacity = 1;
@@ -1767,15 +1815,15 @@ function renderCfDefaultInsight() {
   ];
   var html = '';
   top3.forEach((item,i)=>{
-    html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background='#fff'">
-      <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${item.color}">${item.name}</span><span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span></div>
+    html+=`<div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background='#fff'">
+      <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${item.color}">${item.name}</span><span style="font-size:12px;color:var(--text3);margin-left:auto">${item.pct}%</span></div>
       <div style="margin-top:5px"><span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:3px;background:${item.color}20;color:${item.color}">${item.badge}</span></div>
-      <div style="margin-top:6px;background:#f0f0ee;height:4px;border-radius:2px"><div style="background:${item.color};height:4px;border-radius:2px;width:${item.pct}%"></div></div>
+      <div style="margin-top:6px;background:var(--bg4);height:4px;border-radius:2px"><div style="background:${item.color};height:4px;border-radius:2px;width:${item.pct}%"></div></div>
     </div>`;
   });
   html+=`<div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px">
     <div style="font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px">⚡ 종합 분석</div>
-    <div style="font-size:12px;color:#333;line-height:1.7">EN 상담원 전환의 80%가 언어 장벽 — 영어 지원 챗봇 구축이 단일 최대 임팩트. KO는 정보수집(33%)과 복잡케이스(35%)가 핵심. 자동화가능 비율이 67.4%로 높아 즉각 개선 효과 기대.</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7">EN 상담원 전환의 80%가 언어 장벽 — 영어 지원 챗봇 구축이 단일 최대 임팩트. KO는 정보수집(33%)과 복잡케이스(35%)가 핵심. 자동화가능 비율이 67.4%로 높아 즉각 개선 효과 기대.</div>
   </div>`;
   document.getElementById('cf-ip-body').innerHTML = html;
 }
@@ -1787,15 +1835,15 @@ function renderCfNodeInsight(d) {
   var html = '';
   if(det) {
     det.top3.forEach((item,i)=>{
-      html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px">
-        <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${col}">${item.name}</span>${item.pct?`<span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span>`:''}
+      html+=`<div style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${col}">${item.name}</span>${item.pct?`<span style="font-size:12px;color:var(--text3);margin-left:auto">${item.pct}%</span>`:''}
         </div>
-        ${item.pct?`<div style="margin-top:6px;background:#f0f0ee;height:4px;border-radius:2px"><div style="background:${col};height:4px;border-radius:2px;width:${item.pct}%"></div></div>`:''}
+        ${item.pct?`<div style="margin-top:6px;background:var(--bg4);height:4px;border-radius:2px"><div style="background:${col};height:4px;border-radius:2px;width:${item.pct}%"></div></div>`:''}
       </div>`;
     });
     html+=`<div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px">
       <div style="font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px">⚡ 종합 분석</div>
-      <div style="font-size:12px;color:#333;line-height:1.7">${det.analysis}</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7">${det.analysis}</div>
       <div style="margin-top:8px">${(det.tags||[]).map(t=>`<span style="display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;margin:2px;background:${col}15;color:${col}">${t}</span>`).join('')}</div>
     </div>`;
   }
@@ -1820,9 +1868,9 @@ function renderCfDetailPanel(d) {
   Object.entries(res).forEach(([k,v])=>{
     var w = Math.round(v/maxR*100);
     left+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-      <div style="font-size:11px;color:#888;min-width:60px">${k}</div>
-      <div style="flex:1;background:#f0f0ee;border-radius:2px;height:5px"><div style="background:${kgResColors[k]||'#888'};height:5px;border-radius:2px;width:${w}%"></div></div>
-      <div style="font-size:11px;color:#888;min-width:24px;text-align:right">${v}</div>
+      <div style="font-size:11px;color:var(--text3);min-width:60px">${k}</div>
+      <div style="flex:1;background:var(--bg4);border-radius:2px;height:5px"><div style="background:${kgResColors[k]||'#888'};height:5px;border-radius:2px;width:${w}%"></div></div>
+      <div style="font-size:11px;color:var(--text3);min-width:24px;text-align:right">${v}</div>
     </div>`;
   });
   left += '</div>';
@@ -1833,7 +1881,7 @@ function renderCfDetailPanel(d) {
     <div style="padding:12px 14px;border-right:1px solid #e8e8e6;overflow-y:auto">
       <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">언어/그룹별 분포</div>`;
   Object.entries(sent).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-    cols+=`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f3;font-size:12px"><span style="color:#333">${k}</span><span style="color:#888;font-size:11px">${v}건</span></div>`;
+    cols+=`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f3;font-size:12px"><span style="color:var(--text2)">${k}</span><span style="color:var(--text3);font-size:11px">${v}건</span></div>`;
   });
   cols += '</div>';
 
