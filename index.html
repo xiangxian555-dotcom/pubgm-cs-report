@@ -79,9 +79,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .nav-meta { margin-left: auto; font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
 
 /* ── 패널 ── */
-.panel { display: none; }
-.panel.on { display: block; }
-#p1.panel.on, #p3.panel.on { display: flex; }
+/* panel display controlled by JS */
+
+
 
 /* ── KG 레이아웃 ── */
 #p1, #p3 {
@@ -434,7 +434,7 @@ h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 10px;
 </nav>
 
 <!-- ── 탭1: CS 온톨로지 분석 ── -->
-<div id="p0" class="panel on">
+<div id="p0" style="display:block">
 <div class="page-wrap">
 <div class="page-title">CS 온톨로지 분석 — 상세 리포트</div>
 <div class="page-sub">유저 자유 텍스트 기반 5객체 분류 (Actor / Product / Event / Intent / Sentiment)</div>
@@ -582,7 +582,7 @@ PUBG Mobile Support</div>
 </div>
 
 <!-- ── 탭2: CS Knowledge Graph ── -->
-<div id="p1" class="panel">
+<div id="p1" style="display:none">
   <div class="kg-head">
     <h2>⚡ CS Knowledge Graph</h2>
     <span class="sub">온톨로지 분석 1,000건</span>
@@ -637,7 +637,7 @@ PUBG Mobile Support</div>
 </div>
 
 <!-- ── 탭3: 챗봇 플로우 분석 ── -->
-<div id="p2" class="panel">
+<div id="p2" style="display:none">
 <div class="page-wrap">
 <div class="page-title">챗봇 플로우 문제점 분석</div>
 <div class="page-sub">Claude API 실제 대화 흐름 기반 · 2,000건 샘플 분석</div>
@@ -752,7 +752,7 @@ PUBG Mobile Support</div>
 </div>
 
 <!-- ── 탭4: 챗봇 Knowledge Graph ── -->
-<div id="p3" class="panel">
+<div id="p3" style="display:none">
   <div class="kg-head">
     <h2>🤖 챗봇 Knowledge Graph</h2>
     <span class="sub">플로우 분석 2,000건</span>
