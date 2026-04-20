@@ -245,11 +245,11 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
       <div class="nav-tab" id="ntab-t2" onclick="switchMain('t2',this)">
         🕸 CS Knowledge Graph <span class="tab-badge">33노드</span>
       </div>
-      <div class="nav-tab" style="opacity:.4;cursor:not-allowed">
-        🤖 챗봇 플로우 분석 <span class="tab-badge">준비중</span>
+      <div class="nav-tab" onclick="switchMain('t3',this)">
+        🤖 챗봇 플로우 분석 <span class="tab-badge">2,000건</span>
       </div>
-      <div class="nav-tab" style="opacity:.4;cursor:not-allowed">
-        🕸 챗봇 Knowledge Graph <span class="tab-badge">준비중</span>
+      <div class="nav-tab" onclick="switchMain('t4',this)">
+        🕸 챗봇 Knowledge Graph <span class="tab-badge">20노드</span>
       </div>
     </div>
     <div class="nav-right">Claude API 기반 · 2026-04-20</div>
@@ -918,20 +918,296 @@ window.addEventListener('load',initGraph);
 
 </div>
 
-<div id="t3" style="padding:60px;text-align:center;color:#bbb">
-  <div style="font-size:48px;margin-bottom:16px">🤖</div>
-  <div style="font-size:20px;font-weight:600;color:#888;margin-bottom:8px">챗봇 플로우 분석</div>
-  <div style="font-size:14px;color:#bbb">chatbot_flow_analyzer.py 완료 후 추가됩니다.</div>
+<!-- ══ 탭3: 챗봇 플로우 분석 ══ -->
+<div id="t3" style="display:none">
+<div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+
+<h1 style="font-size:22px;font-weight:700;margin-bottom:4px">챗봇 플로우 문제점 분석</h1>
+<div style="font-size:13px;color:#666;margin-bottom:8px">Claude API 실제 대화 흐름 기반 · 2,000건 샘플 분석</div>
+<div style="margin-bottom:24px">
+  <span style="display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px;background:#fee;color:#c00;font-weight:600">EN 언어장벽 80%</span>
+  <span style="display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px;background:#e1f5ee;color:#0f6e56;font-weight:600">자동화가능 67.4%</span>
+  <span style="display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px;background:#fff3dc;color:#854F0B;font-weight:600">KO 대안없음 39%</span>
 </div>
 
-<div id="t4" style="padding:60px;text-align:center;color:#bbb">
-  <div style="font-size:48px;margin-bottom:16px">🕸</div>
-  <div style="font-size:20px;font-weight:600;color:#888;margin-bottom:8px">챗봇 Knowledge Graph</div>
-  <div style="font-size:14px;color:#bbb">챗봇 분석 완료 후 추가됩니다.</div>
+<!-- KPI -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">
+  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
+    <div style="font-size:11px;color:#888;margin-bottom:4px">분석 샘플</div>
+    <div style="font-size:22px;font-weight:700">2,000건</div>
+    <div style="font-size:11px;color:#aaa">KO/EN 각 500건×2그룹</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
+    <div style="font-size:11px;color:#888;margin-bottom:4px">자동화 가능</div>
+    <div style="font-size:22px;font-weight:700;color:#1D9E75">1,348건</div>
+    <div style="font-size:11px;color:#aaa">67.4% — 개선 여지 큼</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
+    <div style="font-size:11px;color:#888;margin-bottom:4px">EN 핵심 문제</div>
+    <div style="font-size:22px;font-weight:700;color:#D85A30">언어 장벽</div>
+    <div style="font-size:11px;color:#aaa">EN 상담원 전환의 80%</div>
+  </div>
+  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
+    <div style="font-size:11px;color:#888;margin-bottom:4px">KO 핵심 문제</div>
+    <div style="font-size:22px;font-weight:700;color:#BA7517">대안 없음</div>
+    <div style="font-size:11px;color:#aaa">KO 중도포기의 39.2%</div>
+  </div>
+</div>
+
+<!-- 서브탭 -->
+<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap" id="cf-tabs">
+  <div style="padding:5px 14px;font-size:13px;border:1px solid #1a1a1a;border-radius:20px;cursor:pointer;background:#1a1a1a;color:#fff;font-weight:600" onclick="swCF('cf1',this)">상담원 전환 원인</div>
+  <div style="padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666" onclick="swCF('cf2',this)">중도포기 원인</div>
+  <div style="padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666" onclick="swCF('cf3',this)">챗봇 문제점</div>
+  <div style="padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666" onclick="swCF('cf4',this)">개선 제안</div>
+</div>
+
+<!-- 상담원 전환 원인 -->
+<div id="cf1">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a">🇰🇷 KO 상담원 전환 원인 (500건)</h3>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">복잡한 케이스</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:100%">174건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">34.8%</div>
+      </div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">정보수집만 → 상담원 전달</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:94%">165건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">33.0%</div>
+      </div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">유저 챗봇 무시 직접요청</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:58%">102건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">20.4%</div>
+      </div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">챗봇 시도 후 에스컬레이션</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:11%">20건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">4.0%</div>
+      </div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">챗봇 해결책 없음</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:6%">12건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">2.4%</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a">🌐 EN 상담원 전환 원인 (500건)</h3>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">🚨 언어 장벽</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:100%">400건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">80.0%</div>
+      </div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">복잡한 케이스</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:16%">64건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">12.8%</div>
+      </div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
+        <div style="font-size:12px;color:#333;min-width:160px">정보수집만 → 상담원 전달</div>
+        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:4%">18건</div></div>
+        <div style="font-size:11px;color:#888;min-width:36px">3.6%</div>
+      </div>
+      <div style="background:#fff3dc;border:1px solid #BA751730;border-radius:8px;padding:10px 12px;margin-top:12px">
+        <div style="font-size:12px;font-weight:600;color:#854F0B;margin-bottom:4px">⚠️ 핵심 발견</div>
+        <div style="font-size:12px;color:#555;line-height:1.6">EN 상담원 전환의 80%가 언어 장벽. 영어를 지원하는 챗봇이 없어서 한국어 챗봇이 "Sorry, Korean only" 응답 후 상담원으로 전환. <strong>영어 지원 챗봇 구축이 가장 큰 임팩트.</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KO 상담원 핑퐁 -->
+  <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px;margin-top:16px">
+    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">핑퐁 평균 비교</h3>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div style="background:#fef5f0;border-radius:8px;padding:12px;text-align:center;border:1px solid #D85A3020">
+        <div style="font-size:11px;color:#888;margin-bottom:4px">KO 상담원처리</div>
+        <div style="font-size:24px;font-weight:700;color:#D85A30">3.95회</div>
+        <div style="font-size:11px;color:#aaa">가장 높음 — 복잡 케이스</div>
+      </div>
+      <div style="background:#f0fbf6;border-radius:8px;padding:12px;text-align:center;border:1px solid #1D9E7520">
+        <div style="font-size:11px;color:#888;margin-bottom:4px">EN 중도포기</div>
+        <div style="font-size:24px;font-weight:700;color:#1D9E75">2.82회</div>
+        <div style="font-size:11px;color:#aaa">FAQ 후 무응답 패턴</div>
+      </div>
+      <div style="background:#fff3dc;border-radius:8px;padding:12px;text-align:center;border:1px solid #BA751720">
+        <div style="font-size:11px;color:#888;margin-bottom:4px">KO 중도포기</div>
+        <div style="font-size:24px;font-weight:700;color:#BA7517">0.76회</div>
+        <div style="font-size:11px;color:#aaa">초반 이탈 — FAQ 미응답</div>
+      </div>
+      <div style="background:#e8f1fb;border-radius:8px;padding:12px;text-align:center;border:1px solid #378ADD20">
+        <div style="font-size:11px;color:#888;margin-bottom:4px">EN 상담원처리</div>
+        <div style="font-size:24px;font-weight:700;color:#378ADD">0.60회</div>
+        <div style="font-size:11px;color:#aaa">언어장벽 → 즉시 전환</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 중도포기 원인 -->
+<div id="cf2" style="display:none">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🇰🇷 KO 중도포기 원인 (500건)</h3>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">대기 타임아웃</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;width:100%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">157건</div></div><div style="font-size:11px;color:#888;min-width:36px">31.4%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">FAQ 도움 안됨</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;width:91%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">143건</div></div><div style="font-size:11px;color:#888;min-width:36px">28.6%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">정보요청 후 무응답</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:52%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">81건</div></div><div style="font-size:11px;color:#888;min-width:36px">16.2%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">카테고리 없음</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:46%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">72건</div></div><div style="font-size:11px;color:#888;min-width:36px">14.4%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">해결책 없이 통보</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:10%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">16건</div></div><div style="font-size:11px;color:#888;min-width:36px">3.2%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">외부 플랫폼 유도</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:10%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">16건</div></div><div style="font-size:11px;color:#888;min-width:36px">3.2%</div></div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🌐 EN 중도포기 원인 (500건)</h3>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">대기 타임아웃</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;width:100%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">240건</div></div><div style="font-size:11px;color:#888;min-width:36px">48.0%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">카테고리 없음</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;width:51%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">123건</div></div><div style="font-size:11px;color:#888;min-width:36px">24.6%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">FAQ 도움 안됨</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:26%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">62건</div></div><div style="font-size:11px;color:#888;min-width:36px">12.4%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">정보요청 후 무응답</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:14%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">33건</div></div><div style="font-size:11px;color:#888;min-width:36px">6.6%</div></div>
+      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">외부 플랫폼 유도</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:13%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">31건</div></div><div style="font-size:11px;color:#888;min-width:36px">6.2%</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 챗봇 문제점 -->
+<div id="cf3" style="display:none">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🇰🇷 KO 챗봇 문제점</h3>
+      <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px">상담원처리</div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">문제 없음 (유저 요인)</span><span style="font-weight:600">281건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">117건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#BA7517">과도한 정보 요청</span><span style="font-weight:600">40건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">일반적 응답</span><span style="font-weight:600">23건</span></div>
+      <div style="font-size:12px;font-weight:600;color:#888;margin:12px 0 8px">중도포기</div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">대안 없음 (no_alternative)</span><span style="font-weight:600">198건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#BA7517">과도한 정보 요청</span><span style="font-weight:600">74건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">67건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">일반적 응답</span><span style="font-weight:600">63건</span></div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🌐 EN 챗봇 문제점</h3>
+      <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px">상담원처리</div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">🚨 언어 불일치</span><span style="font-weight:600">413건 (82.6%)</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">문제 없음</span><span style="font-weight:600">44건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">과도한 정보 요청</span><span style="font-weight:600">14건</span></div>
+      <div style="font-size:12px;font-weight:600;color:#888;margin:12px 0 8px">중도포기</div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">언어 불일치</span><span style="font-weight:600">137건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#BA7517">과도한 정보 요청</span><span style="font-weight:600">84건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">대안 없음</span><span style="font-weight:600">72건</span></div>
+      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">65건</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 개선 제안 -->
+<div id="cf4" style="display:none">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🟢 즉시 구현 가능</h3>
+      <div style="font-size:12px;color:#888;margin-bottom:12px">자동화가능 67.4% (1,348건)</div>
+      <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#0f6e56;margin-bottom:4px">1순위 — 영어 지원 챗봇 구축</div>
+        <div style="font-size:12px;color:#444;line-height:1.6">EN 상담원 전환의 80%(400건)가 언어 장벽. 영어 지원 챗봇 또는 언어별 자동 라우팅만 구축해도 즉시 400건/그룹 감소.</div>
+      </div>
+      <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#0f6e56;margin-bottom:4px">2순위 — 대안 제시 로직 추가</div>
+        <div style="font-size:12px;color:#444;line-height:1.6">KO 중도포기 no_alternative 198건. "복구 불가" → "SNS 연동으로 보호하는 방법" 대안 안내로 이탈 감소.</div>
+      </div>
+      <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#0f6e56;margin-bottom:4px">3순위 — FAQ 보강</div>
+        <div style="font-size:12px;color:#444;line-height:1.6">KO missing_faq 117+67건. 플랫폼 변경 시나리오, 제재 유형별 세부 카테고리 추가.</div>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🔴 중기 구현 필요</h3>
+      <div style="font-size:12px;color:#888;margin-bottom:12px">상담원 필수 32.6% (652건)</div>
+      <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#c00;margin-bottom:4px">복잡한 케이스 처리 개선</div>
+        <div style="font-size:12px;color:#444;line-height:1.6">KO complex_case 174건. 계정 제재/복구는 DB 연동 없이 자동화 불가. 상담원 초안 생성으로 처리 시간 단축.</div>
+      </div>
+      <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#c00;margin-bottom:4px">정보수집 → 자동처리 연결</div>
+        <div style="font-size:12px;color:#444;line-height:1.6">KO info_collection_only 165건. 챗봇이 정보만 수집하고 상담원에 넘기는 구조. UID+영수증 → 자동 지급 처리 DB 연동 필요.</div>
+      </div>
+      <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:#c00;margin-bottom:4px">과도한 정보 요청 최소화</div>
+        <div style="font-size:12px;color:#444;line-height:1.6">EN excessive_info_request 98건. 주문번호/스크린샷 선택사항화. UID만으로 처리 시작 가능하도록 플로우 변경.</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px;margin-top:16px">
+    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Claude API 개선제안 Top 10</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 챗봇 구축 또는 언어별 라우팅</span><span style="color:#1D9E75;font-weight:600">17건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>복구 불가시 상담원 연결 옵션 제공</span><span style="color:#1D9E75;font-weight:600">4건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>Other 카테고리 영어 지원 추가</span><span style="color:#1D9E75;font-weight:600">8건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>제재 유형별 세부 카테고리 및 FAQ 제공</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 챗봇으로 자동 라우팅</span><span style="color:#1D9E75;font-weight:600">6건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>카테고리 선택 후 세부 옵션 즉시 제시</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 챗봇 연결 또는 다국어 FAQ</span><span style="color:#1D9E75;font-weight:600">6건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>응답 시간 알림 또는 재참여 유도 강화</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 강화 또는 즉시 영어권 상담원 연결</span><span style="color:#1D9E75;font-weight:600">5건</span></div>
+      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>FAQ 후 해결 여부 확인 및 추가 지원 제공</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="font-size:11px;color:#aaa;margin-top:24px;padding-top:12px;border-top:1px solid #e8e8e6">
+  * Claude API (claude-sonnet-4-20250514) 기반 실제 대화 흐름 분석 · 2,000건 샘플 · 2026-04-20
+</div>
+</div>
+</div>
+
+<!-- ══ 탭4: 챗봇 Knowledge Graph ══ -->
+<div id="t4" style="display:none">
+<div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
+  <!-- 그래프 + 인사이트 -->
+  <div style="flex:1;display:flex;min-height:0">
+    <!-- 범례 -->
+    <div style="width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto">
+      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('transfer',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>전환 원인</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('problem',this)"><div style="width:9px;height:9px;border-radius:50%;background:#7F77DD;flex-shrink:0"></div>챗봇 문제점</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('resolution',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>해결 유형</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('lang',this)"><div style="width:9px;height:9px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>언어</div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">주요 지표</div>
+      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">EN 최대 문제</div><div style="font-size:14px;font-weight:700;color:#D85A30">언어 장벽 80%</div></div>
+      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">KO 최대 문제</div><div style="font-size:14px;font-weight:700;color:#BA7517">대안 없음 39%</div></div>
+      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
+    </div>
+
+    <!-- 그래프 캔버스 -->
+    <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden">
+      <svg id="cf-kg-svg" style="width:100%;height:100%"></svg>
+      <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 하단에 상세 분석이 표시됩니다</div>
+    </div>
+
+    <!-- 우측 Quick Insight -->
+    <div style="width:280px;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column;flex-shrink:0">
+      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px">⚡ Quick Insight</div>
+        <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하면 상세 분석이 업데이트됩니다</div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:12px 16px" id="cf-ip-body"></div>
+    </div>
+  </div>
+
+  <!-- 하단 상세 패널 -->
+  <div id="cf-dp" style="background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s ease;flex-shrink:0;position:relative">
+    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
+    <div style="display:flex;height:100%" id="cf-dp-inner"></div>
+  </div>
+</div>
 </div>
 
 <script>
 function switchMain(id, el) {
+  if(el.classList.contains('disabled')) return;
   ['t1','t2','t3','t4'].forEach(function(tid) {
     var p = document.getElementById(tid);
     if(p) p.style.display = (tid === id ? 'block' : 'none');
@@ -941,6 +1217,10 @@ function switchMain(id, el) {
   if(id === 't2' && !window._kgInited) {
     setTimeout(function() { initGraph(); }, 50);
     window._kgInited = true;
+  }
+  if(id === 't4' && !window._cfKgInited) {
+    setTimeout(function() { initCFGraph(); }, 100);
+    window._cfKgInited = true;
   }
 }
 function swP(id,el){
@@ -1349,6 +1629,337 @@ function lgFilter(group,el){
 }
 
 window.addEventListener('load',initGraph);
+
+
+// ── 탭3 서브탭 ──
+function swCF(id, el) {
+  ['cf1','cf2','cf3','cf4'].forEach(function(cid) {
+    document.getElementById(cid).style.display = (cid===id?'block':'none');
+  });
+  document.querySelectorAll('#cf-tabs > div').forEach(function(t) {
+    t.style.background = '#fff';
+    t.style.color = '#666';
+    t.style.borderColor = '#ddd';
+    t.style.fontWeight = '500';
+  });
+  el.style.background = '#1a1a1a';
+  el.style.color = '#fff';
+  el.style.borderColor = '#1a1a1a';
+  el.style.fontWeight = '600';
+}
+
+// ── 챗봇 KG 데이터 ──
+const CF_GC = {transfer:'#D85A30', problem:'#7F77DD', resolution:'#378ADD', lang:'#1D9E75'};
+const CF_GL = {transfer:'전환원인', problem:'챗봇문제점', resolution:'해결유형', lang:'언어'};
+
+const CF_NODES = [
+  {id:'t:complex_case',label:'복잡한 케이스',group:'transfer',count:238},
+  {id:'t:language_barrier',label:'언어 장벽',group:'transfer',count:406},
+  {id:'t:info_collection_only',label:'정보수집만',group:'transfer',count:183},
+  {id:'t:user_skip_chatbot',label:'챗봇 무시',group:'transfer',count:104},
+  {id:'t:faq_not_helpful',label:'FAQ 도움안됨',group:'transfer',count:205},
+  {id:'t:info_request_abandoned',label:'정보요청 무응답',group:'transfer',count:114},
+  {id:'t:category_not_found',label:'카테고리 없음',group:'transfer',count:196},
+  {id:'t:wait_timeout',label:'대기 타임아웃',group:'transfer',count:397},
+  {id:'t:no_solution_given',label:'해결책 없이 통보',group:'transfer',count:17},
+  {id:'p:language_mismatch',label:'언어 불일치',group:'problem',count:550},
+  {id:'p:no_alternative',label:'대안 없음',group:'problem',count:270},
+  {id:'p:missing_faq',label:'FAQ 누락',group:'problem',count:255},
+  {id:'p:excessive_info_request',label:'과도한 정보요청',group:'problem',count:212},
+  {id:'p:generic_response',label:'일반적 응답',group:'problem',count:139},
+  {id:'p:none',label:'문제없음',group:'problem',count:432},
+  {id:'p:wrong_category',label:'잘못된 카테고리',group:'problem',count:45},
+  {id:'r:agent',label:'상담원처리',group:'resolution',count:1000},
+  {id:'r:timeout',label:'중도포기',group:'resolution',count:1000},
+  {id:'l:KO',label:'KO 한국어',group:'lang',count:1000},
+  {id:'l:EN',label:'EN 영어',group:'lang',count:1000},
+];
+
+const CF_EDGES = [
+  {source:'t:language_barrier',target:'r:agent',weight:400},
+  {source:'p:language_mismatch',target:'t:language_barrier',weight:413},
+  {source:'p:language_mismatch',target:'l:EN',weight:550},
+  {source:'t:language_barrier',target:'l:EN',weight:406},
+  {source:'t:complex_case',target:'r:agent',weight:238},
+  {source:'t:complex_case',target:'l:KO',weight:174},
+  {source:'t:info_collection_only',target:'r:agent',weight:183},
+  {source:'t:info_collection_only',target:'l:KO',weight:165},
+  {source:'t:user_skip_chatbot',target:'r:agent',weight:104},
+  {source:'t:user_skip_chatbot',target:'l:KO',weight:102},
+  {source:'t:wait_timeout',target:'r:timeout',weight:397},
+  {source:'t:faq_not_helpful',target:'r:timeout',weight:205},
+  {source:'t:category_not_found',target:'r:timeout',weight:196},
+  {source:'t:info_request_abandoned',target:'r:timeout',weight:114},
+  {source:'p:no_alternative',target:'r:timeout',weight:270},
+  {source:'p:no_alternative',target:'l:KO',weight:198},
+  {source:'p:missing_faq',target:'r:agent',weight:123},
+  {source:'p:missing_faq',target:'r:timeout',weight:132},
+  {source:'p:excessive_info_request',target:'r:timeout',weight:158},
+  {source:'p:excessive_info_request',target:'r:agent',weight:54},
+  {source:'p:none',target:'r:agent',weight:325},
+  {source:'t:faq_not_helpful',target:'l:KO',weight:143},
+  {source:'t:category_not_found',target:'l:EN',weight:123},
+];
+
+const CF_NODE_DET = {
+  't:language_barrier': {
+    top3:[{name:'EN 상담원처리',pct:80},{name:'언어 불일치',pct:82},{name:'영어 지원 챗봇 구축',pct:null}],
+    analysis:'EN 상담원 전환의 80%(400건)가 언어 장벽. "Sorry, Korean only" 응답 후 상담원 전환. 영어 지원 챗봇 구축이 단일 최대 임팩트 개선 포인트.',
+    tags:['EN 전용 문제','즉시 해결 가능','영어챗봇 구축 필요'],
+    sent:{KO:6,EN:400}, res:{상담원처리:406}
+  },
+  't:complex_case': {
+    top3:[{name:'KO 상담원처리',pct:35},{name:'복잡한 케이스',pct:100},{name:'DB 연동 필요',pct:null}],
+    analysis:'KO 상담원처리의 35%(174건). 계정 제재, UC 보상 오류 등 DB 조회 없이 처리 불가한 케이스. 상담원 초안 자동생성으로 처리 시간 단축 가능.',
+    tags:['자동화 불가','초안생성 효과 있음','DB연동 필요'],
+    sent:{KO:174,EN:64}, res:{상담원처리:238}
+  },
+  't:info_collection_only': {
+    top3:[{name:'KO 상담원처리',pct:33},{name:'정보수집 후 전달',pct:100},{name:'챗봇 접수기 역할',pct:null}],
+    analysis:'KO 상담원처리의 33%(165건). 챗봇이 UID/문의내용 수집만 하고 실제 처리 없이 상담원 전달. 챗봇이 "접수기" 역할에 머물러 있는 구조적 문제.',
+    tags:['접수기 역할 문제','KO 핵심 이슈','자동처리 연결 필요'],
+    sent:{KO:165,EN:18}, res:{상담원처리:183}
+  },
+  't:wait_timeout': {
+    top3:[{name:'EN 중도포기',pct:48},{name:'KO 중도포기',pct:31},{name:'48시간 자동종료',pct:null}],
+    analysis:'중도포기의 최다 원인(397건). EN 48%, KO 31%. 유저가 응답 없이 방치 → 48시간 후 자동 종료. 응답 대기 시간 안내 및 재참여 유도 강화 필요.',
+    tags:['EN+KO 공통 문제','대기시간 안내 필요','재참여 유도 강화'],
+    sent:{KO:157,EN:240}, res:{중도포기:397}
+  },
+  't:faq_not_helpful': {
+    top3:[{name:'KO 중도포기',pct:29},{name:'FAQ 미스매치',pct:100},{name:'유저 상황 불일치',pct:null}],
+    analysis:'중도포기 원인 2위(205건). FAQ를 제공했지만 유저의 구체적 상황과 맞지 않아 이탈. KO 143건. 일반적 FAQ → 상황별 세분화 필요.',
+    tags:['FAQ 품질 문제','상황별 세분화 필요','KO 주요 이슈'],
+    sent:{KO:143,EN:62}, res:{중도포기:205}
+  },
+  'p:language_mismatch': {
+    top3:[{name:'EN 상담원처리',pct:83},{name:'EN 중도포기',pct:27},{name:'언어 장벽과 연결',pct:null}],
+    analysis:'EN 상담원처리의 82.6%(413건). 챗봇이 한국어만 지원하여 EN 유저에게 "Korean only" 응답. 영어 지원 챗봇 구축이 즉각적 해결책.',
+    tags:['EN 핵심 문제','즉시 해결 가능','다국어 지원 필요'],
+    sent:{상담원처리:413,중도포기:137}, res:{EN:550}
+  },
+  'p:no_alternative': {
+    top3:[{name:'KO 중도포기',pct:39},{name:'대안 없는 통보',pct:100},{name:'게스트계정 문제',pct:null}],
+    analysis:'KO 중도포기의 39%(198건). "복구 불가", "지원 불가" 통보 후 대안 제시 없이 종료. 게스트 계정 복구 불가 → SNS 연동 대안 안내로 개선.',
+    tags:['KO 핵심 문제','대안 제시 필수','즉시 개선 가능'],
+    sent:{KO:198,EN:72}, res:{중도포기:270}
+  },
+  'p:missing_faq': {
+    top3:[{name:'KO 상담원처리',pct:23},{name:'KO 중도포기',pct:13},{name:'신규 시나리오 필요',pct:null}],
+    analysis:'상담원+중도포기 합계 255건. 플랫폼 변경(갤럭시→구글플레이), 미다스바이 결제 등 새로운 시나리오 FAQ 없음. 신규 FAQ 추가로 즉시 해결 가능.',
+    tags:['FAQ 추가로 해결','플랫폼변경 시나리오','미다스바이 FAQ'],
+    sent:{상담원처리:123,중도포기:132}, res:{KO:184,EN:71}
+  },
+  'p:excessive_info_request': {
+    top3:[{name:'EN 중도포기',pct:17},{name:'KO 상담원+중도포기',pct:23},{name:'요청 최소화 필요',pct:null}],
+    analysis:'212건. 주문번호, 스크린샷, UID 동시 요청으로 유저 이탈. 정보 요청을 선택사항으로 변경하고 UID만으로 처리 시작 가능한 플로우로 개선 필요.',
+    tags:['정보요청 최소화','선택사항 변경 필요','즉시 개선 가능'],
+    sent:{상담원처리:54,중도포기:158}, res:{EN:98,KO:114}
+  },
+  'r:agent': {
+    top3:[{name:'언어 장벽',pct:40},{name:'복잡한 케이스',pct:24},{name:'정보수집만',pct:18}],
+    analysis:'상담원처리 1,000건 분석. EN 80%가 언어 장벽으로 즉시 전환. KO는 복잡한 케이스(35%)와 정보수집(33%)이 주요 원인. 자동화가능 비율 상담원처리 중 53%.',
+    tags:['EN=언어장벽','KO=복잡케이스','자동화 53% 가능'],
+    sent:{상담원처리:1000}, res:{EN:500,KO:500}
+  },
+  'r:timeout': {
+    top3:[{name:'대기 타임아웃',pct:40},{name:'FAQ 도움안됨',pct:21},{name:'카테고리 없음',pct:20}],
+    analysis:'중도포기 1,000건. 대기 타임아웃(40%)이 최다. FAQ 제공했지만 도움 안됨(21%). 대안없음(27%), 카테고리없음(20%). 자동화가능 81%로 개선 여지 가장 큼.',
+    tags:['자동화가능 81%','개선효과 최대','FAQ품질+대안제시'],
+    sent:{중도포기:1000}, res:{EN:500,KO:500}
+  },
+};
+
+function cfNodeR(d) {
+  const b = {transfer:12, problem:12, resolution:18, lang:16};
+  return Math.max(9, Math.min((b[d.group]||12)*Math.sqrt(d.count/150), 36));
+}
+
+let cfSvgNode, cfSvgLink;
+
+function initCFGraph() {
+  const svg = d3.select('#cf-kg-svg');
+  const area = document.querySelector('#t4 .graph-canvas') || document.querySelector('#cf-kg-svg').parentElement;
+  const w = area.clientWidth || 700, h = area.clientHeight || 500;
+  svg.attr('viewBox', `0 0 ${w} ${h}`);
+  const g = svg.append('g');
+  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom', e => g.attr('transform', e.transform)));
+
+  const nodes = CF_NODES.map(d=>({...d}));
+  const edges = CF_EDGES.map(d=>({...d}));
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(edges).id(d=>d.id).distance(d=>160-Math.min(d.weight/6,80)).strength(d=>Math.min(d.weight/300,.7)))
+    .force('charge', d3.forceManyBody().strength(-250))
+    .force('center', d3.forceCenter(w/2, h/2))
+    .force('collision', d3.forceCollide().radius(d=>cfNodeR(d)+10));
+
+  cfSvgLink = g.append('g').selectAll('line').data(edges).enter().append('line')
+    .attr('stroke','#ddd').attr('stroke-width',d=>Math.max(.8,Math.min(d.weight/80,5))).attr('stroke-opacity',.8);
+
+  cfSvgNode = g.append('g').selectAll('g').data(nodes).enter().append('g').attr('cursor','pointer')
+    .call(d3.drag()
+      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
+      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
+    .on('click',(e,d)=>{e.stopPropagation();cfNodeClick(d);})
+    .on('mouseover',(e,d)=>showCfTip(e,d))
+    .on('mouseout',()=>{document.getElementById('cf-kg-tt').style.opacity=0;});
+
+  cfSvgNode.append('circle').attr('r',d=>cfNodeR(d))
+    .attr('fill',d=>CF_GC[d.group]).attr('fill-opacity',.9)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('class','cfnc');
+
+  cfSvgNode.append('text').text(d=>d.label.length>9?d.label.slice(0,8)+'…':d.label)
+    .attr('dy','0.35em').attr('text-anchor','middle')
+    .attr('font-size',d=>cfNodeR(d)>20?'11px':cfNodeR(d)>14?'10px':'9px')
+    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
+
+  sim.on('tick',()=>{
+    cfSvgLink.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    cfSvgNode.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+
+  svg.on('click',()=>{
+    cfSvgNode.selectAll('.cfnc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
+  });
+
+  renderCfDefaultInsight();
+}
+
+function showCfTip(e,d) {
+  const tt = document.getElementById('cf-kg-tt');
+  const area = document.getElementById('cf-kg-svg').parentElement.getBoundingClientRect();
+  tt.innerHTML = `<div style="font-weight:700;font-size:13px;color:${CF_GC[d.group]};margin-bottom:3px">${d.label}</div><div style="color:#888;font-size:11px">${CF_GL[d.group]} · ${d.count}건</div>`;
+  tt.style.left = (e.clientX-area.left+14)+'px';
+  tt.style.top = (e.clientY-area.top-10)+'px';
+  tt.style.opacity = 1;
+}
+
+function cfNodeClick(d) {
+  cfSvgNode.selectAll('.cfnc')
+    .attr('stroke',n=>n.id===d.id?'#1a1a1a':'#fff')
+    .attr('stroke-width',n=>n.id===d.id?3.5:2.5)
+    .attr('fill-opacity',n=>n.id===d.id?1:.3);
+  cfSvgLink.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.05)
+    .attr('stroke',l=>(l.source.id===d.id||l.target.id===d.id)?CF_GC[d.group]:'#ddd');
+  renderCfNodeInsight(d);
+  renderCfDetailPanel(d);
+}
+
+function renderCfDefaultInsight() {
+  document.getElementById('cf-ip-sub').textContent = '전체 2,000건 기준';
+  const top3 = [
+    {name:'언어 장벽',color:'#D85A30',pct:80,badge:'전환원인'},
+    {name:'대기 타임아웃',color:'#D85A30',pct:40,badge:'전환원인'},
+    {name:'대안 없음',color:'#7F77DD',pct:27,badge:'챗봇문제점'},
+  ];
+  let html = '';
+  top3.forEach((item,i)=>{
+    html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background='#fff'">
+      <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${item.color}">${item.name}</span><span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span></div>
+      <div style="margin-top:5px"><span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:3px;background:${item.color}20;color:${item.color}">${item.badge}</span></div>
+      <div style="margin-top:6px;background:#f0f0ee;height:4px;border-radius:2px"><div style="background:${item.color};height:4px;border-radius:2px;width:${item.pct}%"></div></div>
+    </div>`;
+  });
+  html+=`<div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px">
+    <div style="font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px">⚡ 종합 분석</div>
+    <div style="font-size:12px;color:#333;line-height:1.7">EN 상담원 전환의 80%가 언어 장벽 — 영어 지원 챗봇 구축이 단일 최대 임팩트. KO는 정보수집(33%)과 복잡케이스(35%)가 핵심. 자동화가능 비율이 67.4%로 높아 즉각 개선 효과 기대.</div>
+  </div>`;
+  document.getElementById('cf-ip-body').innerHTML = html;
+}
+
+function renderCfNodeInsight(d) {
+  const det = CF_NODE_DET[d.id];
+  const col = CF_GC[d.group];
+  document.getElementById('cf-ip-sub').textContent = `${d.label} · ${d.count}건`;
+  let html = '';
+  if(det) {
+    det.top3.forEach((item,i)=>{
+      html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${col}">${item.name}</span>${item.pct?`<span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span>`:''}
+        </div>
+        ${item.pct?`<div style="margin-top:6px;background:#f0f0ee;height:4px;border-radius:2px"><div style="background:${col};height:4px;border-radius:2px;width:${item.pct}%"></div></div>`:''}
+      </div>`;
+    });
+    html+=`<div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px">
+      <div style="font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px">⚡ 종합 분석</div>
+      <div style="font-size:12px;color:#333;line-height:1.7">${det.analysis}</div>
+      <div style="margin-top:8px">${(det.tags||[]).map(t=>`<span style="display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;margin:2px;background:${col}15;color:${col}">${t}</span>`).join('')}</div>
+    </div>`;
+  }
+  document.getElementById('cf-ip-body').innerHTML = html;
+}
+
+function renderCfDetailPanel(d) {
+  const det = CF_NODE_DET[d.id];
+  const dp = document.getElementById('cf-dp');
+  dp.style.height = '220px';
+  const col = CF_GC[d.group];
+  if(!det) {dp.style.height='0';return;}
+
+  const resColors = {상담원처리:'#378ADD',중도포기:'#BA7517'};
+  let left = `<div style="width:200px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
+    <div style="font-size:15px;font-weight:700;color:${col};margin-bottom:3px">${d.label}</div>
+    <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;background:${col}20;color:${col};display:inline-block;margin-bottom:8px">${CF_GL[d.group]}</span>
+    <div style="font-size:12px;color:#666;margin-bottom:10px">총 ${d.count}건</div>`;
+
+  const res = det.res||{};
+  const maxR = Math.max(...Object.values(res),1);
+  Object.entries(res).forEach(([k,v])=>{
+    const w = Math.round(v/maxR*100);
+    left+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+      <div style="font-size:11px;color:#888;min-width:60px">${k}</div>
+      <div style="flex:1;background:#f0f0ee;border-radius:2px;height:5px"><div style="background:${resColors[k]||'#888'};height:5px;border-radius:2px;width:${w}%"></div></div>
+      <div style="font-size:11px;color:#888;min-width:24px;text-align:right">${v}</div>
+    </div>`;
+  });
+  left += '</div>';
+
+  // 언어 분포 컬럼
+  const sent = det.sent||{};
+  let cols = `<div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr)">
+    <div style="padding:12px 14px;border-right:1px solid #e8e8e6;overflow-y:auto">
+      <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">언어/그룹별 분포</div>`;
+  Object.entries(sent).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+    cols+=`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f3;font-size:12px"><span style="color:#333">${k}</span><span style="color:#888;font-size:11px">${v}건</span></div>`;
+  });
+  cols += '</div>';
+
+  // 개선방향
+  cols += `<div style="padding:12px 14px;overflow-y:auto">
+    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">핵심 태그</div>`;
+  (det.tags||[]).forEach(t=>{
+    cols+=`<div style="font-size:12px;padding:5px 10px;background:${col}10;border-radius:5px;color:${col};font-weight:500;margin-bottom:4px">${t}</div>`;
+  });
+  cols += '</div></div>';
+
+  // 종합분석
+  let analysis = `<div style="width:240px;padding:14px 16px;background:#f8f8f6;border-left:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
+    <div style="font-size:12px;font-weight:700;margin-bottom:8px">⚡ 종합 분석</div>
+    <div style="font-size:12px;color:#444;line-height:1.7">${det.analysis}</div>
+  </div>`;
+
+  document.getElementById('cf-dp-inner').innerHTML = left + cols + analysis;
+}
+
+function closeCfDp() {
+  document.getElementById('cf-dp').style.height='0';
+}
+
+function cfKgFilter(group, el) {
+  document.querySelectorAll('#t4 .legend-item-cf').forEach(l=>{l.style.background='';l.style.fontWeight='400';});
+  if(el) {el.style.background='#f0f0ee';el.style.fontWeight='600';}
+  if(!cfSvgNode) return;
+  cfSvgNode.selectAll('circle').attr('opacity',d=>group==='all'?.9:d.group===group?1:.1);
+  cfSvgNode.selectAll('text').attr('opacity',d=>group==='all'?1:d.group===group?1:.1);
+  if(cfSvgLink) cfSvgLink.attr('opacity',d=>{
+    if(group==='all') return .8;
+    return (d.source.group===group||d.target.group===group)?.8:.05;
+  });
+}
+
+/* t4 KG init merged into switchMain */
 
 </script>
 </body>
