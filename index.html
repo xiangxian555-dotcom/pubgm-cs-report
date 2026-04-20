@@ -6,6 +6,11 @@
 <title>PUBG Mobile CS 분석 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
+html, body { height: 100%; margin: 0; padding: 0; }
+#p0, #p1, #p2, #p3 { box-sizing: border-box; }
+#p1 { height: calc(100vh - 51px); overflow: hidden; }
+#p3 { height: calc(100vh - 51px); overflow: hidden; }
+
 
 /* ── 탭1 스타일 ── */
 
@@ -94,7 +99,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 /* ══════════════════════════
    탭2: CS Knowledge Graph
 ═══════════════════════════ */
-.kg-wrap{display:flex;height:calc(100vh - 51px);flex-direction:column}
+.kg-wrap{display:flex;height:100%;flex-direction:column}
 .kg-main{flex:1;display:flex;min-height:0}
 .kg-legend{width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto}
 .kg-legend h3{font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
