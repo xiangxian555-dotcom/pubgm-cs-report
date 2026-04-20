@@ -499,10 +499,10 @@ PUBG Mobile Support</div>
     <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">불만 Sentiment</div><div style="font-size:14px;font-weight:700;color:#BA7517">49.9%</div></div>
   </div>
   <!-- 그래프 캔버스 -->
-  <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden" id="kg-area">
+  <div style="flex:1;position:relative;background:#1e1e2e;overflow:hidden" id="kg-area">
     <svg id="kg-svg" style="position:absolute;top:0;left:0;width:100%;height:100%"></svg>
     <div id="kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
-    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
+    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#999;background:#2a2a3e;padding:4px 14px;border-radius:20px;border:1px solid #3a3a4e;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
   </div>
   <!-- 우측 인사이트 -->
   <div style="width:280px;flex-shrink:0;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column">
@@ -774,10 +774,10 @@ PUBG Mobile Support</div>
     <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
   </div>
   <!-- 그래프 캔버스 -->
-  <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden" id="cf-area">
+  <div style="flex:1;position:relative;background:#1e1e2e;overflow:hidden" id="cf-area">
     <svg id="cf-kg-svg" style="position:absolute;top:0;left:0;width:100%;height:100%"></svg>
     <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
-    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
+    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#999;background:#2a2a3e;padding:4px 14px;border-radius:20px;border:1px solid #3a3a4e;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
   </div>
   <!-- 우측 인사이트 -->
   <div style="width:280px;flex-shrink:0;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column">
@@ -803,8 +803,8 @@ function TAB(n) {
   });
   var ts = document.querySelectorAll("#ntabs .nav-tab");
   for (var j=0; j<ts.length; j++) ts[j].classList[j===n?"add":"remove"]("on");
-  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){ if(typeof initKGGraph==="function") initKGGraph(); },300); }
-  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){ if(typeof initCFGraph==="function") initCFGraph(); },300); }
+  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){ if(typeof initKGGraph==="function") initKGGraph(); },500); }
+  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){ if(typeof initCFGraph==="function") initCFGraph(); },500); }
 }
 function swP(id,el){document.querySelectorAll(".pp").forEach(function(p){p.classList.remove("on");});document.querySelectorAll(".p-tab").forEach(function(t){t.classList.remove("on");});document.getElementById(id).classList.add("on");el.classList.add("on");}
 function swLang(id,el){["lko","len"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".p-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
@@ -990,7 +990,10 @@ var svgNodeSel, svgLinkSel, currentNode=null;
 
 function initKGGraph(){
   var area=document.getElementById("kg-area");
-  var svg=d3.select('#kg-svg'); var w=area.offsetWidth||900, h=area.offsetHeight||600;
+  var w=area?area.offsetWidth:0;
+  var h=area?area.offsetHeight:0;
+  if(!w||!h){w=window.innerWidth-490;h=window.innerHeight-97;}
+  var svg=d3.select('#kg-svg');
   svg.attr('viewBox',`0 0 ${w} ${h}`);
   var g=svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
@@ -1643,9 +1646,11 @@ function cfNodeR(d) {
 var cfSvgNode, cfSvgLink;
 
 function initCFGraph() {
+  var area = document.getElementById('cf-area');
+  var w = area ? area.offsetWidth : 0;
+  var h = area ? area.offsetHeight : 0;
+  if(!w||!h){w=window.innerWidth-490;h=window.innerHeight-51;}
   var svg = d3.select('#cf-kg-svg');
-  var area = document.querySelector('#t4 .graph-canvas') || document.querySelector('#cf-kg-svg').parentElement;
-  var w = area.clientWidth || 700, h = area.clientHeight || 500;
   svg.attr('viewBox', `0 0 ${w} ${h}`);
   var g = svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom', e => g.attr('transform', e.transform)));
