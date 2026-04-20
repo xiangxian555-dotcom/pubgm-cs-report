@@ -6,10 +6,8 @@
 <title>PUBG Mobile CS 분석 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
-
-#p1 { height: calc(100vh - 51px); display: flex; flex-direction: column; overflow: hidden; }
-#p3 { height: calc(100vh - 51px); display: flex; flex-direction: column; overflow: hidden; }
-
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif; background: #f8f8f6; color: #1a1a1a; font-size: 14px; }
 
 /* ── 탭1 스타일 ── */
 
@@ -158,9 +156,9 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 /* body height removed */
 /* ── 상단 헤더 ── */
 
-.header h1{font-size:15px;font-weight:700;color:#1a1a1a}
-.header .sub{font-size:11px;color:#999}
-.header .badges{margin-left:auto;display:flex;gap:6px;align-items:center}
+
+
+
 .hbadge{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600}
 /* ── 메인 레이아웃 ── */
 
@@ -178,7 +176,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 .legend-item:hover,.legend-item.active{background:#f0f0ee;font-weight:600}
 .legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 /* ── 오른쪽: Quick Insight ── */
-
+.insight-panel{width:300px;background:#fff;display:flex;flex-direction:column;flex-shrink:0}
 .ip-header{padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0}
 .ip-title{font-size:13px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px;margin-bottom:2px}
 .ip-subtitle{font-size:11px;color:#bbb}
@@ -199,8 +197,8 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 .analysis-title{font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px;display:flex;align-items:center;gap:5px}
 .analysis-text{font-size:12px;color:#333;line-height:1.7}
 /* ── 하단: 상세 패널 ── */
-.detail-panel{position:absolute;bottom:0;left:0;right:300px;background:#fff;border-top:2px solid #e8e8e6;transition:transform .3s ease;transform:translateY(100%);box-shadow:0 -4px 16px rgba(0,0,0,.08)}
-.detail-panel.open{transform:translateY(0)}
+
+
 .dp-header{padding:10px 16px;border-bottom:1px solid #e8e8e6;display:flex;align-items:center;gap:8px;background:#fff;position:relative}
 .dp-node-name{font-size:15px;font-weight:700}
 .dp-group-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px}
@@ -232,81 +230,18 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 
 
 /* ── 탭 패널 공통 ── */
-#t2, #t3, #t4 { display:none }
-#t2.on, #t3.on, #t4.on { display:block }
+
+
 #t1 { display:block }
 #t1.hidden { display:none }
 
-
-/* ── 전체 레이아웃 ── */
-html { height: 100%; }
-body { height: 100%; margin: 0; }
-
-/* ── KG 패널 공통 ── */
+/* KG 패널 전체 높이 */
 #p1, #p3 {
   position: fixed;
-  top: 51px;
-  left: 0; right: 0; bottom: 0;
-}
-
-/* ── KG 내부 구조 ── */
-.kg-header {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 46px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e6;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 10;
-}
-.kg-wrap, .chatbot-kg-wrap {
-  position: absolute;
-  top: 46px; left: 0; right: 0; bottom: 0;
-  display: flex;
-}
-.kg-legend, #p3 .leg-sidebar {
-  width: 200px;
-  background: #fff;
-  border-right: 1px solid #e8e8e6;
-  padding: 16px;
-  overflow-y: auto;
-  flex-shrink: 0;
-}
-.kg-canvas, .cf-canvas {
-  flex: 1;
-  position: relative;
-  background: #fafaf8;
-  overflow: hidden;
-}
-#kg-svg, #cf-kg-svg {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-}
-.insight-panel, .cf-insight {
-  width: 300px;
-  background: #fff;
-  border-left: 1px solid #e8e8e6;
+  top: 51px; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  overflow-y: auto;
-}
-/* 하단 상세 패널 */
-.detail-panel, #cf-dp {
-  position: absolute;
-  bottom: 0; left: 0; right: 300px;
-  background: #fff;
-  border-top: 2px solid #e8e8e6;
-  z-index: 20;
-  transform: translateY(100%);
-  transition: transform .3s;
-}
-.detail-panel.open, #cf-dp[style*="220px"] {
-  transform: translateY(0);
+  overflow: hidden;
 }
 </style>
 </head>
@@ -538,55 +473,53 @@ PUBG Mobile Support</div>
   * Claude API (claude-sonnet-4-20250514) 기반 · 샘플 1,000건 · 생성일: 2026-04-20
 </div>
 </div></div>
-<div id="p1" style="display:none"><div class="kg-header">
-  <h1>⚡ CS Knowledge Graph</h1>
-  <div class="sub">PUBG Mobile · 온톨로지 분석 1,000건 · 2026-04-20</div>
-  <div class="badges">
-    <span class="hbadge" style="background:#fee;color:#c00">상담원 58.9%</span>
-    <span class="hbadge" style="background:#e1f5ee;color:#0f6e56">자동화가능 24.7%</span>
-    <span class="hbadge" style="background:#fff3dc;color:#854F0B">불만 49.9%</span>
+<div id="p1" style="display:none">
+<div style="display:flex;align-items:center;height:46px;background:#fff;border-bottom:1px solid #e8e8e6;padding:0 20px;gap:12px;flex-shrink:0">
+  <h1 style="font-size:15px;font-weight:700;color:#1a1a1a">⚡ CS Knowledge Graph</h1>
+  <span style="font-size:11px;color:#999">온톨로지 분석 1,000건 · 2026-04-20</span>
+  <div style="margin-left:auto;display:flex;gap:6px">
+    <span style="font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600;background:#fee;color:#c00">상담원 58.9%</span>
+    <span style="font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600;background:#e1f5ee;color:#0f6e56">자동화가능 24.7%</span>
+    <span style="font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600;background:#fff3dc;color:#854F0B">불만 49.9%</span>
   </div>
 </div>
-
-<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex">
-  <div class="kg-canvas">
-    <svg id="kg-svg"></svg>
-    <div class="kg-tt" id="kg-tt"></div>
-    <div class="legend" id="legend">
-      <div class="legend-title">노드 그룹</div>
-      <div class="legend-item active" onclick="lgFilter('all',this)"><div class="legend-dot" style="background:#888"></div>전체</div>
-      <div class="legend-item" onclick="lgFilter('product',this)"><div class="legend-dot" style="background:#378ADD"></div>Product</div>
-      <div class="legend-item" onclick="lgFilter('event',this)"><div class="legend-dot" style="background:#D85A30"></div>Event</div>
-      <div class="legend-item" onclick="lgFilter('intent',this)"><div class="legend-dot" style="background:#1D9E75"></div>Intent</div>
-      <div class="legend-item" onclick="lgFilter('sentiment',this)"><div class="legend-dot" style="background:#BA7517"></div>Sentiment</div>
-      <div class="legend-item" onclick="lgFilter('resolution',this)"><div class="legend-dot" style="background:#7F77DD"></div>Resolution</div>
-    </div>
-    <div class="kg-hint">노드를 클릭하면 하단에 상세 분석이 표시됩니다 · 드래그 이동 · 스크롤 줌</div>
-    <!-- 하단 상세 패널 -->
-    <div class="detail-panel" id="detail-panel">
-      <div class="dp-header">
-        <div class="dp-node-name" id="dp-node-name">—</div>
-        <span class="dp-group-badge" id="dp-group-badge"></span>
-        <div class="dp-total" id="dp-total"></div>
-        <div class="dp-close" onclick="closeDp()">✕</div>
-      </div>
-      <div class="dp-cols" id="dp-cols"></div>
-      <div class="dp-filter-section" id="dp-filter-section"></div>
-    </div>
+<div style="display:flex;flex:1;min-height:0">
+  <!-- 범례 -->
+  <div style="width:190px;flex-shrink:0;background:#fff;border-right:1px solid #e8e8e6;padding:14px;overflow-y:auto">
+    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">노드 그룹</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="lgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('product',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>Product</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('event',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>Event</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('intent',this)"><div style="width:9px;height:9px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>Intent</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('sentiment',this)"><div style="width:9px;height:9px;border-radius:50%;background:#BA7517;flex-shrink:0"></div>Sentiment</div>
+    <div style="margin-bottom:12px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="lgFilter('resolution',this)"><div style="width:9px;height:9px;border-radius:50%;background:#7F77DD;flex-shrink:0"></div>Resolution</div>
+    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">주요 지표</div>
+    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">총 건수</div><div style="font-size:14px;font-weight:700">1,000건</div></div>
+    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">계정시스템</div><div style="font-size:14px;font-weight:700;color:#378ADD">37.6%</div></div>
+    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">불만 Sentiment</div><div style="font-size:14px;font-weight:700;color:#BA7517">49.9%</div></div>
   </div>
-
-  <!-- 우측 Quick Insight -->
-  <div class="insight-panel" style="overflow-y:auto">
-    <div class="ip-header">
-      <div class="ip-title">⚡ Quick Insight</div>
-      <div class="ip-subtitle" id="ip-subtitle">노드를 선택하면 상세 분석이 업데이트됩니다</div>
+  <!-- 그래프 캔버스 -->
+  <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden" id="kg-area">
+    <svg id="kg-svg" style="position:absolute;top:0;left:0;width:100%;height:100%"></svg>
+    <div id="kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
+  </div>
+  <!-- 우측 인사이트 -->
+  <div style="width:280px;flex-shrink:0;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column">
+    <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0">
+      <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px">⚡ Quick Insight</div>
+      <div style="font-size:11px;color:#bbb" id="ip-subtitle">노드를 선택하면 상세 분석이 업데이트됩니다</div>
     </div>
-    <div class="ip-body" id="ip-body">
-      <!-- 기본: 전체 Top 3 -->
-    </div>
+    <div style="flex:1;overflow-y:auto;padding:12px 16px" id="ip-body"></div>
   </div>
 </div>
-
+<!-- 하단 상세 패널 -->
+<div id="kg-detail" style="position:absolute;bottom:0;left:0;right:280px;background:#fff;border-top:2px solid #e8e8e6;transform:translateY(100%);transition:transform .3s;z-index:20">
+  <div style="position:absolute;right:12px;top:10px;cursor:pointer;color:#999;font-size:15px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee" onclick="closeDp()">✕</div>
+  <div id="kg-dp-header" style="padding:10px 16px;border-bottom:1px solid #e8e8e6;display:flex;align-items:center;gap:8px"></div>
+  <div id="kg-dp-cols" style="display:grid;grid-template-columns:repeat(4,1fr);height:160px"></div>
+  <div id="kg-dp-filter" style="border-top:1px solid #e8e8e6;padding:10px 16px;background:#fafaf8;display:flex;gap:8px;align-items:flex-start"></div>
+</div>
 </div>
 <div id="p2" style="display:none"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
 
@@ -825,61 +758,59 @@ PUBG Mobile Support</div>
   * Claude API (claude-sonnet-4-20250514) 기반 실제 대화 흐름 분석 · 2,000건 샘플 · 2026-04-20
 </div>
 </div></div>
-<div id="p3" style="display:none"><div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column">
-  <!-- 그래프 + 인사이트 -->
-  <div style="flex:1;display:flex;min-height:0">
-    <!-- 범례 -->
-    <div style="width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto">
-      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
-      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('transfer',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>전환 원인</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('problem',this)"><div style="width:9px;height:9px;border-radius:50%;background:#7F77DD;flex-shrink:0"></div>챗봇 문제점</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('resolution',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>해결 유형</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('lang',this)"><div style="width:9px;height:9px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>언어</div>
-      </div>
-      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">주요 지표</div>
-      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">EN 최대 문제</div><div style="font-size:14px;font-weight:700;color:#D85A30">언어 장벽 80%</div></div>
-      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">KO 최대 문제</div><div style="font-size:14px;font-weight:700;color:#BA7517">대안 없음 39%</div></div>
-      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
-    </div>
-
-    <!-- 그래프 캔버스 -->
-    <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden;min-height:0">
-      <svg id="cf-kg-svg" style="position:absolute;top:0;left:0;width:100%;height:100%"></svg>
-      <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
-      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 하단에 상세 분석이 표시됩니다</div>
-    </div>
-
-    <!-- 우측 Quick Insight -->
-    <div style="width:280px;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column;flex-shrink:0">
-      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0">
-        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px">⚡ Quick Insight</div>
-        <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하면 상세 분석이 업데이트됩니다</div>
-      </div>
-      <div style="flex:1;overflow-y:auto;padding:12px 16px" id="cf-ip-body"></div>
-    </div>
+<div id="p3" style="display:none">
+<div style="display:flex;flex:1;min-height:0">
+  <!-- 범례 -->
+  <div style="width:190px;flex-shrink:0;background:#fff;border-right:1px solid #e8e8e6;padding:14px;overflow-y:auto">
+    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">노드 그룹</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('transfer',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>전환 원인</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('problem',this)"><div style="width:9px;height:9px;border-radius:50%;background:#7F77DD;flex-shrink:0"></div>챗봇 문제점</div>
+    <div style="margin-bottom:4px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('resolution',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>해결 유형</div>
+    <div style="margin-bottom:12px;display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 5px;border-radius:4px;cursor:pointer" onclick="cfKgFilter('lang',this)"><div style="width:9px;height:9px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>언어</div>
+    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">주요 지표</div>
+    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">EN 최대 문제</div><div style="font-size:14px;font-weight:700;color:#D85A30">언어 장벽 80%</div></div>
+    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">KO 최대 문제</div><div style="font-size:14px;font-weight:700;color:#BA7517">대안 없음 39%</div></div>
+    <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:5px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
   </div>
-
-  <!-- 하단 상세 패널 -->
-  <div id="cf-dp" style="background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s ease;flex-shrink:0">
-    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
-    <div style="display:flex;height:100%" id="cf-dp-inner"></div>
+  <!-- 그래프 캔버스 -->
+  <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden" id="cf-area">
+    <svg id="cf-kg-svg" style="position:absolute;top:0;left:0;width:100%;height:100%"></svg>
+    <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드 클릭 → 상세 분석 · 드래그 이동 · 스크롤 줌</div>
   </div>
-</div></div>
+  <!-- 우측 인사이트 -->
+  <div style="width:280px;flex-shrink:0;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column">
+    <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0">
+      <div style="font-size:13px;font-weight:700;margin-bottom:2px">⚡ Quick Insight</div>
+      <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하면 상세 분석이 업데이트됩니다</div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:12px 16px" id="cf-ip-body"></div>
+  </div>
+</div>
+<div id="cf-dp" style="position:absolute;bottom:0;left:0;right:280px;background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s;z-index:20">
+  <div style="position:absolute;right:12px;top:10px;cursor:pointer;color:#999;font-size:15px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee" onclick="closeCfDp()">✕</div>
+  <div style="display:flex;height:100%" id="cf-dp-inner"></div>
+</div>
+</div>
 
 <script>
-/* ── 탭 전환 ── */
 function TAB(n) {
-  for (var i=0; i<4; i++) document.getElementById('p'+i).style.display = i===n?'block':'none';
-  var ts = document.querySelectorAll('#ntabs .nav-tab');
-  for (var j=0; j<ts.length; j++) ts[j].classList[j===n?'add':'remove']('on');
-  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){ if(typeof initKGGraph==='function') initKGGraph(); },300); }
-  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){ if(typeof initCFGraph==='function') initCFGraph(); },300); }
+  ["p0","p1","p2","p3"].forEach(function(id,i) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = i===n ? "block" : "none";
+  });
+  var ts = document.querySelectorAll("#ntabs .nav-tab");
+  for (var j=0; j<ts.length; j++) ts[j].classList[j===n?"add":"remove"]("on");
+  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){ if(typeof initKGGraph==="function") initKGGraph(); },300); }
+  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){ if(typeof initCFGraph==="function") initCFGraph(); },300); }
 }
-function swP(id,el){document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});document.getElementById(id).classList.add('on');el.classList.add('on');}
-function swLang(id,el){['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
-function swEx(id,el){['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
+function swP(id,el){document.querySelectorAll(".pp").forEach(function(p){p.classList.remove("on");});document.querySelectorAll(".p-tab").forEach(function(t){t.classList.remove("on");});document.getElementById(id).classList.add("on");el.classList.add("on");}
+function swLang(id,el){["lko","len"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".p-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
+function swEx(id,el){["ex-auto","ex-manual"].forEach(function(x){document.getElementById(x).style.display="none";});document.getElementById(id).style.display="block";el.parentElement.querySelectorAll(".p-tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");}
+function closeDp(){var d=document.getElementById("kg-detail");if(d)d.style.transform="translateY(100%)";}
+function closeCfDp(){var d=document.getElementById("cf-dp");if(d)d.style.height="0";}
 
 
 var KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
@@ -1058,9 +989,8 @@ function nodeR(d){var b={product:14,event:11,intent:11,sentiment:16,resolution:1
 var svgNodeSel, svgLinkSel, currentNode=null;
 
 function initKGGraph(){
-  var svg=d3.select('#kg-svg');
-  var area=document.querySelector('.graph-area');
-  var w=area.clientWidth, h=area.clientHeight;
+  var area=document.getElementById("kg-area");
+  var svg=d3.select('#kg-svg'); var w=area.offsetWidth||900, h=area.offsetHeight||600;
   svg.attr('viewBox',`0 0 ${w} ${h}`);
   var g=svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
