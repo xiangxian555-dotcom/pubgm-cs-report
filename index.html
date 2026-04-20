@@ -228,9 +228,9 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 
 
 /* ── 탭 패널 공통 ── */
-
+#t2, #t3, #t4 { display:none }
 #t2.on, #t3.on, #t4.on { display:block }
-
+#t1 { display:block }
 #t1.hidden { display:none }
 
 </style>
@@ -239,17 +239,17 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 <nav class="nav">
   <div class="nav-inner">
     <div class="nav-logo">PUBG Mobile CS 분석<span>2026 Q1 · 90,389건</span></div>
-    <div class="nav-tabs" id="nav-tabs">
-      <div class="nav-tab on" onclick="TAB(0)">📊 CS 온톨로지 분석 <span class="tab-badge">1,000건</span></div>
-      <div class="nav-tab" onclick="TAB(1)">🕸 CS Knowledge Graph <span class="tab-badge">33노드</span></div>
-      <div class="nav-tab" onclick="TAB(2)">🤖 챗봇 플로우 분석 <span class="tab-badge">2,000건</span></div>
-      <div class="nav-tab" onclick="TAB(3)">🕸 챗봇 Knowledge Graph <span class="tab-badge">20노드</span></div>
+    <div class="nav-tabs" id="ntabs">
+      <div class="nav-tab on"  onclick="TAB(0)">📊 CS 온톨로지 분석 <span class="tab-badge">1,000건</span></div>
+      <div class="nav-tab"     onclick="TAB(1)">🕸 CS Knowledge Graph <span class="tab-badge">33노드</span></div>
+      <div class="nav-tab"     onclick="TAB(2)">🤖 챗봇 플로우 분석 <span class="tab-badge">2,000건</span></div>
+      <div class="nav-tab"     onclick="TAB(3)">🕸 챗봇 Knowledge Graph <span class="tab-badge">20노드</span></div>
     </div>
     <div class="nav-right">Claude API 기반 · 2026-04-20</div>
   </div>
 </nav>
 
-<div id="panel-0" style="display:block"><div class="page">
+<div id="p0" style="display:block"><div class="page">
 <h1>CS 온톨로지 분석 — 상세 리포트</h1>
 <div style="font-size:13px;color:#666;margin-bottom:8px">유저 자유 텍스트 기반 5객체 분류 (Actor / Product / Event / Intent / Sentiment)</div>
 <div style="margin-bottom:24px">
@@ -463,7 +463,7 @@ PUBG Mobile Support</div>
   * Claude API (claude-sonnet-4-20250514) 기반 · 샘플 1,000건 · 생성일: 2026-04-20
 </div>
 </div></div>
-<div id="panel-1" style="display:none"><div class="header">
+<div id="p1" style="display:none"><div class="header">
   <h1>⚡ CS Knowledge Graph</h1>
   <div class="sub">PUBG Mobile · 온톨로지 분석 1,000건 · 2026-04-20</div>
   <div class="badges">
@@ -513,7 +513,7 @@ PUBG Mobile Support</div>
 </div>
 
 </div>
-<div id="panel-2" style="display:none"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+<div id="p2" style="display:none"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
 
 <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">챗봇 플로우 문제점 분석</h1>
 <div style="font-size:13px;color:#666;margin-bottom:8px">Claude API 실제 대화 흐름 기반 · 2,000건 샘플 분석</div>
@@ -750,7 +750,7 @@ PUBG Mobile Support</div>
   * Claude API (claude-sonnet-4-20250514) 기반 실제 대화 흐름 분석 · 2,000건 샘플 · 2026-04-20
 </div>
 </div></div>
-<div id="panel-3" style="display:none"><div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
+<div id="p3" style="display:none"><div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
   <!-- 그래프 + 인사이트 -->
   <div style="flex:1;display:flex;min-height:0">
     <!-- 범례 -->
@@ -794,21 +794,34 @@ PUBG Mobile Support</div>
 </div></div>
 
 <script>
+/* ── 탭 전환 (최우선 로드) ── */
 function TAB(n) {
-  for (var i = 0; i < 4; i++) {
-    var p = document.getElementById('panel-' + i);
-    if (p) p.style.display = (i === n) ? 'block' : 'none';
-  }
-  var tabs = document.querySelectorAll('#nav-tabs .nav-tab');
-  for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('on');
-  if (tabs[n]) tabs[n].classList.add('on');
-  if (n===1 && !window._kg1) { window._kg1=true; setTimeout(function(){if(typeof initKGGraph==='function')initKGGraph();},100); }
-  if (n===3 && !window._kg3) { window._kg3=true; setTimeout(function(){if(typeof initCFGraph==='function')initCFGraph();},100); }
+  for (var i=0; i<4; i++) document.getElementById('p'+i).style.display = i===n?'block':'none';
+  var ts = document.querySelectorAll('#ntabs .nav-tab');
+  for (var j=0; j<ts.length; j++) ts[j].classList[j===n?'add':'remove']('on');
+  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){(window.initKGGraph||function(){})();},50); }
+  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){(window.initCFGraph||function(){})();},50); }
 }
-function swP(id,el){document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});document.getElementById(id).classList.add('on');el.classList.add('on');}
-function swLang(id,el){['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
-function swEx(id,el){['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
+function swP(id,el) {
+  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById(id).classList.add('on'); el.classList.add('on');
+}
+function swLang(id,el) {
+  ['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});
+  document.getElementById(id).style.display='block';
+  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+}
+function swEx(id,el) {
+  ['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});
+  document.getElementById(id).style.display='block';
+  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+}
 
+/* ── CS KG (IIFE로 변수 격리) ── */
+(function() {
 
 var KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
 var KGL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
@@ -992,8 +1005,8 @@ function initKGGraph(){
   svg.attr('viewBox',`0 0 ${w} ${h}`);
   const g=svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
-  const nodes=KG_NODES.map(d=>({...d}));
-  const edges=KG_EDGES.map(d=>({...d}));
+  const nodes=NODES.map(d=>({...d}));
+  const edges=EDGES.map(d=>({...d}));
   const sim=d3.forceSimulation(nodes)
     .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
     .force('charge',d3.forceManyBody().strength(-230))
@@ -1062,7 +1075,7 @@ function closeInsight(){
 function renderDefaultInsight(){
   document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
   let html='';
-  KG_DEFAULT_TOP3.forEach((item,i)=>{
+  DEFAULT_TOP3.forEach((item,i)=>{
     const w=Math.round(item.pct/40*100);
     html+=`<div class="top-item" onclick="clickTop('${item.id}')">
       <div style="display:flex;align-items:center">
@@ -1074,12 +1087,12 @@ function renderDefaultInsight(){
       <div class="top-bar"><div class="top-bar-fill" style="background:${item.color};width:${w}%"></div></div>
     </div>`;
   });
-  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${KG_DEFAULT_ANALYSIS}</div></div>`;
+  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${DEFAULT_ANALYSIS}</div></div>`;
   document.getElementById('ip-body').innerHTML=html;
 }
 
 function renderNodeInsight(d){
-  const det=KG_NODE_DET[d.id];
+  const det=NODE_DET[d.id];
   const col=KGC[d.group];
   const pct=Math.round(d.count/1000*100);
   document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
@@ -1106,13 +1119,13 @@ function renderNodeInsight(d){
 }
 
 function clickTop(nodeId){
-  const node=KG_NODES.find(n=>n.id===nodeId);
+  const node=NODES.find(n=>n.id===nodeId);
   if(node) onNodeClick(node);
 }
 
 // ── 하단 상세 패널 ──
 function renderDetailPanel(d){
-  const det=KG_NODE_DET[d.id];
+  const det=NODE_DET[d.id];
   const col=KGC[d.group];
   const dp=document.getElementById('detail-panel');
   dp.classList.add('open');
@@ -1161,7 +1174,7 @@ function renderFilterSection(d, det, selectedSent, col){
   Object.entries(sd).forEach(([key,val])=>{
     const maxV=Math.max(...Object.values(val));
     const barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
+    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${sentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
     Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
       const w=Math.round(v/maxV*100);
       comboHtml+=`<div class="filter-bar-row">
@@ -1178,8 +1191,8 @@ function renderFilterSection(d, det, selectedSent, col){
 function filterSent(el, nodeId, sent, col){
   document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  const d=KG_NODES.find(n=>n.id===nodeId);
-  const det=KG_NODE_DET[nodeId];
+  const d=NODES.find(n=>n.id===nodeId);
+  const det=NODE_DET[nodeId];
   if(d && det) renderFilterSection(d, det, sent, col);
 }
 
@@ -1196,7 +1209,17 @@ function lgFilter(group,el){
 
 window.addEventListener('load',initGraph);
 
+window.initKGGraph = initKGGraph;
+window.renderDefaultInsight = renderDefaultInsight;
+window.renderNodeInsight = renderNodeInsight;
+window.clickTop = clickTop;
+window.onNodeClick = onNodeClick;
+window.closeDp = closeDp;
+window.lgFilter = lgFilter;
+})();
 
+/* ── 챗봇 분석 + KG (IIFE로 변수 격리) ── */
+(function() {
 
 function switchMain(id, el) {
   if(el.classList.contains('disabled')) return;
@@ -1242,20 +1265,122 @@ function swEx(id,el){
 
 
 // 전체 데이터
-
-
+const NODES=[
+  {id:"product:계정시스템",label:"계정시스템",group:"product",count:376},
+  {id:"product:제재시스템",label:"제재시스템",group:"product",count:202},
+  {id:"product:인게임시스템",label:"인게임시스템",group:"product",count:100},
+  {id:"product:결제시스템",label:"결제시스템",group:"product",count:89},
+  {id:"product:기술시스템",label:"기술시스템",group:"product",count:88},
+  {id:"product:신고시스템",label:"신고시스템",group:"product",count:75},
+  {id:"product:챗봇시스템",label:"챗봇시스템",group:"product",count:15},
+  {id:"event:계정 제재",label:"계정 제재",group:"event",count:161},
+  {id:"event:계정 분실/도용",label:"계정 분실/도용",group:"event",count:134},
+  {id:"event:로그인 불가",label:"로그인 불가",group:"event",count:130},
+  {id:"event:소셜계정 연동 오류",label:"소셜계정 연동",group:"event",count:61},
+  {id:"event:게임 버그/오류",label:"게임 버그/오류",group:"event",count:45},
+  {id:"event:실행/설치 오류",label:"실행/설치 오류",group:"event",count:40},
+  {id:"event:제재 이의",label:"제재 이의",group:"event",count:30},
+  {id:"event:아이템/보상 누락",label:"아이템/보상",group:"event",count:26},
+  {id:"event:이중/오류 결제",label:"이중/오류 결제",group:"event",count:20},
+  {id:"event:환불 요청",label:"환불 요청",group:"event",count:17},
+  {id:"intent:계정 복구 요청",label:"계정 복구 요청",group:"intent",count:237},
+  {id:"intent:기술 지원 요청",label:"기술 지원 요청",group:"intent",count:182},
+  {id:"intent:제재 이의 신청",label:"제재 이의 신청",group:"intent",count:173},
+  {id:"intent:정보/정책 문의",label:"정보/정책 문의",group:"intent",count:165},
+  {id:"intent:신고 접수",label:"신고 접수",group:"intent",count:102},
+  {id:"intent:단순 감정 표출",label:"단순 감정 표출",group:"intent",count:55},
+  {id:"intent:보상/복구 요청",label:"보상/복구 요청",group:"intent",count:34},
+  {id:"intent:환불/취소 요청",label:"환불/취소 요청",group:"intent",count:21},
+  {id:"sentiment:불만",label:"불만 😡",group:"sentiment",count:499},
+  {id:"sentiment:중립",label:"중립 😐",group:"sentiment",count:461},
+  {id:"sentiment:긍정",label:"긍정 😊",group:"sentiment",count:40},
+  {id:"resolution:상담원처리",label:"상담원처리",group:"resolution",count:589},
+  {id:"resolution:bot_1회해결",label:"챗봇해결",group:"resolution",count:262},
+  {id:"resolution:중도포기",label:"중도포기",group:"resolution",count:130},
+];
+const EDGES=[
+  {source:"product:계정시스템",target:"resolution:상담원처리",weight:203},
+  {source:"intent:계정 복구 요청",target:"resolution:상담원처리",weight:176},
+  {source:"intent:계정 복구 요청",target:"sentiment:불만",weight:174},
+  {source:"event:계정 제재",target:"product:제재시스템",weight:160},
+  {source:"intent:제재 이의 신청",target:"sentiment:불만",weight:156},
+  {source:"product:제재시스템",target:"resolution:상담원처리",weight:156},
+  {source:"intent:제재 이의 신청",target:"resolution:상담원처리",weight:151},
+  {source:"intent:정보/정책 문의",target:"sentiment:중립",weight:143},
+  {source:"event:계정 제재",target:"intent:제재 이의 신청",weight:140},
+  {source:"event:계정 분실/도용",target:"product:계정시스템",weight:132},
+  {source:"event:계정 분실/도용",target:"intent:계정 복구 요청",weight:128},
+  {source:"intent:정보/정책 문의",target:"resolution:bot_1회해결",weight:125},
+  {source:"event:로그인 불가",target:"product:계정시스템",weight:118},
+  {source:"intent:기술 지원 요청",target:"resolution:상담원처리",weight:115},
+  {source:"product:계정시스템",target:"resolution:bot_1회해결",weight:116},
+  {source:"event:로그인 불가",target:"intent:계정 복구 요청",weight:69},
+  {source:"event:로그인 불가",target:"intent:기술 지원 요청",weight:51},
+  {source:"product:신고시스템",target:"resolution:상담원처리",weight:65},
+  {source:"intent:신고 접수",target:"resolution:상담원처리",weight:65},
+  {source:"event:소셜계정 연동 오류",target:"product:계정시스템",weight:61},
+  {source:"event:소셜계정 연동 오류",target:"intent:계정 복구 요청",weight:38},
+  {source:"product:결제시스템",target:"resolution:상담원처리",weight:59},
+  {source:"product:인게임시스템",target:"resolution:bot_1회해결",weight:40},
+  {source:"event:실행/설치 오류",target:"intent:기술 지원 요청",weight:39},
+  {source:"product:제재시스템",target:"resolution:bot_1회해결",weight:37},
+  {source:"intent:기술 지원 요청",target:"sentiment:불만",weight:50},
+  {source:"event:환불 요청",target:"intent:환불/취소 요청",weight:17},
+  {source:"product:기술시스템",target:"resolution:중도포기",weight:27},
+];
 
 
 
 // 기본 Top 3 (전체 기준)
-
-
+const DEFAULT_TOP3=[
+  {id:"product:계정시스템",name:"계정시스템",badges:["Product"],pct:37.6,color:'#378ADD'},
+  {id:"product:제재시스템",name:"제재시스템",badges:["Product"],pct:20.2,color:'#378ADD'},
+  {id:"intent:계정 복구 요청",name:"계정 복구 요청",badges:["Intent"],pct:23.7,color:'#1D9E75'},
+];
+const DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
 
 function nodeR(d){const b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
 
 let svgNodeSel, svgLinkSel, currentNode=null;
 
-
+function initKGGraph(){
+  const svg=d3.select('#kg-svg');
+  const area=document.querySelector('.graph-area');
+  const w=area.clientWidth, h=area.clientHeight;
+  svg.attr('viewBox',`0 0 ${w} ${h}`);
+  const g=svg.append('g');
+  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
+  const nodes=NODES.map(d=>({...d}));
+  const edges=EDGES.map(d=>({...d}));
+  const sim=d3.forceSimulation(nodes)
+    .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
+    .force('charge',d3.forceManyBody().strength(-230))
+    .force('center',d3.forceCenter(w/2,h/2))
+    .force('collision',d3.forceCollide().radius(d=>nodeR(d)+10));
+  svgLinkSel=g.append('g').selectAll('line').data(edges).enter().append('line')
+    .attr('stroke','#ddd').attr('stroke-width',d=>Math.max(.8,Math.min(d.weight/60,5))).attr('stroke-opacity',.8);
+  svgNodeSel=g.append('g').selectAll('g').data(nodes).enter().append('g').attr('cursor','pointer')
+    .call(d3.drag()
+      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
+      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
+    .on('click',(e,d)=>{e.stopPropagation();onNodeClick(d);})
+    .on('mouseover',(e,d)=>showTip(e,d))
+    .on('mouseout',()=>{document.getElementById('kg-tt').style.opacity=0;});
+  svgNodeSel.append('circle').attr('r',d=>nodeR(d))
+    .attr('fill',d=>KGC[d.group]).attr('fill-opacity',.9)
+    .attr('stroke','#fff').attr('stroke-width',2.5).attr('class','nc');
+  svgNodeSel.append('text').text(d=>d.label.length>9?d.label.slice(0,8)+'…':d.label)
+    .attr('dy','0.35em').attr('text-anchor','middle')
+    .attr('font-size',d=>nodeR(d)>20?'11px':nodeR(d)>14?'10px':'9px')
+    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
+  sim.on('tick',()=>{
+    svgLinkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    svgNodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+  svg.on('click',()=>{resetHighlight();closeInsight();});
+  renderDefaultInsight();
+}
 
 function showTip(e,d){
   const tt=document.getElementById('kg-tt');
@@ -1697,7 +1822,7 @@ function renderCfDetailPanel(d) {
   const col = CF_GC[d.group];
   if(!det) {dp.style.height='0';return;}
 
-  
+  const resColors = {상담원처리:'#378ADD',중도포기:'#BA7517'};
   let left = `<div style="width:200px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
     <div style="font-size:15px;font-weight:700;color:${col};margin-bottom:3px">${d.label}</div>
     <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;background:${col}20;color:${col};display:inline-block;margin-bottom:8px">${CF_GL[d.group]}</span>
@@ -1761,6 +1886,12 @@ function cfKgFilter(group, el) {
 /* t4 KG init merged into switchMain */
 
 
+window.initCFGraph = initCFGraph;
+window.swCF = swCF;
+window.closeCfDp = closeCfDp;
+window.cfKgFilter = cfKgFilter;
+window.filterSent = filterSent;
+})();
 </script>
 </body>
 </html>
