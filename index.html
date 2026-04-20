@@ -6,8 +6,7 @@
 <title>PUBG Mobile CS 분석 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
-html, body { height: 100%; margin: 0; padding: 0; }
-#p0, #p1, #p2, #p3 { box-sizing: border-box; }
+
 #p1 { height: calc(100vh - 51px); display: flex; flex-direction: column; overflow: hidden; }
 #p3 { height: calc(100vh - 51px); display: flex; flex-direction: column; overflow: hidden; }
 
@@ -99,8 +98,8 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 /* ══════════════════════════
    탭2: CS Knowledge Graph
 ═══════════════════════════ */
-.kg-wrap{display:flex;flex:1;flex-direction:column;min-height:0}
-.kg-main{flex:1;display:flex;min-height:0}
+
+
 .kg-legend{width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto}
 .kg-legend h3{font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
 .leg{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
@@ -110,8 +109,8 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 .kpi-sm{background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6}
 .kpi-sm .kl{font-size:10px;color:#999;margin-bottom:2px}
 .kpi-sm .kv{font-size:15px;font-weight:700}
-.kg-canvas{flex:1;background:#fafaf8;position:relative;overflow:hidden}
-#kg-svg{width:100%;height:100%}
+
+
 .kg-tooltip{position:absolute;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)}
 .kg-tooltip .tt-name{font-weight:700;font-size:13px;margin-bottom:3px}
 .kg-tooltip .tt-sub{color:#888;font-size:11px}
@@ -158,16 +157,16 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 *{box-sizing:border-box;margin:0;padding:0}
 /* body height removed */
 /* ── 상단 헤더 ── */
-.kg-header{background:#fff;border-bottom:1px solid #e8e8e6;padding:10px 20px;display:flex;align-items:center;gap:12px;height:46px;flex-shrink:0;width:100%}
+
 .header h1{font-size:15px;font-weight:700;color:#1a1a1a}
 .header .sub{font-size:11px;color:#999}
 .header .badges{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hbadge{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600}
 /* ── 메인 레이아웃 ── */
-#p1 .main{display:flex;flex:1;min-height:0}
+
 /* ── 왼쪽: 그래프 ── */
 .graph-area{flex:1;position:relative;overflow:hidden;background:#fafaf8;border-right:1px solid #e8e8e6}
-#kg-svg{width:100%;height:100%}
+
 .kg-tt{position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1);max-width:180px}
 .kg-tt .tn{font-weight:700;font-size:13px;margin-bottom:3px;color:#1a1a1a}
 .kg-tt .ts{color:#888;font-size:11px}
@@ -179,7 +178,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 .legend-item:hover,.legend-item.active{background:#f0f0ee;font-weight:600}
 .legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 /* ── 오른쪽: Quick Insight ── */
-.insight-panel{width:300px;background:#fff;display:flex;flex-direction:column;flex-shrink:0}
+
 .ip-header{padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0}
 .ip-title{font-size:13px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px;margin-bottom:2px}
 .ip-subtitle{font-size:11px;color:#bbb}
@@ -238,6 +237,77 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 #t1 { display:block }
 #t1.hidden { display:none }
 
+
+/* ── 전체 레이아웃 ── */
+html { height: 100%; }
+body { height: 100%; margin: 0; }
+
+/* ── KG 패널 공통 ── */
+#p1, #p3 {
+  position: fixed;
+  top: 51px;
+  left: 0; right: 0; bottom: 0;
+}
+
+/* ── KG 내부 구조 ── */
+.kg-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 46px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e6;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+.kg-wrap, .chatbot-kg-wrap {
+  position: absolute;
+  top: 46px; left: 0; right: 0; bottom: 0;
+  display: flex;
+}
+.kg-legend, #p3 .leg-sidebar {
+  width: 200px;
+  background: #fff;
+  border-right: 1px solid #e8e8e6;
+  padding: 16px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.kg-canvas, .cf-canvas {
+  flex: 1;
+  position: relative;
+  background: #fafaf8;
+  overflow: hidden;
+}
+#kg-svg, #cf-kg-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+.insight-panel, .cf-insight {
+  width: 300px;
+  background: #fff;
+  border-left: 1px solid #e8e8e6;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+/* 하단 상세 패널 */
+.detail-panel, #cf-dp {
+  position: absolute;
+  bottom: 0; left: 0; right: 300px;
+  background: #fff;
+  border-top: 2px solid #e8e8e6;
+  z-index: 20;
+  transform: translateY(100%);
+  transition: transform .3s;
+}
+.detail-panel.open, #cf-dp[style*="220px"] {
+  transform: translateY(0);
+}
 </style>
 </head>
 <body>
@@ -478,8 +548,8 @@ PUBG Mobile Support</div>
   </div>
 </div>
 
-<div class="main">
-  <div class="graph-area">
+<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex">
+  <div class="kg-canvas">
     <svg id="kg-svg"></svg>
     <div class="kg-tt" id="kg-tt"></div>
     <div class="legend" id="legend">
@@ -506,7 +576,7 @@ PUBG Mobile Support</div>
   </div>
 
   <!-- 우측 Quick Insight -->
-  <div class="insight-panel">
+  <div class="insight-panel" style="overflow-y:auto">
     <div class="ip-header">
       <div class="ip-title">⚡ Quick Insight</div>
       <div class="ip-subtitle" id="ip-subtitle">노드를 선택하면 상세 분석이 업데이트됩니다</div>
@@ -755,7 +825,7 @@ PUBG Mobile Support</div>
   * Claude API (claude-sonnet-4-20250514) 기반 실제 대화 흐름 분석 · 2,000건 샘플 · 2026-04-20
 </div>
 </div></div>
-<div id="p3" style="display:none"><div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
+<div id="p3" style="display:none"><div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column">
   <!-- 그래프 + 인사이트 -->
   <div style="flex:1;display:flex;min-height:0">
     <!-- 범례 -->
@@ -775,8 +845,8 @@ PUBG Mobile Support</div>
     </div>
 
     <!-- 그래프 캔버스 -->
-    <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden">
-      <svg id="cf-kg-svg" style="width:100%;height:100%"></svg>
+    <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden;min-height:0">
+      <svg id="cf-kg-svg" style="position:absolute;top:0;left:0;width:100%;height:100%"></svg>
       <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
       <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 하단에 상세 분석이 표시됩니다</div>
     </div>
@@ -792,7 +862,7 @@ PUBG Mobile Support</div>
   </div>
 
   <!-- 하단 상세 패널 -->
-  <div id="cf-dp" style="background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s ease;flex-shrink:0;position:relative">
+  <div id="cf-dp" style="background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s ease;flex-shrink:0">
     <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
     <div style="display:flex;height:100%" id="cf-dp-inner"></div>
   </div>
