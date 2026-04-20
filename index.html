@@ -6,6 +6,7 @@
 <title>PUBG Mobile CS 분석 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
+
 /* ── 탭1 스타일 ── */
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -27,8 +28,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .nav-right{margin-left:auto;font-size:11px;color:#bbb;padding-left:16px}
 
 /* ── 탭 패널 ── */
-.tab-panel{display:none}
-.tab-panel.on{display:block}
+
+
 
 /* ══════════════════════════
    탭1: CS 온톨로지 분석
@@ -138,11 +139,11 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 /* ══════════════════════════
    탭3,4: 준비중
 ═══════════════════════════ */
-.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;color:#bbb}
-.coming-soon .cs-icon{font-size:48px}
-.coming-soon .cs-title{font-size:20px;font-weight:600;color:#888}
-.coming-soon .cs-desc{font-size:14px;color:#bbb;text-align:center;line-height:1.7}
-.coming-soon .cs-badge{background:#f0f0ee;color:#888;font-size:12px;padding:6px 16px;border-radius:20px;border:1px solid #e8e8e6}
+
+
+
+
+
 
 @media(max-width:768px){.kpi{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.kg-legend{display:none}.dp-cols{grid-template-columns:1fr}.dp-analysis{display:none}}
 
@@ -227,38 +228,28 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 
 
 /* ── 탭 패널 공통 ── */
-#t2, #t3, #t4 { display:none }
+
 #t2.on, #t3.on, #t4.on { display:block }
-#t1 { display:block }
+
 #t1.hidden { display:none }
+
 </style>
 </head>
 <body>
-
 <nav class="nav">
   <div class="nav-inner">
     <div class="nav-logo">PUBG Mobile CS 분석<span>2026 Q1 · 90,389건</span></div>
-    <div class="nav-tabs">
-      <div class="nav-tab on" id="ntab-t1" onclick="switchMain('t1',this)">
-        📊 CS 온톨로지 분석 <span class="tab-badge">1,000건</span>
-      </div>
-      <div class="nav-tab" id="ntab-t2" onclick="switchMain('t2',this)">
-        🕸 CS Knowledge Graph <span class="tab-badge">33노드</span>
-      </div>
-      <div class="nav-tab" onclick="switchMain('t3',this)">
-        🤖 챗봇 플로우 분석 <span class="tab-badge">2,000건</span>
-      </div>
-      <div class="nav-tab" onclick="switchMain('t4',this)">
-        🕸 챗봇 Knowledge Graph <span class="tab-badge">20노드</span>
-      </div>
+    <div class="nav-tabs" id="nav-tabs">
+      <div class="nav-tab on" onclick="TAB(0)">📊 CS 온톨로지 분석 <span class="tab-badge">1,000건</span></div>
+      <div class="nav-tab" onclick="TAB(1)">🕸 CS Knowledge Graph <span class="tab-badge">33노드</span></div>
+      <div class="nav-tab" onclick="TAB(2)">🤖 챗봇 플로우 분석 <span class="tab-badge">2,000건</span></div>
+      <div class="nav-tab" onclick="TAB(3)">🕸 챗봇 Knowledge Graph <span class="tab-badge">20노드</span></div>
     </div>
     <div class="nav-right">Claude API 기반 · 2026-04-20</div>
   </div>
 </nav>
 
-<!-- ══ 탭1: CS 온톨로지 분석 ══ -->
-<div class="tab-panel on" id="t1">
-<div class="page">
+<div id="panel-0" style="display:block"><div class="page">
 <h1>CS 온톨로지 분석 — 상세 리포트</h1>
 <div style="font-size:13px;color:#666;margin-bottom:8px">유저 자유 텍스트 기반 5객체 분류 (Actor / Product / Event / Intent / Sentiment)</div>
 <div style="margin-bottom:24px">
@@ -471,15 +462,8 @@ PUBG Mobile Support</div>
 <div style="font-size:11px;color:#aaa;margin-top:24px;padding-top:12px;border-top:1px solid #e8e8e6">
   * Claude API (claude-sonnet-4-20250514) 기반 · 샘플 1,000건 · 생성일: 2026-04-20
 </div>
-</div>
-</div><!-- end t1 -->
-
-
-
-<div id="t2">
-
-
-<div class="header">
+</div></div>
+<div id="panel-1" style="display:none"><div class="header">
   <h1>⚡ CS Knowledge Graph</h1>
   <div class="sub">PUBG Mobile · 온톨로지 분석 1,000건 · 2026-04-20</div>
   <div class="badges">
@@ -528,399 +512,8 @@ PUBG Mobile Support</div>
   </div>
 </div>
 
-<script>
-const GC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
-const GL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
-const sentColors={불만:'#D85A30','불만 😡':'#D85A30',중립:'#888','중립 😐':'#888',긍정:'#1D9E75','긍정 😊':'#1D9E75'};
-const resColors={상담원처리:'#378ADD',챗봇해결:'#1D9E75',중도포기:'#BA7517'};
-
-// 전체 데이터
-const NODES=[
-  {id:"product:계정시스템",label:"계정시스템",group:"product",count:376},
-  {id:"product:제재시스템",label:"제재시스템",group:"product",count:202},
-  {id:"product:인게임시스템",label:"인게임시스템",group:"product",count:100},
-  {id:"product:결제시스템",label:"결제시스템",group:"product",count:89},
-  {id:"product:기술시스템",label:"기술시스템",group:"product",count:88},
-  {id:"product:신고시스템",label:"신고시스템",group:"product",count:75},
-  {id:"product:챗봇시스템",label:"챗봇시스템",group:"product",count:15},
-  {id:"event:계정 제재",label:"계정 제재",group:"event",count:161},
-  {id:"event:계정 분실/도용",label:"계정 분실/도용",group:"event",count:134},
-  {id:"event:로그인 불가",label:"로그인 불가",group:"event",count:130},
-  {id:"event:소셜계정 연동 오류",label:"소셜계정 연동",group:"event",count:61},
-  {id:"event:게임 버그/오류",label:"게임 버그/오류",group:"event",count:45},
-  {id:"event:실행/설치 오류",label:"실행/설치 오류",group:"event",count:40},
-  {id:"event:제재 이의",label:"제재 이의",group:"event",count:30},
-  {id:"event:아이템/보상 누락",label:"아이템/보상",group:"event",count:26},
-  {id:"event:이중/오류 결제",label:"이중/오류 결제",group:"event",count:20},
-  {id:"event:환불 요청",label:"환불 요청",group:"event",count:17},
-  {id:"intent:계정 복구 요청",label:"계정 복구 요청",group:"intent",count:237},
-  {id:"intent:기술 지원 요청",label:"기술 지원 요청",group:"intent",count:182},
-  {id:"intent:제재 이의 신청",label:"제재 이의 신청",group:"intent",count:173},
-  {id:"intent:정보/정책 문의",label:"정보/정책 문의",group:"intent",count:165},
-  {id:"intent:신고 접수",label:"신고 접수",group:"intent",count:102},
-  {id:"intent:단순 감정 표출",label:"단순 감정 표출",group:"intent",count:55},
-  {id:"intent:보상/복구 요청",label:"보상/복구 요청",group:"intent",count:34},
-  {id:"intent:환불/취소 요청",label:"환불/취소 요청",group:"intent",count:21},
-  {id:"sentiment:불만",label:"불만 😡",group:"sentiment",count:499},
-  {id:"sentiment:중립",label:"중립 😐",group:"sentiment",count:461},
-  {id:"sentiment:긍정",label:"긍정 😊",group:"sentiment",count:40},
-  {id:"resolution:상담원처리",label:"상담원처리",group:"resolution",count:589},
-  {id:"resolution:bot_1회해결",label:"챗봇해결",group:"resolution",count:262},
-  {id:"resolution:중도포기",label:"중도포기",group:"resolution",count:130},
-];
-const EDGES=[
-  {source:"product:계정시스템",target:"resolution:상담원처리",weight:203},
-  {source:"intent:계정 복구 요청",target:"resolution:상담원처리",weight:176},
-  {source:"intent:계정 복구 요청",target:"sentiment:불만",weight:174},
-  {source:"event:계정 제재",target:"product:제재시스템",weight:160},
-  {source:"intent:제재 이의 신청",target:"sentiment:불만",weight:156},
-  {source:"product:제재시스템",target:"resolution:상담원처리",weight:156},
-  {source:"intent:제재 이의 신청",target:"resolution:상담원처리",weight:151},
-  {source:"intent:정보/정책 문의",target:"sentiment:중립",weight:143},
-  {source:"event:계정 제재",target:"intent:제재 이의 신청",weight:140},
-  {source:"event:계정 분실/도용",target:"product:계정시스템",weight:132},
-  {source:"event:계정 분실/도용",target:"intent:계정 복구 요청",weight:128},
-  {source:"intent:정보/정책 문의",target:"resolution:bot_1회해결",weight:125},
-  {source:"event:로그인 불가",target:"product:계정시스템",weight:118},
-  {source:"intent:기술 지원 요청",target:"resolution:상담원처리",weight:115},
-  {source:"product:계정시스템",target:"resolution:bot_1회해결",weight:116},
-  {source:"event:로그인 불가",target:"intent:계정 복구 요청",weight:69},
-  {source:"event:로그인 불가",target:"intent:기술 지원 요청",weight:51},
-  {source:"product:신고시스템",target:"resolution:상담원처리",weight:65},
-  {source:"intent:신고 접수",target:"resolution:상담원처리",weight:65},
-  {source:"event:소셜계정 연동 오류",target:"product:계정시스템",weight:61},
-  {source:"event:소셜계정 연동 오류",target:"intent:계정 복구 요청",weight:38},
-  {source:"product:결제시스템",target:"resolution:상담원처리",weight:59},
-  {source:"product:인게임시스템",target:"resolution:bot_1회해결",weight:40},
-  {source:"event:실행/설치 오류",target:"intent:기술 지원 요청",weight:39},
-  {source:"product:제재시스템",target:"resolution:bot_1회해결",weight:37},
-  {source:"intent:기술 지원 요청",target:"sentiment:불만",weight:50},
-  {source:"event:환불 요청",target:"intent:환불/취소 요청",weight:17},
-  {source:"product:기술시스템",target:"resolution:중도포기",weight:27},
-];
-
-const NODE_DET={
-  "product:계정시스템":{
-    sentiment:{"불만 😡":210,"중립 😐":160,"긍정 😊":6},
-    event:{"계정 분실/도용":134,"로그인 불가":118,"소셜계정 연동":61,"기타":63},
-    resolution:{상담원처리:203,챗봇해결:116,중도포기:53},
-    lang:{EN:362,KO:10,JA:4},
-    top3:[{name:"계정 복구 요청",badges:["Intent","Product"],pct:63},{name:"정보/정책 문의",badges:["Intent","Product"],pct:31},{name:"기술 지원 요청",badges:["Intent","Product"],pct:22}],
-    analysis:"계정시스템 관련 문의는 총 376건(37.6%)이 접수됐습니다. 영어권 유저(362건)가 압도적으로 많으며, 계정 분실/도용과 로그인 불가가 핵심 Event입니다. 상담원 처리(203건)와 챗봇 해결(116건)이 공존하며, 정보/정책 문의는 자동화 확장 여지가 큽니다.",
-    sents:{"불만":{"product":{상담원처리:165,챗봇해결:32},"event":{"계정 분실/도용":119,"로그인 불가":72,"소셜계정 연동":38}},"중립":{"product":{상담원처리:28,챗봇해결:80},"event":{"로그인 불가":41,"기타":55}}}
-  },
-  "product:제재시스템":{
-    sentiment:{"불만 😡":181,"중립 😐":18,"긍정 😊":3},
-    event:{"계정 제재":160,"제재 이의":30,"기타":12},
-    resolution:{상담원처리:156,챗봇해결:37,중도포기:4},
-    lang:{EN:191,KO:9,JA:2},
-    top3:[{name:"제재 이의 신청",badges:["Intent","Event"],pct:69},{name:"계정 제재",badges:["Event"],pct:79},{name:"정보/정책 문의",badges:["Intent"],pct:5}],
-    analysis:"제재시스템은 불만 Sentiment가 89.6%로 전체 중 가장 높습니다. 계정 제재(160건)가 주요 Event이며, 제재 이의 신청(173건)과 강하게 연결됩니다. 케이스별 내부 조사가 필수로 자동화는 거의 불가능합니다.",
-    sents:{"불만":{"product":{상담원처리:150,챗봇해결:22},"event":{"계정 제재":144,"제재 이의":27}}}
-  },
-  "product:결제시스템":{
-    sentiment:{"불만 😡":45,"중립 😐":40,"긍정 😊":4},
-    event:{"환불 요청":17,"결제 후 미지급":16,"이중/오류 결제":20,"기타":36},
-    resolution:{상담원처리:59,챗봇해결:13,중도포기:16},
-    lang:{EN:58,KO:27,JA:4},
-    top3:[{name:"환불/취소 요청",badges:["Intent","Product"],pct:19},{name:"정보/정책 문의",badges:["Intent"],pct:22},{name:"보상/복구 요청",badges:["Intent"],pct:18}],
-    analysis:"KO 유저 비중(27건)이 상대적으로 높습니다. 환불/미지급/오류 결제가 주요 패턴이며, 정보/정책 문의는 85%가 자동화 가능합니다. 실제 환불 처리는 상담원 필수입니다.",
-    sents:{"불만":{"product":{상담원처리:35,챗봇해결:5},"event":{"이중/오류 결제":18,"결제 후 미지급":12}}}
-  },
-  "intent:계정 복구 요청":{
-    sentiment:{"불만 😡":174,"중립 😐":58,"긍정 😊":5},
-    event:{"계정 분실/도용":128,"로그인 불가":69,"소셜계정 연동 오류":38,"기타":2},
-    resolution:{상담원처리:176,챗봇해결:47,중도포기:14},
-    lang:{EN:210,KO:24,JA:3},
-    top3:[{name:"계정시스템",badges:["Product"],pct:69},{name:"계정 분실/도용",badges:["Event"],pct:54},{name:"로그인 불가",badges:["Event"],pct:29}],
-    analysis:"가장 많은 Intent(23.7%). 불만 73.4%로 감정적 케이스 집중. 상담원 처리가 176건으로 압도적. SNS 연동 절차 등 정보 안내는 자동화 가능하지만 실제 복구는 DB 조회 + 본인인증이 필수입니다.",
-    sents:{"불만":{"product":{계정시스템:138,제재시스템:20,기타:16},"event":{"계정 분실/도용":110,"로그인 불가":45}}}
-  },
-  "intent:제재 이의 신청":{
-    sentiment:{"불만 😡":156,"중립 😐":14,"긍정 😊":3},
-    event:{"계정 제재":140,"제재 이의":30,"기타":3},
-    resolution:{상담원처리:151,챗봇해결:20,중도포기:2},
-    lang:{EN:160,KO:9,JA:4},
-    top3:[{name:"제재시스템",badges:["Product"],pct:76},{name:"계정 제재",badges:["Event"],pct:81},{name:"불만",badges:["Sentiment"],pct:90}],
-    analysis:"예상보다 높은 17.3% 비중. 불만 Sentiment 90.2%로 전체 Intent 중 가장 높습니다. 10년 밴 이의신청 등 케이스별 내부 조사 필수. 처리 속도가 CSAT에 직결됩니다.",
-    sents:{"불만":{"product":{제재시스템:145,계정시스템:8},"event":{"계정 제재":130,"제재 이의":25}}}
-  },
-  "intent:정보/정책 문의":{
-    sentiment:{"불만 😡":22,"중립 😐":143,"긍정 😊":0},
-    event:{"기타":122,"소셜계정 연동 오류":14,"계정 제재":10,"실행/설치":9},
-    resolution:{상담원처리:38,챗봇해결:125,중도포기:2},
-    lang:{EN:130,KO:30,JA:5},
-    top3:[{name:"계정시스템",badges:["Product"],pct:37},{name:"챗봇 1회 해결",badges:["Resolution"],pct:76},{name:"중립",badges:["Sentiment"],pct:87}],
-    analysis:"자동화 가능 비율 80%+ 로 가장 높은 Intent. 챗봇 1회 해결 125건으로 이미 잘 작동 중. 중립 Sentiment(87%)가 압도적. FAQ 강화만으로 상담원 전환을 크게 줄일 수 있습니다.",
-    sents:{"중립":{"product":{계정시스템:50,결제시스템:20,인게임:17},"event":{"기타":100,"소셜계정 연동":12}}}
-  },
-  "sentiment:불만":{
-    sentiment:{"불만 😡":499},
-    event:{"제재 이의 신청":156,"계정 복구 요청":174,"기술 지원 요청":92,"신고 접수":41},
-    resolution:{상담원처리:387,챗봇해결:36,중도포기:65},
-    lang:{EN:380,KO:95,JA:24},
-    top3:[{name:"상담원처리",badges:["Resolution"],pct:78},{name:"제재시스템",badges:["Product"],pct:36},{name:"계정시스템",badges:["Product"],pct:42}],
-    analysis:"유저 절반(49.9%)이 불만 상태. 불만 유저의 77.6%가 상담원으로 전달됩니다. 제재 이의(156건)와 계정 복구(174건)가 불만의 핵심. 불만 감지 시 즉시 우선 배정 라우팅이 필요합니다.",
-    sents:{"불만":{"product":{제재시스템:181,계정시스템:210,신고:14},"event":{"계정 제재":144,"계정 분실/도용":119,"제재 이의 신청":156}}}
-  },
-  "resolution:상담원처리":{
-    sentiment:{"불만 😡":387,"중립 😐":198,"긍정 😊":4},
-    event:{"계정시스템":203,"제재시스템":156,"신고시스템":65,"결제시스템":59},
-    resolution:{상담원처리:589},
-    lang:{EN:518,KO:70,JA:1},
-    top3:[{name:"계정 복구 요청",badges:["Intent"],pct:30},{name:"제재 이의 신청",badges:["Intent"],pct:26},{name:"계정시스템",badges:["Product"],pct:34}],
-    analysis:"전체의 58.9%가 상담원 처리. KO 핑퐁 평균 4.9회 vs EN 1.5회로 KO가 훨씬 복잡. 불만 Sentiment가 65.7%로 집중. 계정+제재가 핵심이며, 정보/정책 문의(38건)만 자동화 전환 여지가 있습니다.",
-    sents:{"불만":{"product":{계정시스템:165,제재시스템:175,신고:50},"event":{"계정 제재":140,"계정 분실/도용":120}}}
-  },
-  "resolution:bot_1회해결":{
-    sentiment:{"불만 😡":36,"중립 😐":190,"긍정 😊":36},
-    event:{"계정시스템":116,"인게임":40,"제재":37,"기술":29},
-    resolution:{챗봇해결:262},
-    lang:{EN:240,KO:16,JA:6},
-    top3:[{name:"정보/정책 문의",badges:["Intent"],pct:48},{name:"계정시스템",badges:["Product"],pct:44},{name:"긍정",badges:["Sentiment"],pct:14}],
-    analysis:"챗봇 해결(26.2%). 긍정 Sentiment 유저의 90%가 여기 집중. 계정시스템 116건이 최다. 정보/정책 문의(125건)가 자동화의 핵심 경로. 이 수치를 높이는 것이 CSAT 향상의 핵심입니다.",
-    sents:{"중립":{"product":{계정시스템:80,인게임:35,제재:25},"event":{"기타":90,"로그인 불가":40}}}
-  },
-  "resolution:중도포기":{
-    sentiment:{"불만 😡":65,"중립 😐":65},
-    event:{"계정시스템":53,"기술시스템":27,"결제시스템":16,"인게임":14},
-    resolution:{중도포기:130},
-    lang:{EN:130,KO:0,JA:0},
-    top3:[{name:"EN 전용",badges:["Language"],pct:100},{name:"계정시스템",badges:["Product"],pct:41},{name:"기술시스템",badges:["Product"],pct:21}],
-    analysis:"13%(130건)이 중도포기. EN 유저 전용 패턴. 계정 정보 요청 후 무응답(56%)이 주원인. 정보 요청 방식을 '선택사항'으로 변경하면 즉시 효과를 볼 수 있습니다.",
-    sents:{"불만":{"product":{계정시스템:30,결제:12,기술:15},"event":{"로그인 불가":28,"설치오류":20}}}
-  },
-};
-
-// 기본 Top 3 (전체 기준)
-const DEFAULT_TOP3=[
-  {id:"product:계정시스템",name:"계정시스템",badges:["Product"],pct:37.6,color:'#378ADD'},
-  {id:"product:제재시스템",name:"제재시스템",badges:["Product"],pct:20.2,color:'#378ADD'},
-  {id:"intent:계정 복구 요청",name:"계정 복구 요청",badges:["Intent"],pct:23.7,color:'#1D9E75'},
-];
-const DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
-
-function nodeR(d){const b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
-
-let svgNodeSel, svgLinkSel, currentNode=null;
-
-function initGraph(){
-  const svg=d3.select('#kg-svg');
-  const area=document.querySelector('.graph-area');
-  const w=area.clientWidth, h=area.clientHeight;
-  svg.attr('viewBox',`0 0 ${w} ${h}`);
-  const g=svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
-  const nodes=NODES.map(d=>({...d}));
-  const edges=EDGES.map(d=>({...d}));
-  const sim=d3.forceSimulation(nodes)
-    .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
-    .force('charge',d3.forceManyBody().strength(-230))
-    .force('center',d3.forceCenter(w/2,h/2))
-    .force('collision',d3.forceCollide().radius(d=>nodeR(d)+10));
-  svgLinkSel=g.append('g').selectAll('line').data(edges).enter().append('line')
-    .attr('stroke','#ddd').attr('stroke-width',d=>Math.max(.8,Math.min(d.weight/60,5))).attr('stroke-opacity',.8);
-  svgNodeSel=g.append('g').selectAll('g').data(nodes).enter().append('g').attr('cursor','pointer')
-    .call(d3.drag()
-      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
-      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
-      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
-    .on('click',(e,d)=>{e.stopPropagation();onNodeClick(d);})
-    .on('mouseover',(e,d)=>showTip(e,d))
-    .on('mouseout',()=>{document.getElementById('kg-tt').style.opacity=0;});
-  svgNodeSel.append('circle').attr('r',d=>nodeR(d))
-    .attr('fill',d=>GC[d.group]).attr('fill-opacity',.9)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('class','nc');
-  svgNodeSel.append('text').text(d=>d.label.length>9?d.label.slice(0,8)+'…':d.label)
-    .attr('dy','0.35em').attr('text-anchor','middle')
-    .attr('font-size',d=>nodeR(d)>20?'11px':nodeR(d)>14?'10px':'9px')
-    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
-  sim.on('tick',()=>{
-    svgLinkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-    svgNodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
-  });
-  svg.on('click',()=>{resetHighlight();closeInsight();});
-  renderDefaultInsight();
-}
-
-function showTip(e,d){
-  const tt=document.getElementById('kg-tt');
-  const area=document.querySelector('.graph-area').getBoundingClientRect();
-  tt.innerHTML=`<div class="tn" style="color:${GC[d.group]}">${d.label}</div><div class="ts">${GL[d.group]} · ${d.count}건 (${Math.round(d.count/1000*100)}%)</div><div class="ts" style="color:#bbb;margin-top:2px">클릭해서 상세 분석</div>`;
-  tt.style.left=(e.clientX-area.left+14)+'px';
-  tt.style.top=(e.clientY-area.top-10)+'px';
-  tt.style.opacity=1;
-}
-
-function onNodeClick(d){
-  currentNode=d;
-  // 하이라이트
-  svgNodeSel.selectAll('.nc')
-    .attr('stroke',n=>n.id===d.id?'#1a1a1a':'#fff')
-    .attr('stroke-width',n=>n.id===d.id?3.5:2.5)
-    .attr('fill-opacity',n=>n.id===d.id?1:.3);
-  svgLinkSel.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.08)
-    .attr('stroke',l=>(l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#ddd');
-  // 오른쪽 Quick Insight 업데이트
-  renderNodeInsight(d);
-  // 하단 상세 패널
-  renderDetailPanel(d);
-}
-
-function resetHighlight(){
-  svgNodeSel.selectAll('.nc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
-  svgLinkSel.attr('stroke-opacity',.8).attr('stroke','#ddd');
-}
-function closeInsight(){
-  currentNode=null;
-  renderDefaultInsight();
-  closeDp();
-}
-
-// ── 오른쪽 패널 ──
-function renderDefaultInsight(){
-  document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
-  let html='';
-  DEFAULT_TOP3.forEach((item,i)=>{
-    const w=Math.round(item.pct/40*100);
-    html+=`<div class="top-item" onclick="clickTop('${item.id}')">
-      <div style="display:flex;align-items:center">
-        <span class="top-rank">${i+1}.</span>
-        <span class="top-name" style="color:${item.color}">${item.name}</span>
-        <span class="top-pct">${item.pct}%</span>
-      </div>
-      <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${item.color}20;color:${item.color}">${b}</span>`).join('')}</div>
-      <div class="top-bar"><div class="top-bar-fill" style="background:${item.color};width:${w}%"></div></div>
-    </div>`;
-  });
-  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${DEFAULT_ANALYSIS}</div></div>`;
-  document.getElementById('ip-body').innerHTML=html;
-}
-
-function renderNodeInsight(d){
-  const det=NODE_DET[d.id];
-  const col=GC[d.group];
-  const pct=Math.round(d.count/1000*100);
-  document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
-  let html='';
-  if(det && det.top3){
-    det.top3.forEach((item,i)=>{
-      const bColor=item.badges[0]==='Intent'?GC.intent:item.badges[0]==='Product'?GC.product:item.badges[0]==='Event'?GC.event:item.badges[0]==='Resolution'?GC.resolution:GC.sentiment;
-      const w=Math.round(item.pct/100*100);
-      html+=`<div class="top-item">
-        <div style="display:flex;align-items:center">
-          <span class="top-rank">${i+1}.</span>
-          <span class="top-name" style="color:${col}">${item.name}</span>
-          <span class="top-pct">${item.pct}%</span>
-        </div>
-        <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${bColor}20;color:${bColor}">${b}</span>`).join('')}</div>
-        <div class="top-bar"><div class="top-bar-fill" style="background:${col};width:${w}%"></div></div>
-      </div>`;
-    });
-  }
-  if(det){
-    html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${det.analysis}</div></div>`;
-  }
-  document.getElementById('ip-body').innerHTML=html;
-}
-
-function clickTop(nodeId){
-  const node=NODES.find(n=>n.id===nodeId);
-  if(node) onNodeClick(node);
-}
-
-// ── 하단 상세 패널 ──
-function renderDetailPanel(d){
-  const det=NODE_DET[d.id];
-  const col=GC[d.group];
-  const dp=document.getElementById('detail-panel');
-  dp.classList.add('open');
-  document.getElementById('dp-node-name').textContent=d.label;
-  document.getElementById('dp-node-name').style.color=col;
-  const badge=document.getElementById('dp-group-badge');
-  badge.textContent=GL[d.group];
-  badge.style.background=col+'20';
-  badge.style.color=col;
-  document.getElementById('dp-total').textContent=`총 ${d.count}건`;
-  if(!det){document.getElementById('dp-cols').innerHTML='';document.getElementById('dp-filter-section').innerHTML='';return;}
-  // 4컬럼
-  const cols=[
-    {title:'Sentiment',badge:'지표',color:'#BA7517',data:det.sentiment||{}},
-    {title:'Event',badge:'이슈',color:'#D85A30',data:det.event||{}},
-    {title:'Resolution',badge:'지표',color:'#7F77DD',data:det.resolution||{}},
-    {title:'Language',badge:'지표',color:'#D4537E',data:det.lang||{}},
-  ];
-  let colsHtml='';
-  cols.forEach(c=>{
-    colsHtml+=`<div class="dp-col"><div class="dp-col-title"><div class="legend-dot" style="background:${c.color}"></div>${c.title} <span class="dp-col-badge" style="background:${c.color}20;color:${c.color}">${c.badge}</span></div>`;
-    Object.entries(c.data).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-      colsHtml+=`<div class="dp-row"><div class="dp-key">${k}</div><div class="dp-val">${v}건</div></div>`;
-    });
-    colsHtml+='</div>';
-  });
-  document.getElementById('dp-cols').innerHTML=colsHtml;
-  // Sentiment 필터 섹션
-  renderFilterSection(d, det, '불만', col);
-}
-
-function renderFilterSection(d, det, selectedSent, col){
-  const sents=det.sents||{};
-  const sentKeys=Object.keys(sents);
-  if(sentKeys.length===0){document.getElementById('dp-filter-section').innerHTML='';return;}
-  // 버튼
-  let btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
-  sentKeys.forEach(s=>{
-    btnHtml+=`<div class="sfbtn${s===selectedSent?' active':''}" onclick="filterSent(this,'${d.id}','${s}','${col}')">${s}</div>`;
-  });
-  btnHtml+='</div></div>';
-  // 선택된 Sentiment 데이터
-  const sd=sents[selectedSent]||{};
-  let comboHtml='';
-  const cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
-  Object.entries(sd).forEach(([key,val])=>{
-    const maxV=Math.max(...Object.values(val));
-    const barCol=key==='event'?GC.event:key==='lang'?'#D4537E':GC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${sentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
-    Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
-      const w=Math.round(v/maxV*100);
-      comboHtml+=`<div class="filter-bar-row">
-        <div class="filter-bar-label">${k}</div>
-        <div class="filter-bar-wrap"><div class="filter-bar-fill" style="background:${barCol};width:${w}%">${w>20?v+'건':''}</div></div>
-        <div class="filter-bar-cnt">${v}</div>
-      </div>`;
-    });
-    comboHtml+='</div>';
-  });
-  document.getElementById('dp-filter-section').innerHTML=btnHtml+comboHtml;
-}
-
-function filterSent(el, nodeId, sent, col){
-  document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  const d=NODES.find(n=>n.id===nodeId);
-  const det=NODE_DET[nodeId];
-  if(d && det) renderFilterSection(d, det, sent, col);
-}
-
-function closeDp(){document.getElementById('detail-panel').classList.remove('open');}
-
-function lgFilter(group,el){
-  document.querySelectorAll('.legend-item').forEach(l=>l.classList.remove('active'));
-  el.classList.add('active');
-  if(!svgNodeSel) return;
-  svgNodeSel.selectAll('circle').attr('opacity',d=>group==='all'?.9:d.group===group?1:.1);
-  svgNodeSel.selectAll('text').attr('opacity',d=>group==='all'?1:d.group===group?1:.1);
-  svgLinkSel.attr('opacity',d=>{if(group==='all') return .8;return(d.source.group===group||d.target.group===group)?.8:.05;});
-}
-
-window.addEventListener('load',initGraph);
-</script>
-
 </div>
-
-<!-- ══ 탭3: 챗봇 플로우 분석 ══ -->
-<div id="t3" style="display:none">
-<div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+<div id="panel-2" style="display:none"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
 
 <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">챗봇 플로우 문제점 분석</h1>
 <div style="font-size:13px;color:#666;margin-bottom:8px">Claude API 실제 대화 흐름 기반 · 2,000건 샘플 분석</div>
@@ -1156,12 +749,8 @@ window.addEventListener('load',initGraph);
 <div style="font-size:11px;color:#aaa;margin-top:24px;padding-top:12px;border-top:1px solid #e8e8e6">
   * Claude API (claude-sonnet-4-20250514) 기반 실제 대화 흐름 분석 · 2,000건 샘플 · 2026-04-20
 </div>
-</div>
-</div>
-
-<!-- ══ 탭4: 챗봇 Knowledge Graph ══ -->
-<div id="t4" style="display:none">
-<div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
+</div></div>
+<div id="panel-3" style="display:none"><div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
   <!-- 그래프 + 인사이트 -->
   <div style="flex:1;display:flex;min-height:0">
     <!-- 범례 -->
@@ -1202,55 +791,32 @@ window.addEventListener('load',initGraph);
     <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
     <div style="display:flex;height:100%" id="cf-dp-inner"></div>
   </div>
-</div>
-</div>
+</div></div>
 
 <script>
-function switchMain(id, el) {
-  if(el.classList.contains('disabled')) return;
-  ['t1','t2','t3','t4'].forEach(function(tid) {
-    var p = document.getElementById(tid);
-    if(p) p.style.display = (tid === id ? 'block' : 'none');
-  });
-  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('on'); });
-  el.classList.add('on');
-  if(id === 't2' && !window._kgInited) {
-    setTimeout(function() { initGraph(); }, 50);
-    window._kgInited = true;
+function TAB(n) {
+  for (var i = 0; i < 4; i++) {
+    var p = document.getElementById('panel-' + i);
+    if (p) p.style.display = (i === n) ? 'block' : 'none';
   }
-  if(id === 't4' && !window._cfKgInited) {
-    setTimeout(function() { initCFGraph(); }, 100);
-    window._cfKgInited = true;
-  }
+  var tabs = document.querySelectorAll('#nav-tabs .nav-tab');
+  for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('on');
+  if (tabs[n]) tabs[n].classList.add('on');
+  if (n===1 && !window._kg1) { window._kg1=true; setTimeout(function(){if(typeof initKGGraph==='function')initKGGraph();},100); }
+  if (n===3 && !window._kg3) { window._kg3=true; setTimeout(function(){if(typeof initCFGraph==='function')initCFGraph();},100); }
 }
-function swP(id,el){
-  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById(id).classList.add('on'); el.classList.add('on');
-}
-function swLang(id,el){
-  document.getElementById('lko').style.display='none';
-  document.getElementById('len').style.display='none';
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
-function swEx(id,el){
-  document.getElementById('ex-auto').style.display='none';
-  document.getElementById('ex-manual').style.display='none';
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
+function swP(id,el){document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});document.getElementById(id).classList.add('on');el.classList.add('on');}
+function swLang(id,el){['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
+function swEx(id,el){['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
 
 
-const KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
-const KGL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
-const kgSentColors={불만:'#D85A30','불만 😡':'#D85A30',중립:'#888','중립 😐':'#888',긍정:'#1D9E75','긍정 😊':'#1D9E75'};
-const kgResColors={상담원처리:'#378ADD',챗봇해결:'#1D9E75',중도포기:'#BA7517'};
+var KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
+var KGL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
+var kgSentColors={불만:'#D85A30','불만 😡':'#D85A30',중립:'#888','중립 😐':'#888',긍정:'#1D9E75','긍정 😊':'#1D9E75'};
+var kgResColors={상담원처리:'#378ADD',챗봇해결:'#1D9E75',중도포기:'#BA7517'};
 
 // 전체 데이터
-const NODES=[
+var KG_NODES=[
   {id:"product:계정시스템",label:"계정시스템",group:"product",count:376},
   {id:"product:제재시스템",label:"제재시스템",group:"product",count:202},
   {id:"product:인게임시스템",label:"인게임시스템",group:"product",count:100},
@@ -1283,7 +849,7 @@ const NODES=[
   {id:"resolution:bot_1회해결",label:"챗봇해결",group:"resolution",count:262},
   {id:"resolution:중도포기",label:"중도포기",group:"resolution",count:130},
 ];
-const EDGES=[
+var KG_EDGES=[
   {source:"product:계정시스템",target:"resolution:상담원처리",weight:203},
   {source:"intent:계정 복구 요청",target:"resolution:상담원처리",weight:176},
   {source:"intent:계정 복구 요청",target:"sentiment:불만",weight:174},
@@ -1314,7 +880,7 @@ const EDGES=[
   {source:"product:기술시스템",target:"resolution:중도포기",weight:27},
 ];
 
-const KG_NODE_DET={
+var KG_NODE_DET={
   "product:계정시스템":{
     sentiment:{"불만 😡":210,"중립 😐":160,"긍정 😊":6},
     event:{"계정 분실/도용":134,"로그인 불가":118,"소셜계정 연동":61,"기타":63},
@@ -1408,26 +974,26 @@ const KG_NODE_DET={
 };
 
 // 기본 Top 3 (전체 기준)
-const DEFAULT_TOP3=[
+var KG_DEFAULT_TOP3=[
   {id:"product:계정시스템",name:"계정시스템",badges:["Product"],pct:37.6,color:'#378ADD'},
   {id:"product:제재시스템",name:"제재시스템",badges:["Product"],pct:20.2,color:'#378ADD'},
   {id:"intent:계정 복구 요청",name:"계정 복구 요청",badges:["Intent"],pct:23.7,color:'#1D9E75'},
 ];
-const DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
+var KG_DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
 
 function nodeR(d){const b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
 
 let svgNodeSel, svgLinkSel, currentNode=null;
 
-function initGraph(){
+function initKGGraph(){
   const svg=d3.select('#kg-svg');
   const area=document.querySelector('.graph-area');
   const w=area.clientWidth, h=area.clientHeight;
   svg.attr('viewBox',`0 0 ${w} ${h}`);
   const g=svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
-  const nodes=NODES.map(d=>({...d}));
-  const edges=EDGES.map(d=>({...d}));
+  const nodes=KG_NODES.map(d=>({...d}));
+  const edges=KG_EDGES.map(d=>({...d}));
   const sim=d3.forceSimulation(nodes)
     .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
     .force('charge',d3.forceManyBody().strength(-230))
@@ -1457,6 +1023,239 @@ function initGraph(){
   svg.on('click',()=>{resetHighlight();closeInsight();});
   renderDefaultInsight();
 }
+
+function showTip(e,d){
+  const tt=document.getElementById('kg-tt');
+  const area=document.querySelector('.graph-area').getBoundingClientRect();
+  tt.innerHTML=`<div class="tn" style="color:${KGC[d.group]}">${d.label}</div><div class="ts">${KGL[d.group]} · ${d.count}건 (${Math.round(d.count/1000*100)}%)</div><div class="ts" style="color:#bbb;margin-top:2px">클릭해서 상세 분석</div>`;
+  tt.style.left=(e.clientX-area.left+14)+'px';
+  tt.style.top=(e.clientY-area.top-10)+'px';
+  tt.style.opacity=1;
+}
+
+function onNodeClick(d){
+  currentNode=d;
+  // 하이라이트
+  svgNodeSel.selectAll('.nc')
+    .attr('stroke',n=>n.id===d.id?'#1a1a1a':'#fff')
+    .attr('stroke-width',n=>n.id===d.id?3.5:2.5)
+    .attr('fill-opacity',n=>n.id===d.id?1:.3);
+  svgLinkSel.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.08)
+    .attr('stroke',l=>(l.source.id===d.id||l.target.id===d.id)?KGC[d.group]:'#ddd');
+  // 오른쪽 Quick Insight 업데이트
+  renderNodeInsight(d);
+  // 하단 상세 패널
+  renderDetailPanel(d);
+}
+
+function resetHighlight(){
+  svgNodeSel.selectAll('.nc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
+  svgLinkSel.attr('stroke-opacity',.8).attr('stroke','#ddd');
+}
+function closeInsight(){
+  currentNode=null;
+  renderDefaultInsight();
+  closeDp();
+}
+
+// ── 오른쪽 패널 ──
+function renderDefaultInsight(){
+  document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
+  let html='';
+  KG_DEFAULT_TOP3.forEach((item,i)=>{
+    const w=Math.round(item.pct/40*100);
+    html+=`<div class="top-item" onclick="clickTop('${item.id}')">
+      <div style="display:flex;align-items:center">
+        <span class="top-rank">${i+1}.</span>
+        <span class="top-name" style="color:${item.color}">${item.name}</span>
+        <span class="top-pct">${item.pct}%</span>
+      </div>
+      <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${item.color}20;color:${item.color}">${b}</span>`).join('')}</div>
+      <div class="top-bar"><div class="top-bar-fill" style="background:${item.color};width:${w}%"></div></div>
+    </div>`;
+  });
+  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${KG_DEFAULT_ANALYSIS}</div></div>`;
+  document.getElementById('ip-body').innerHTML=html;
+}
+
+function renderNodeInsight(d){
+  const det=KG_NODE_DET[d.id];
+  const col=KGC[d.group];
+  const pct=Math.round(d.count/1000*100);
+  document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
+  let html='';
+  if(det && det.top3){
+    det.top3.forEach((item,i)=>{
+      const bColor=item.badges[0]==='Intent'?KGC.intent:item.badges[0]==='Product'?KGC.product:item.badges[0]==='Event'?KGC.event:item.badges[0]==='Resolution'?KGC.resolution:KGC.sentiment;
+      const w=Math.round(item.pct/100*100);
+      html+=`<div class="top-item">
+        <div style="display:flex;align-items:center">
+          <span class="top-rank">${i+1}.</span>
+          <span class="top-name" style="color:${col}">${item.name}</span>
+          <span class="top-pct">${item.pct}%</span>
+        </div>
+        <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${bColor}20;color:${bColor}">${b}</span>`).join('')}</div>
+        <div class="top-bar"><div class="top-bar-fill" style="background:${col};width:${w}%"></div></div>
+      </div>`;
+    });
+  }
+  if(det){
+    html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${det.analysis}</div></div>`;
+  }
+  document.getElementById('ip-body').innerHTML=html;
+}
+
+function clickTop(nodeId){
+  const node=KG_NODES.find(n=>n.id===nodeId);
+  if(node) onNodeClick(node);
+}
+
+// ── 하단 상세 패널 ──
+function renderDetailPanel(d){
+  const det=KG_NODE_DET[d.id];
+  const col=KGC[d.group];
+  const dp=document.getElementById('detail-panel');
+  dp.classList.add('open');
+  document.getElementById('dp-node-name').textContent=d.label;
+  document.getElementById('dp-node-name').style.color=col;
+  const badge=document.getElementById('dp-group-badge');
+  badge.textContent=KGL[d.group];
+  badge.style.background=col+'20';
+  badge.style.color=col;
+  document.getElementById('dp-total').textContent=`총 ${d.count}건`;
+  if(!det){document.getElementById('dp-cols').innerHTML='';document.getElementById('dp-filter-section').innerHTML='';return;}
+  // 4컬럼
+  const cols=[
+    {title:'Sentiment',badge:'지표',color:'#BA7517',data:det.sentiment||{}},
+    {title:'Event',badge:'이슈',color:'#D85A30',data:det.event||{}},
+    {title:'Resolution',badge:'지표',color:'#7F77DD',data:det.resolution||{}},
+    {title:'Language',badge:'지표',color:'#D4537E',data:det.lang||{}},
+  ];
+  let colsHtml='';
+  cols.forEach(c=>{
+    colsHtml+=`<div class="dp-col"><div class="dp-col-title"><div class="legend-dot" style="background:${c.color}"></div>${c.title} <span class="dp-col-badge" style="background:${c.color}20;color:${c.color}">${c.badge}</span></div>`;
+    Object.entries(c.data).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+      colsHtml+=`<div class="dp-row"><div class="dp-key">${k}</div><div class="dp-val">${v}건</div></div>`;
+    });
+    colsHtml+='</div>';
+  });
+  document.getElementById('dp-cols').innerHTML=colsHtml;
+  // Sentiment 필터 섹션
+  renderFilterSection(d, det, '불만', col);
+}
+
+function renderFilterSection(d, det, selectedSent, col){
+  const sents=det.sents||{};
+  const sentKeys=Object.keys(sents);
+  if(sentKeys.length===0){document.getElementById('dp-filter-section').innerHTML='';return;}
+  // 버튼
+  let btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
+  sentKeys.forEach(s=>{
+    btnHtml+=`<div class="sfbtn${s===selectedSent?' active':''}" onclick="filterSent(this,'${d.id}','${s}','${col}')">${s}</div>`;
+  });
+  btnHtml+='</div></div>';
+  // 선택된 Sentiment 데이터
+  const sd=sents[selectedSent]||{};
+  let comboHtml='';
+  const cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
+  Object.entries(sd).forEach(([key,val])=>{
+    const maxV=Math.max(...Object.values(val));
+    const barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
+    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
+    Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
+      const w=Math.round(v/maxV*100);
+      comboHtml+=`<div class="filter-bar-row">
+        <div class="filter-bar-label">${k}</div>
+        <div class="filter-bar-wrap"><div class="filter-bar-fill" style="background:${barCol};width:${w}%">${w>20?v+'건':''}</div></div>
+        <div class="filter-bar-cnt">${v}</div>
+      </div>`;
+    });
+    comboHtml+='</div>';
+  });
+  document.getElementById('dp-filter-section').innerHTML=btnHtml+comboHtml;
+}
+
+function filterSent(el, nodeId, sent, col){
+  document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const d=KG_NODES.find(n=>n.id===nodeId);
+  const det=KG_NODE_DET[nodeId];
+  if(d && det) renderFilterSection(d, det, sent, col);
+}
+
+function closeDp(){document.getElementById('detail-panel').classList.remove('open');}
+
+function lgFilter(group,el){
+  document.querySelectorAll('.legend-item').forEach(l=>l.classList.remove('active'));
+  el.classList.add('active');
+  if(!svgNodeSel) return;
+  svgNodeSel.selectAll('circle').attr('opacity',d=>group==='all'?.9:d.group===group?1:.1);
+  svgNodeSel.selectAll('text').attr('opacity',d=>group==='all'?1:d.group===group?1:.1);
+  svgLinkSel.attr('opacity',d=>{if(group==='all') return .8;return(d.source.group===group||d.target.group===group)?.8:.05;});
+}
+
+window.addEventListener('load',initGraph);
+
+
+
+function switchMain(id, el) {
+  if(el.classList.contains('disabled')) return;
+  ['t1','t2','t3','t4'].forEach(function(tid) {
+    var p = document.getElementById(tid);
+    if(p) p.style.display = (tid === id ? 'block' : 'none');
+  });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('on'); });
+  el.classList.add('on');
+  if(id === 't2' && !window._kgInited) {
+    setTimeout(function() { initKGGraph(); }, 50);
+    window._kgInited = true;
+  }
+  if(id === 't4' && !window._cfKgInited) {
+    setTimeout(function() { initCFGraph(); }, 100);
+    window._cfKgInited = true;
+  }
+}
+function swP(id,el){
+  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById(id).classList.add('on'); el.classList.add('on');
+}
+function swLang(id,el){
+  document.getElementById('lko').style.display='none';
+  document.getElementById('len').style.display='none';
+  document.getElementById(id).style.display='block';
+  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+}
+function swEx(id,el){
+  document.getElementById('ex-auto').style.display='none';
+  document.getElementById('ex-manual').style.display='none';
+  document.getElementById(id).style.display='block';
+  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+}
+
+
+
+
+
+
+
+// 전체 데이터
+
+
+
+
+
+// 기본 Top 3 (전체 기준)
+
+
+
+function nodeR(d){const b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
+
+let svgNodeSel, svgLinkSel, currentNode=null;
+
+
 
 function showTip(e,d){
   const tt=document.getElementById('kg-tt');
@@ -1898,7 +1697,7 @@ function renderCfDetailPanel(d) {
   const col = CF_GC[d.group];
   if(!det) {dp.style.height='0';return;}
 
-  const resColors = {상담원처리:'#378ADD',중도포기:'#BA7517'};
+  
   let left = `<div style="width:200px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
     <div style="font-size:15px;font-weight:700;color:${col};margin-bottom:3px">${d.label}</div>
     <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;background:${col}20;color:${col};display:inline-block;margin-bottom:8px">${CF_GL[d.group]}</span>
@@ -1960,6 +1759,7 @@ function cfKgFilter(group, el) {
 }
 
 /* t4 KG init merged into switchMain */
+
 
 </script>
 </body>
