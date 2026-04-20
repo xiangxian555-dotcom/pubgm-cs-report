@@ -6,6 +6,7 @@
 <title>PUBG Mobile CS 분석 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
+/* ── 탭1 스타일 ── */
 
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f8f8f6;color:#1a1a1a;font-size:14px}
@@ -146,18 +147,18 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 @media(max-width:768px){.kpi{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.kg-legend{display:none}.dp-cols{grid-template-columns:1fr}.dp-analysis{display:none}}
 
 
-/* ── KG 전용 스타일 ── */
+/* ── KG 스타일 (스코프 제한) ── */
 
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#fff;color:#1a1a1a;font-size:13px;height:100vh;overflow:hidden}
+/* body height removed */
 /* ── 상단 헤더 ── */
-.header{background:#fff;border-bottom:1px solid #e8e8e6;padding:10px 20px;display:flex;align-items:center;gap:12px;height:46px;flex-shrink:0}
+#t2 .header{background:#fff;border-bottom:1px solid #e8e8e6;padding:10px 20px;display:flex;align-items:center;gap:12px;height:46px;flex-shrink:0}
 .header h1{font-size:15px;font-weight:700;color:#1a1a1a}
 .header .sub{font-size:11px;color:#999}
 .header .badges{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hbadge{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600}
 /* ── 메인 레이아웃 ── */
-.main{display:flex;height:calc(100vh - 46px)}
+#t2 .main{display:flex;height:calc(100vh - 51px)}
 /* ── 왼쪽: 그래프 ── */
 .graph-area{flex:1;position:relative;overflow:hidden;background:#fafaf8;border-right:1px solid #e8e8e6}
 #kg-svg{width:100%;height:100%}
@@ -224,25 +225,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .sfbtn{font-size:11px;padding:3px 10px;border-radius:4px;cursor:pointer;border:1px solid #e8e8e6;background:#fff;color:#666;transition:all .12s}
 .sfbtn:hover,.sfbtn.active{border-color:#1a1a1a;background:#1a1a1a;color:#fff}
 
+
+/* ── 탭 패널 공통 ── */
+#t2, #t3, #t4 { display:none }
+#t2.on, #t3.on, #t4.on { display:block }
+#t1 { display:block }
+#t1.hidden { display:none }
 </style>
 </head>
 <body>
 
-<!-- 상단 네비 -->
 <nav class="nav">
   <div class="nav-inner">
     <div class="nav-logo">PUBG Mobile CS 분석<span>2026 Q1 · 90,389건</span></div>
     <div class="nav-tabs">
-      <div class="nav-tab on" onclick="switchMain('t1',this)">
+      <div class="nav-tab on" id="ntab-t1" onclick="switchMain('t1',this)">
         📊 CS 온톨로지 분석 <span class="tab-badge">1,000건</span>
       </div>
-      <div class="nav-tab" onclick="switchMain('t2',this)">
+      <div class="nav-tab" id="ntab-t2" onclick="switchMain('t2',this)">
         🕸 CS Knowledge Graph <span class="tab-badge">33노드</span>
       </div>
-      <div class="nav-tab disabled">
+      <div class="nav-tab" style="opacity:.4;cursor:not-allowed">
         🤖 챗봇 플로우 분석 <span class="tab-badge">준비중</span>
       </div>
-      <div class="nav-tab disabled">
+      <div class="nav-tab" style="opacity:.4;cursor:not-allowed">
         🕸 챗봇 Knowledge Graph <span class="tab-badge">준비중</span>
       </div>
     </div>
@@ -250,7 +256,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
   </div>
 </nav>
 
-<!-- 탭1: CS 온톨로지 분석 -->
 <!-- ══ 탭1: CS 온톨로지 분석 ══ -->
 <div class="tab-panel on" id="t1">
 <div class="page">
@@ -471,8 +476,7 @@ PUBG Mobile Support</div>
 
 
 
-<!-- 탭2: CS Knowledge Graph -->
-<div class="tab-panel" id="t2">
+<div id="t2">
 
 
 <div class="header">
@@ -914,60 +918,51 @@ window.addEventListener('load',initGraph);
 
 </div>
 
-<!-- 탭3 -->
-<div class="tab-panel" id="t3">
-  <div class="coming-soon">
-    <div class="cs-icon">🤖</div>
-    <div class="cs-title">챗봇 플로우 분석</div>
-    <div class="cs-desc">chatbot_flow_analyzer.py 실행 완료 후<br>결과 파일을 업로드하면 채워집니다.</div>
-    <div class="cs-badge">준비 중</div>
-  </div>
+<div id="t3" style="padding:60px;text-align:center;color:#bbb">
+  <div style="font-size:48px;margin-bottom:16px">🤖</div>
+  <div style="font-size:20px;font-weight:600;color:#888;margin-bottom:8px">챗봇 플로우 분석</div>
+  <div style="font-size:14px;color:#bbb">chatbot_flow_analyzer.py 완료 후 추가됩니다.</div>
 </div>
 
-<!-- 탭4 -->
-<div class="tab-panel" id="t4">
-  <div class="coming-soon">
-    <div class="cs-icon">🕸</div>
-    <div class="cs-title">챗봇 Knowledge Graph</div>
-    <div class="cs-desc">챗봇 분석 완료 후 추가됩니다.</div>
-    <div class="cs-badge">준비 중</div>
-  </div>
+<div id="t4" style="padding:60px;text-align:center;color:#bbb">
+  <div style="font-size:48px;margin-bottom:16px">🕸</div>
+  <div style="font-size:20px;font-weight:600;color:#888;margin-bottom:8px">챗봇 Knowledge Graph</div>
+  <div style="font-size:14px;color:#bbb">챗봇 분석 완료 후 추가됩니다.</div>
 </div>
 
 <script>
-/* ── 탭 전환 ── */
 function switchMain(id, el) {
-  if(el.classList.contains('disabled')) return;
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
+  ['t1','t2','t3','t4'].forEach(function(tid) {
+    var p = document.getElementById(tid);
+    if(p) p.style.display = (tid === id ? 'block' : 'none');
+  });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('on'); });
   el.classList.add('on');
   if(id === 't2' && !window._kgInited) {
-    initGraph();
+    setTimeout(function() { initGraph(); }, 50);
     window._kgInited = true;
   }
 }
 function swP(id,el){
-  document.querySelectorAll('.pp').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.p-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
   document.getElementById(id).classList.add('on'); el.classList.add('on');
 }
 function swLang(id,el){
   document.getElementById('lko').style.display='none';
   document.getElementById('len').style.display='none';
   document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(t=>t.classList.remove('on'));
+  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
   el.classList.add('on');
 }
 function swEx(id,el){
   document.getElementById('ex-auto').style.display='none';
   document.getElementById('ex-manual').style.display='none';
   document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(t=>t.classList.remove('on'));
+  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
   el.classList.add('on');
 }
 
-/* ── KG 스크립트 ── */
 
 const KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
 const KGL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
