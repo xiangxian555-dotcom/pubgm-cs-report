@@ -243,6 +243,9 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
   flex-direction: column;
   overflow: hidden;
 }
+
+.detail-panel { position:absolute; bottom:0; left:0; right:280px; background:#fff; border-top:2px solid #e8e8e6; transform:translateY(100%); transition:transform .3s; z-index:20; }
+.detail-panel.open { transform:translateY(0); }
 </style>
 </head>
 <body>
@@ -514,11 +517,11 @@ PUBG Mobile Support</div>
   </div>
 </div>
 <!-- 하단 상세 패널 -->
-<div id="kg-detail" style="position:absolute;bottom:0;left:0;right:280px;background:#fff;border-top:2px solid #e8e8e6;transform:translateY(100%);transition:transform .3s;z-index:20">
+<div id="detail-panel" style="position:absolute;bottom:0;left:0;right:280px;background:#fff;border-top:2px solid #e8e8e6;transform:translateY(100%);transition:transform .3s;z-index:20">
   <div style="position:absolute;right:12px;top:10px;cursor:pointer;color:#999;font-size:15px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee" onclick="closeDp()">✕</div>
-  <div id="kg-dp-header" style="padding:10px 16px;border-bottom:1px solid #e8e8e6;display:flex;align-items:center;gap:8px"></div>
-  <div id="kg-dp-cols" style="display:grid;grid-template-columns:repeat(4,1fr);height:160px"></div>
-  <div id="kg-dp-filter" style="border-top:1px solid #e8e8e6;padding:10px 16px;background:#fafaf8;display:flex;gap:8px;align-items:flex-start"></div>
+  <div id="dp-node-name" style="font-size:15px;font-weight:700;display:inline;margin-right:6px"></div><span id="dp-group-badge" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;display:inline-block;margin-right:6px"></span><span id="dp-total" style="font-size:12px;color:#888"></span><div style="padding:10px 16px;border-bottom:1px solid #e8e8e6;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></div>
+  <div id="dp-cols" style="display:grid;grid-template-columns:repeat(4,1fr);height:200px"></div>
+  <div id="dp-filter-section" style="border-top:1px solid #e8e8e6;padding:10px 16px;background:#fafaf8;display:flex;gap:8px;align-items:flex-start"></div>
 </div>
 </div>
 <div id="p2" style="display:none"><div style="max-width:1100px;margin:0 auto;padding:28px 24px">
@@ -796,10 +799,11 @@ PUBG Mobile Support</div>
 
 <script>
 function TAB(n) {
+  var displays = ["block","flex","block","flex"];
   ["p0","p1","p2","p3"].forEach(function(id,i) {
     var el = document.getElementById(id);
     if (!el) return;
-    el.style.display = i===n ? "block" : "none";
+    el.style.display = i===n ? displays[i] : "none";
   });
   var ts = document.querySelectorAll("#ntabs .nav-tab");
   for (var j=0; j<ts.length; j++) ts[j].classList[j===n?"add":"remove"]("on");
