@@ -794,34 +794,18 @@ PUBG Mobile Support</div>
 </div></div>
 
 <script>
-/* ── 탭 전환 (최우선 로드) ── */
+/* ── 탭 전환 ── */
 function TAB(n) {
   for (var i=0; i<4; i++) document.getElementById('p'+i).style.display = i===n?'block':'none';
   var ts = document.querySelectorAll('#ntabs .nav-tab');
   for (var j=0; j<ts.length; j++) ts[j].classList[j===n?'add':'remove']('on');
-  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){(window.initKGGraph||function(){})();},50); }
-  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){(window.initCFGraph||function(){})();},50); }
+  if (n===1 && !window._k1) { window._k1=1; setTimeout(function(){ if(typeof initKGGraph==='function') initKGGraph(); },300); }
+  if (n===3 && !window._k3) { window._k3=1; setTimeout(function(){ if(typeof initCFGraph==='function') initCFGraph(); },300); }
 }
-function swP(id,el) {
-  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById(id).classList.add('on'); el.classList.add('on');
-}
-function swLang(id,el) {
-  ['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
-function swEx(id,el) {
-  ['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
+function swP(id,el){document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});document.getElementById(id).classList.add('on');el.classList.add('on');}
+function swLang(id,el){['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
+function swEx(id,el){['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});document.getElementById(id).style.display='block';el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});el.classList.add('on');}
 
-/* ── CS KG (IIFE로 변수 격리) ── */
-(function() {
 
 var KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
 var KGL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
@@ -994,20 +978,20 @@ var KG_DEFAULT_TOP3=[
 ];
 var KG_DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
 
-function nodeR(d){const b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
+function nodeR(d){var b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
 
-let svgNodeSel, svgLinkSel, currentNode=null;
+var svgNodeSel, svgLinkSel, currentNode=null;
 
 function initKGGraph(){
-  const svg=d3.select('#kg-svg');
-  const area=document.querySelector('.graph-area');
-  const w=area.clientWidth, h=area.clientHeight;
+  var svg=d3.select('#kg-svg');
+  var area=document.querySelector('.graph-area');
+  var w=area.clientWidth, h=area.clientHeight;
   svg.attr('viewBox',`0 0 ${w} ${h}`);
-  const g=svg.append('g');
+  var g=svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
-  const nodes=NODES.map(d=>({...d}));
-  const edges=EDGES.map(d=>({...d}));
-  const sim=d3.forceSimulation(nodes)
+  var nodes=KG_NODES.map(d=>({...d}));
+  var edges=KG_EDGES.map(d=>({...d}));
+  var sim=d3.forceSimulation(nodes)
     .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
     .force('charge',d3.forceManyBody().strength(-230))
     .force('center',d3.forceCenter(w/2,h/2))
@@ -1038,8 +1022,8 @@ function initKGGraph(){
 }
 
 function showTip(e,d){
-  const tt=document.getElementById('kg-tt');
-  const area=document.querySelector('.graph-area').getBoundingClientRect();
+  var tt=document.getElementById('kg-tt');
+  var area=document.querySelector('.graph-area').getBoundingClientRect();
   tt.innerHTML=`<div class="tn" style="color:${KGC[d.group]}">${d.label}</div><div class="ts">${KGL[d.group]} · ${d.count}건 (${Math.round(d.count/1000*100)}%)</div><div class="ts" style="color:#bbb;margin-top:2px">클릭해서 상세 분석</div>`;
   tt.style.left=(e.clientX-area.left+14)+'px';
   tt.style.top=(e.clientY-area.top-10)+'px';
@@ -1074,9 +1058,9 @@ function closeInsight(){
 // ── 오른쪽 패널 ──
 function renderDefaultInsight(){
   document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
-  let html='';
-  DEFAULT_TOP3.forEach((item,i)=>{
-    const w=Math.round(item.pct/40*100);
+  var html='';
+  KG_DEFAULT_TOP3.forEach((item,i)=>{
+    var w=Math.round(item.pct/40*100);
     html+=`<div class="top-item" onclick="clickTop('${item.id}')">
       <div style="display:flex;align-items:center">
         <span class="top-rank">${i+1}.</span>
@@ -1087,20 +1071,20 @@ function renderDefaultInsight(){
       <div class="top-bar"><div class="top-bar-fill" style="background:${item.color};width:${w}%"></div></div>
     </div>`;
   });
-  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${DEFAULT_ANALYSIS}</div></div>`;
+  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${KG_DEFAULT_ANALYSIS}</div></div>`;
   document.getElementById('ip-body').innerHTML=html;
 }
 
 function renderNodeInsight(d){
-  const det=NODE_DET[d.id];
-  const col=KGC[d.group];
-  const pct=Math.round(d.count/1000*100);
+  var det=KG_NODE_DET[d.id];
+  var col=KGC[d.group];
+  var pct=Math.round(d.count/1000*100);
   document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
-  let html='';
+  var html='';
   if(det && det.top3){
     det.top3.forEach((item,i)=>{
-      const bColor=item.badges[0]==='Intent'?KGC.intent:item.badges[0]==='Product'?KGC.product:item.badges[0]==='Event'?KGC.event:item.badges[0]==='Resolution'?KGC.resolution:KGC.sentiment;
-      const w=Math.round(item.pct/100*100);
+      var bColor=item.badges[0]==='Intent'?KGC.intent:item.badges[0]==='Product'?KGC.product:item.badges[0]==='Event'?KGC.event:item.badges[0]==='Resolution'?KGC.resolution:KGC.sentiment;
+      var w=Math.round(item.pct/100*100);
       html+=`<div class="top-item">
         <div style="display:flex;align-items:center">
           <span class="top-rank">${i+1}.</span>
@@ -1119,32 +1103,32 @@ function renderNodeInsight(d){
 }
 
 function clickTop(nodeId){
-  const node=NODES.find(n=>n.id===nodeId);
+  var node=KG_NODES.find(n=>n.id===nodeId);
   if(node) onNodeClick(node);
 }
 
 // ── 하단 상세 패널 ──
 function renderDetailPanel(d){
-  const det=NODE_DET[d.id];
-  const col=KGC[d.group];
-  const dp=document.getElementById('detail-panel');
+  var det=KG_NODE_DET[d.id];
+  var col=KGC[d.group];
+  var dp=document.getElementById('detail-panel');
   dp.classList.add('open');
   document.getElementById('dp-node-name').textContent=d.label;
   document.getElementById('dp-node-name').style.color=col;
-  const badge=document.getElementById('dp-group-badge');
+  var badge=document.getElementById('dp-group-badge');
   badge.textContent=KGL[d.group];
   badge.style.background=col+'20';
   badge.style.color=col;
   document.getElementById('dp-total').textContent=`총 ${d.count}건`;
   if(!det){document.getElementById('dp-cols').innerHTML='';document.getElementById('dp-filter-section').innerHTML='';return;}
   // 4컬럼
-  const cols=[
+  var cols=[
     {title:'Sentiment',badge:'지표',color:'#BA7517',data:det.sentiment||{}},
     {title:'Event',badge:'이슈',color:'#D85A30',data:det.event||{}},
     {title:'Resolution',badge:'지표',color:'#7F77DD',data:det.resolution||{}},
     {title:'Language',badge:'지표',color:'#D4537E',data:det.lang||{}},
   ];
-  let colsHtml='';
+  var colsHtml='';
   cols.forEach(c=>{
     colsHtml+=`<div class="dp-col"><div class="dp-col-title"><div class="legend-dot" style="background:${c.color}"></div>${c.title} <span class="dp-col-badge" style="background:${c.color}20;color:${c.color}">${c.badge}</span></div>`;
     Object.entries(c.data).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
@@ -1158,25 +1142,25 @@ function renderDetailPanel(d){
 }
 
 function renderFilterSection(d, det, selectedSent, col){
-  const sents=det.sents||{};
-  const sentKeys=Object.keys(sents);
+  var sents=det.sents||{};
+  var sentKeys=Object.keys(sents);
   if(sentKeys.length===0){document.getElementById('dp-filter-section').innerHTML='';return;}
   // 버튼
-  let btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
+  var btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
   sentKeys.forEach(s=>{
     btnHtml+=`<div class="sfbtn${s===selectedSent?' active':''}" onclick="filterSent(this,'${d.id}','${s}','${col}')">${s}</div>`;
   });
   btnHtml+='</div></div>';
   // 선택된 Sentiment 데이터
-  const sd=sents[selectedSent]||{};
-  let comboHtml='';
-  const cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
+  var sd=sents[selectedSent]||{};
+  var comboHtml='';
+  var cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
   Object.entries(sd).forEach(([key,val])=>{
-    const maxV=Math.max(...Object.values(val));
-    const barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${sentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
+    var maxV=Math.max(...Object.values(val));
+    var barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
+    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
     Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
-      const w=Math.round(v/maxV*100);
+      var w=Math.round(v/maxV*100);
       comboHtml+=`<div class="filter-bar-row">
         <div class="filter-bar-label">${k}</div>
         <div class="filter-bar-wrap"><div class="filter-bar-fill" style="background:${barCol};width:${w}%">${w>20?v+'건':''}</div></div>
@@ -1191,8 +1175,8 @@ function renderFilterSection(d, det, selectedSent, col){
 function filterSent(el, nodeId, sent, col){
   document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  const d=NODES.find(n=>n.id===nodeId);
-  const det=NODE_DET[nodeId];
+  var d=KG_NODES.find(n=>n.id===nodeId);
+  var det=KG_NODE_DET[nodeId];
   if(d && det) renderFilterSection(d, det, sent, col);
 }
 
@@ -1209,17 +1193,6 @@ function lgFilter(group,el){
 
 window.addEventListener('load',initGraph);
 
-window.initKGGraph = initKGGraph;
-window.renderDefaultInsight = renderDefaultInsight;
-window.renderNodeInsight = renderNodeInsight;
-window.clickTop = clickTop;
-window.onNodeClick = onNodeClick;
-window.closeDp = closeDp;
-window.lgFilter = lgFilter;
-})();
-
-/* ── 챗봇 분석 + KG (IIFE로 변수 격리) ── */
-(function() {
 
 function switchMain(id, el) {
   if(el.classList.contains('disabled')) return;
@@ -1265,7 +1238,7 @@ function swEx(id,el){
 
 
 // 전체 데이터
-const NODES=[
+var NODES=[
   {id:"product:계정시스템",label:"계정시스템",group:"product",count:376},
   {id:"product:제재시스템",label:"제재시스템",group:"product",count:202},
   {id:"product:인게임시스템",label:"인게임시스템",group:"product",count:100},
@@ -1298,7 +1271,7 @@ const NODES=[
   {id:"resolution:bot_1회해결",label:"챗봇해결",group:"resolution",count:262},
   {id:"resolution:중도포기",label:"중도포기",group:"resolution",count:130},
 ];
-const EDGES=[
+var EDGES=[
   {source:"product:계정시스템",target:"resolution:상담원처리",weight:203},
   {source:"intent:계정 복구 요청",target:"resolution:상담원처리",weight:176},
   {source:"intent:계정 복구 요청",target:"sentiment:불만",weight:174},
@@ -1332,59 +1305,22 @@ const EDGES=[
 
 
 // 기본 Top 3 (전체 기준)
-const DEFAULT_TOP3=[
+var DEFAULT_TOP3=[
   {id:"product:계정시스템",name:"계정시스템",badges:["Product"],pct:37.6,color:'#378ADD'},
   {id:"product:제재시스템",name:"제재시스템",badges:["Product"],pct:20.2,color:'#378ADD'},
   {id:"intent:계정 복구 요청",name:"계정 복구 요청",badges:["Intent"],pct:23.7,color:'#1D9E75'},
 ];
-const DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
+var DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
 
-function nodeR(d){const b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
+function nodeR(d){var b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
 
-let svgNodeSel, svgLinkSel, currentNode=null;
+var svgNodeSel, svgLinkSel, currentNode=null;
 
-function initKGGraph(){
-  const svg=d3.select('#kg-svg');
-  const area=document.querySelector('.graph-area');
-  const w=area.clientWidth, h=area.clientHeight;
-  svg.attr('viewBox',`0 0 ${w} ${h}`);
-  const g=svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
-  const nodes=NODES.map(d=>({...d}));
-  const edges=EDGES.map(d=>({...d}));
-  const sim=d3.forceSimulation(nodes)
-    .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
-    .force('charge',d3.forceManyBody().strength(-230))
-    .force('center',d3.forceCenter(w/2,h/2))
-    .force('collision',d3.forceCollide().radius(d=>nodeR(d)+10));
-  svgLinkSel=g.append('g').selectAll('line').data(edges).enter().append('line')
-    .attr('stroke','#ddd').attr('stroke-width',d=>Math.max(.8,Math.min(d.weight/60,5))).attr('stroke-opacity',.8);
-  svgNodeSel=g.append('g').selectAll('g').data(nodes).enter().append('g').attr('cursor','pointer')
-    .call(d3.drag()
-      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
-      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
-      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
-    .on('click',(e,d)=>{e.stopPropagation();onNodeClick(d);})
-    .on('mouseover',(e,d)=>showTip(e,d))
-    .on('mouseout',()=>{document.getElementById('kg-tt').style.opacity=0;});
-  svgNodeSel.append('circle').attr('r',d=>nodeR(d))
-    .attr('fill',d=>KGC[d.group]).attr('fill-opacity',.9)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('class','nc');
-  svgNodeSel.append('text').text(d=>d.label.length>9?d.label.slice(0,8)+'…':d.label)
-    .attr('dy','0.35em').attr('text-anchor','middle')
-    .attr('font-size',d=>nodeR(d)>20?'11px':nodeR(d)>14?'10px':'9px')
-    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
-  sim.on('tick',()=>{
-    svgLinkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-    svgNodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
-  });
-  svg.on('click',()=>{resetHighlight();closeInsight();});
-  renderDefaultInsight();
-}
+
 
 function showTip(e,d){
-  const tt=document.getElementById('kg-tt');
-  const area=document.querySelector('.graph-area').getBoundingClientRect();
+  var tt=document.getElementById('kg-tt');
+  var area=document.querySelector('.graph-area').getBoundingClientRect();
   tt.innerHTML=`<div class="tn" style="color:${KGC[d.group]}">${d.label}</div><div class="ts">${KGL[d.group]} · ${d.count}건 (${Math.round(d.count/1000*100)}%)</div><div class="ts" style="color:#bbb;margin-top:2px">클릭해서 상세 분석</div>`;
   tt.style.left=(e.clientX-area.left+14)+'px';
   tt.style.top=(e.clientY-area.top-10)+'px';
@@ -1419,9 +1355,9 @@ function closeInsight(){
 // ── 오른쪽 패널 ──
 function renderDefaultInsight(){
   document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
-  let html='';
+  var html='';
   DEFAULT_TOP3.forEach((item,i)=>{
-    const w=Math.round(item.pct/40*100);
+    var w=Math.round(item.pct/40*100);
     html+=`<div class="top-item" onclick="clickTop('${item.id}')">
       <div style="display:flex;align-items:center">
         <span class="top-rank">${i+1}.</span>
@@ -1437,15 +1373,15 @@ function renderDefaultInsight(){
 }
 
 function renderNodeInsight(d){
-  const det=KG_NODE_DET[d.id];
-  const col=KGC[d.group];
-  const pct=Math.round(d.count/1000*100);
+  var det=KG_NODE_DET[d.id];
+  var col=KGC[d.group];
+  var pct=Math.round(d.count/1000*100);
   document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
-  let html='';
+  var html='';
   if(det && det.top3){
     det.top3.forEach((item,i)=>{
-      const bColor=item.badges[0]==='Intent'?KGC.intent:item.badges[0]==='Product'?KGC.product:item.badges[0]==='Event'?KGC.event:item.badges[0]==='Resolution'?KGC.resolution:KGC.sentiment;
-      const w=Math.round(item.pct/100*100);
+      var bColor=item.badges[0]==='Intent'?KGC.intent:item.badges[0]==='Product'?KGC.product:item.badges[0]==='Event'?KGC.event:item.badges[0]==='Resolution'?KGC.resolution:KGC.sentiment;
+      var w=Math.round(item.pct/100*100);
       html+=`<div class="top-item">
         <div style="display:flex;align-items:center">
           <span class="top-rank">${i+1}.</span>
@@ -1464,32 +1400,32 @@ function renderNodeInsight(d){
 }
 
 function clickTop(nodeId){
-  const node=NODES.find(n=>n.id===nodeId);
+  var node=NODES.find(n=>n.id===nodeId);
   if(node) onNodeClick(node);
 }
 
 // ── 하단 상세 패널 ──
 function renderDetailPanel(d){
-  const det=KG_NODE_DET[d.id];
-  const col=KGC[d.group];
-  const dp=document.getElementById('detail-panel');
+  var det=KG_NODE_DET[d.id];
+  var col=KGC[d.group];
+  var dp=document.getElementById('detail-panel');
   dp.classList.add('open');
   document.getElementById('dp-node-name').textContent=d.label;
   document.getElementById('dp-node-name').style.color=col;
-  const badge=document.getElementById('dp-group-badge');
+  var badge=document.getElementById('dp-group-badge');
   badge.textContent=KGL[d.group];
   badge.style.background=col+'20';
   badge.style.color=col;
   document.getElementById('dp-total').textContent=`총 ${d.count}건`;
   if(!det){document.getElementById('dp-cols').innerHTML='';document.getElementById('dp-filter-section').innerHTML='';return;}
   // 4컬럼
-  const cols=[
+  var cols=[
     {title:'Sentiment',badge:'지표',color:'#BA7517',data:det.sentiment||{}},
     {title:'Event',badge:'이슈',color:'#D85A30',data:det.event||{}},
     {title:'Resolution',badge:'지표',color:'#7F77DD',data:det.resolution||{}},
     {title:'Language',badge:'지표',color:'#D4537E',data:det.lang||{}},
   ];
-  let colsHtml='';
+  var colsHtml='';
   cols.forEach(c=>{
     colsHtml+=`<div class="dp-col"><div class="dp-col-title"><div class="legend-dot" style="background:${c.color}"></div>${c.title} <span class="dp-col-badge" style="background:${c.color}20;color:${c.color}">${c.badge}</span></div>`;
     Object.entries(c.data).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
@@ -1503,25 +1439,25 @@ function renderDetailPanel(d){
 }
 
 function renderFilterSection(d, det, selectedSent, col){
-  const sents=det.sents||{};
-  const sentKeys=Object.keys(sents);
+  var sents=det.sents||{};
+  var sentKeys=Object.keys(sents);
   if(sentKeys.length===0){document.getElementById('dp-filter-section').innerHTML='';return;}
   // 버튼
-  let btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
+  var btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
   sentKeys.forEach(s=>{
     btnHtml+=`<div class="sfbtn${s===selectedSent?' active':''}" onclick="filterSent(this,'${d.id}','${s}','${col}')">${s}</div>`;
   });
   btnHtml+='</div></div>';
   // 선택된 Sentiment 데이터
-  const sd=sents[selectedSent]||{};
-  let comboHtml='';
-  const cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
+  var sd=sents[selectedSent]||{};
+  var comboHtml='';
+  var cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
   Object.entries(sd).forEach(([key,val])=>{
-    const maxV=Math.max(...Object.values(val));
-    const barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
+    var maxV=Math.max(...Object.values(val));
+    var barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
     comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
     Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
-      const w=Math.round(v/maxV*100);
+      var w=Math.round(v/maxV*100);
       comboHtml+=`<div class="filter-bar-row">
         <div class="filter-bar-label">${k}</div>
         <div class="filter-bar-wrap"><div class="filter-bar-fill" style="background:${barCol};width:${w}%">${w>20?v+'건':''}</div></div>
@@ -1536,8 +1472,8 @@ function renderFilterSection(d, det, selectedSent, col){
 function filterSent(el, nodeId, sent, col){
   document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  const d=NODES.find(n=>n.id===nodeId);
-  const det=KG_NODE_DET[nodeId];
+  var d=NODES.find(n=>n.id===nodeId);
+  var det=KG_NODE_DET[nodeId];
   if(d && det) renderFilterSection(d, det, sent, col);
 }
 
@@ -1573,10 +1509,10 @@ function swCF(id, el) {
 }
 
 // ── 챗봇 KG 데이터 ──
-const CF_GC = {transfer:'#D85A30', problem:'#7F77DD', resolution:'#378ADD', lang:'#1D9E75'};
-const CF_GL = {transfer:'전환원인', problem:'챗봇문제점', resolution:'해결유형', lang:'언어'};
+var CF_GC = {transfer:'#D85A30', problem:'#7F77DD', resolution:'#378ADD', lang:'#1D9E75'};
+var CF_GL = {transfer:'전환원인', problem:'챗봇문제점', resolution:'해결유형', lang:'언어'};
 
-const CF_NODES = [
+var CF_NODES = [
   {id:'t:complex_case',label:'복잡한 케이스',group:'transfer',count:238},
   {id:'t:language_barrier',label:'언어 장벽',group:'transfer',count:406},
   {id:'t:info_collection_only',label:'정보수집만',group:'transfer',count:183},
@@ -1599,7 +1535,7 @@ const CF_NODES = [
   {id:'l:EN',label:'EN 영어',group:'lang',count:1000},
 ];
 
-const CF_EDGES = [
+var CF_EDGES = [
   {source:'t:language_barrier',target:'r:agent',weight:400},
   {source:'p:language_mismatch',target:'t:language_barrier',weight:413},
   {source:'p:language_mismatch',target:'l:EN',weight:550},
@@ -1625,7 +1561,7 @@ const CF_EDGES = [
   {source:'t:category_not_found',target:'l:EN',weight:123},
 ];
 
-const CF_NODE_DET = {
+var CF_NODE_DET = {
   't:language_barrier': {
     top3:[{name:'EN 상담원처리',pct:80},{name:'언어 불일치',pct:82},{name:'영어 지원 챗봇 구축',pct:null}],
     analysis:'EN 상담원 전환의 80%(400건)가 언어 장벽. "Sorry, Korean only" 응답 후 상담원 전환. 영어 지원 챗봇 구축이 단일 최대 임팩트 개선 포인트.',
@@ -1695,24 +1631,24 @@ const CF_NODE_DET = {
 };
 
 function cfNodeR(d) {
-  const b = {transfer:12, problem:12, resolution:18, lang:16};
+  var b = {transfer:12, problem:12, resolution:18, lang:16};
   return Math.max(9, Math.min((b[d.group]||12)*Math.sqrt(d.count/150), 36));
 }
 
-let cfSvgNode, cfSvgLink;
+var cfSvgNode, cfSvgLink;
 
 function initCFGraph() {
-  const svg = d3.select('#cf-kg-svg');
-  const area = document.querySelector('#t4 .graph-canvas') || document.querySelector('#cf-kg-svg').parentElement;
-  const w = area.clientWidth || 700, h = area.clientHeight || 500;
+  var svg = d3.select('#cf-kg-svg');
+  var area = document.querySelector('#t4 .graph-canvas') || document.querySelector('#cf-kg-svg').parentElement;
+  var w = area.clientWidth || 700, h = area.clientHeight || 500;
   svg.attr('viewBox', `0 0 ${w} ${h}`);
-  const g = svg.append('g');
+  var g = svg.append('g');
   svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom', e => g.attr('transform', e.transform)));
 
-  const nodes = CF_NODES.map(d=>({...d}));
-  const edges = CF_EDGES.map(d=>({...d}));
+  var nodes = CF_NODES.map(d=>({...d}));
+  var edges = CF_EDGES.map(d=>({...d}));
 
-  const sim = d3.forceSimulation(nodes)
+  var sim = d3.forceSimulation(nodes)
     .force('link', d3.forceLink(edges).id(d=>d.id).distance(d=>160-Math.min(d.weight/6,80)).strength(d=>Math.min(d.weight/300,.7)))
     .force('charge', d3.forceManyBody().strength(-250))
     .force('center', d3.forceCenter(w/2, h/2))
@@ -1752,8 +1688,8 @@ function initCFGraph() {
 }
 
 function showCfTip(e,d) {
-  const tt = document.getElementById('cf-kg-tt');
-  const area = document.getElementById('cf-kg-svg').parentElement.getBoundingClientRect();
+  var tt = document.getElementById('cf-kg-tt');
+  var area = document.getElementById('cf-kg-svg').parentElement.getBoundingClientRect();
   tt.innerHTML = `<div style="font-weight:700;font-size:13px;color:${CF_GC[d.group]};margin-bottom:3px">${d.label}</div><div style="color:#888;font-size:11px">${CF_GL[d.group]} · ${d.count}건</div>`;
   tt.style.left = (e.clientX-area.left+14)+'px';
   tt.style.top = (e.clientY-area.top-10)+'px';
@@ -1773,12 +1709,12 @@ function cfNodeClick(d) {
 
 function renderCfDefaultInsight() {
   document.getElementById('cf-ip-sub').textContent = '전체 2,000건 기준';
-  const top3 = [
+  var top3 = [
     {name:'언어 장벽',color:'#D85A30',pct:80,badge:'전환원인'},
     {name:'대기 타임아웃',color:'#D85A30',pct:40,badge:'전환원인'},
     {name:'대안 없음',color:'#7F77DD',pct:27,badge:'챗봇문제점'},
   ];
-  let html = '';
+  var html = '';
   top3.forEach((item,i)=>{
     html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background='#fff'">
       <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${item.color}">${item.name}</span><span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span></div>
@@ -1794,10 +1730,10 @@ function renderCfDefaultInsight() {
 }
 
 function renderCfNodeInsight(d) {
-  const det = CF_NODE_DET[d.id];
-  const col = CF_GC[d.group];
+  var det = CF_NODE_DET[d.id];
+  var col = CF_GC[d.group];
   document.getElementById('cf-ip-sub').textContent = `${d.label} · ${d.count}건`;
-  let html = '';
+  var html = '';
   if(det) {
     det.top3.forEach((item,i)=>{
       html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px">
@@ -1816,22 +1752,22 @@ function renderCfNodeInsight(d) {
 }
 
 function renderCfDetailPanel(d) {
-  const det = CF_NODE_DET[d.id];
-  const dp = document.getElementById('cf-dp');
+  var det = CF_NODE_DET[d.id];
+  var dp = document.getElementById('cf-dp');
   dp.style.height = '220px';
-  const col = CF_GC[d.group];
+  var col = CF_GC[d.group];
   if(!det) {dp.style.height='0';return;}
 
-  const resColors = {상담원처리:'#378ADD',중도포기:'#BA7517'};
-  let left = `<div style="width:200px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
+  var resColors = {상담원처리:'#378ADD',중도포기:'#BA7517'};
+  var left = `<div style="width:200px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
     <div style="font-size:15px;font-weight:700;color:${col};margin-bottom:3px">${d.label}</div>
     <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;background:${col}20;color:${col};display:inline-block;margin-bottom:8px">${CF_GL[d.group]}</span>
     <div style="font-size:12px;color:#666;margin-bottom:10px">총 ${d.count}건</div>`;
 
-  const res = det.res||{};
-  const maxR = Math.max(...Object.values(res),1);
+  var res = det.res||{};
+  var maxR = Math.max(...Object.values(res),1);
   Object.entries(res).forEach(([k,v])=>{
-    const w = Math.round(v/maxR*100);
+    var w = Math.round(v/maxR*100);
     left+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
       <div style="font-size:11px;color:#888;min-width:60px">${k}</div>
       <div style="flex:1;background:#f0f0ee;border-radius:2px;height:5px"><div style="background:${resColors[k]||'#888'};height:5px;border-radius:2px;width:${w}%"></div></div>
@@ -1841,8 +1777,8 @@ function renderCfDetailPanel(d) {
   left += '</div>';
 
   // 언어 분포 컬럼
-  const sent = det.sent||{};
-  let cols = `<div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr)">
+  var sent = det.sent||{};
+  var cols = `<div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr)">
     <div style="padding:12px 14px;border-right:1px solid #e8e8e6;overflow-y:auto">
       <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">언어/그룹별 분포</div>`;
   Object.entries(sent).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
@@ -1859,7 +1795,7 @@ function renderCfDetailPanel(d) {
   cols += '</div></div>';
 
   // 종합분석
-  let analysis = `<div style="width:240px;padding:14px 16px;background:#f8f8f6;border-left:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
+  var analysis = `<div style="width:240px;padding:14px 16px;background:#f8f8f6;border-left:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
     <div style="font-size:12px;font-weight:700;margin-bottom:8px">⚡ 종합 분석</div>
     <div style="font-size:12px;color:#444;line-height:1.7">${det.analysis}</div>
   </div>`;
@@ -1886,12 +1822,6 @@ function cfKgFilter(group, el) {
 /* t4 KG init merged into switchMain */
 
 
-window.initCFGraph = initCFGraph;
-window.swCF = swCF;
-window.closeCfDp = closeCfDp;
-window.cfKgFilter = cfKgFilter;
-window.filterSent = filterSent;
-})();
 </script>
 </body>
 </html>
