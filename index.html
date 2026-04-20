@@ -8,8 +8,8 @@
 <style>
 html, body { height: 100%; margin: 0; padding: 0; }
 #p0, #p1, #p2, #p3 { box-sizing: border-box; }
-#p1 { height: calc(100vh - 51px); overflow: hidden; }
-#p3 { height: calc(100vh - 51px); overflow: hidden; }
+#p1 { height: calc(100vh - 51px); display: flex; flex-direction: column; overflow: hidden; }
+#p3 { height: calc(100vh - 51px); display: flex; flex-direction: column; overflow: hidden; }
 
 
 /* ── 탭1 스타일 ── */
@@ -99,7 +99,7 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 /* ══════════════════════════
    탭2: CS Knowledge Graph
 ═══════════════════════════ */
-.kg-wrap{display:flex;height:100%;flex-direction:column}
+.kg-wrap{display:flex;flex:1;flex-direction:column;min-height:0}
 .kg-main{flex:1;display:flex;min-height:0}
 .kg-legend{width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto}
 .kg-legend h3{font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
@@ -158,13 +158,13 @@ h3{font-size:14px;font-weight:600;margin-bottom:8px}
 *{box-sizing:border-box;margin:0;padding:0}
 /* body height removed */
 /* ── 상단 헤더 ── */
-#t2 .header{background:#fff;border-bottom:1px solid #e8e8e6;padding:10px 20px;display:flex;align-items:center;gap:12px;height:46px;flex-shrink:0}
+.kg-header{background:#fff;border-bottom:1px solid #e8e8e6;padding:10px 20px;display:flex;align-items:center;gap:12px;height:46px;flex-shrink:0;width:100%}
 .header h1{font-size:15px;font-weight:700;color:#1a1a1a}
 .header .sub{font-size:11px;color:#999}
 .header .badges{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hbadge{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600}
 /* ── 메인 레이아웃 ── */
-#t2 .main{display:flex;height:calc(100vh - 51px)}
+#p1 .main{display:flex;flex:1;min-height:0}
 /* ── 왼쪽: 그래프 ── */
 .graph-area{flex:1;position:relative;overflow:hidden;background:#fafaf8;border-right:1px solid #e8e8e6}
 #kg-svg{width:100%;height:100%}
@@ -468,7 +468,7 @@ PUBG Mobile Support</div>
   * Claude API (claude-sonnet-4-20250514) 기반 · 샘플 1,000건 · 생성일: 2026-04-20
 </div>
 </div></div>
-<div id="p1" style="display:none"><div class="header">
+<div id="p1" style="display:none"><div class="kg-header">
   <h1>⚡ CS Knowledge Graph</h1>
   <div class="sub">PUBG Mobile · 온톨로지 분석 1,000건 · 2026-04-20</div>
   <div class="badges">
