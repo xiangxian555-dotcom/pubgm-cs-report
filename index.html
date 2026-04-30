@@ -7,129 +7,169 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f8f8f6;color:#1a1a1a;font-size:14px}
-.nav{background:#fff;border-bottom:1px solid #e8e8e6;position:sticky;top:0;z-index:200;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.nav-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:0;height:52px}
-.nav-logo{font-size:14px;font-weight:700;padding-right:16px;border-right:1px solid #e8e8e6;margin-right:8px;white-space:nowrap;line-height:1.3}
-.nav-logo span{font-size:10px;font-weight:400;color:#999;display:block}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#222;--bg4:#2a2a2a;
+  --border:#333;--border2:#444;
+  --text:#e8e8e6;--text2:#aaa;--text3:#666;
+  --accent:#4f8ef7;
+  --green:#1D9E75;--red:#D85A30;--amber:#BA7517;--purple:#7F77DD;--blue:#378ADD;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+/* ── NAV ── */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.nav-inner{max-width:1500px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:0;height:50px}
+.nav-logo{font-size:13px;font-weight:700;color:var(--text);padding-right:16px;border-right:1px solid var(--border);margin-right:8px;white-space:nowrap;line-height:1.3}
+.nav-logo span{font-size:10px;font-weight:400;color:var(--text3);display:block}
 .nav-tabs{display:flex;flex:1}
-.nav-tab{padding:0 16px;height:52px;font-size:12px;font-weight:500;color:#888;cursor:pointer;border-bottom:3px solid transparent;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
-.nav-tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
-.nav-tab:hover{color:#1a1a1a}
-.nav-badge{font-size:10px;background:#f0f0ee;color:#888;padding:2px 6px;border-radius:10px}
-.nav-tab.on .nav-badge{background:#1a1a1a;color:#fff}
+.nav-tab{padding:0 14px;height:50px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
+.nav-tab.on{color:var(--text);border-bottom-color:var(--accent)}
+.nav-tab:hover{color:var(--text)}
+.nav-badge{font-size:10px;background:var(--bg4);color:var(--text3);padding:2px 6px;border-radius:8px}
+.nav-tab.on .nav-badge{background:var(--accent);color:#fff}
 .nav-right{display:flex;align-items:center;gap:6px;padding-left:12px}
-.nav-right label{font-size:11px;color:#888;white-space:nowrap}
-.nav-right input[type=date]{font-size:11px;padding:4px 7px;border:1px solid #ddd;border-radius:5px;color:#1a1a1a;background:#fafaf8;outline:none;cursor:pointer}
-.nav-right input[type=date]:focus{border-color:#1a1a1a}
-.btn-load{padding:5px 14px;font-size:12px;font-weight:700;background:#1a1a1a;color:#fff;border:none;border-radius:5px;cursor:pointer;white-space:nowrap;transition:background .15s}
-.btn-load:hover{background:#333}
-.btn-load:disabled{background:#bbb;cursor:not-allowed}
+.nav-right label{font-size:11px;color:var(--text3);white-space:nowrap}
+.nav-right input[type=date]{font-size:11px;padding:4px 8px;border:1px solid var(--border2);border-radius:5px;color:var(--text);background:var(--bg3);outline:none;cursor:pointer;color-scheme:dark}
+.btn-load{padding:5px 14px;font-size:12px;font-weight:700;background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;transition:opacity .15s}
+.btn-load:hover{opacity:.85}
+.btn-load:disabled{background:var(--border2);cursor:not-allowed}
 #load-status{font-size:11px;white-space:nowrap}
 
 /* ── 탭 패널 ── */
-.tab-panel{display:none;max-width:1400px;margin:0 auto;padding:24px 20px}
+.tab-panel{display:none;max-width:1500px;margin:0 auto;padding:20px}
 .tab-panel.on{display:block}
 
 /* ── KPI ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
-.kpi-card{background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:14px 16px}
-.kpi-label{font-size:10px;color:#888;margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
-.kpi-val{font-size:24px;font-weight:700;margin-bottom:3px}
-.kpi-sub{font-size:11px;color:#aaa}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.kpi-card{background:var(--bg2);border-radius:8px;border:1px solid var(--border);padding:14px 16px}
+.kpi-label{font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.kpi-val{font-size:22px;font-weight:700;margin-bottom:2px}
+.kpi-sub{font-size:11px;color:var(--text3)}
 
 /* ── 서브탭 ── */
-.sub-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
-.sub-tab{padding:7px 14px;font-size:12px;font-weight:500;border:1px solid #e8e8e6;border-radius:20px;cursor:pointer;background:#fff;color:#666;transition:all .15s}
-.sub-tab.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.sub-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.sub-tab{padding:6px 14px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:20px;cursor:pointer;background:var(--bg2);color:var(--text2);transition:all .15s}
+.sub-tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sub-tab:hover{border-color:var(--border2);color:var(--text)}
 
 /* ── 섹션 카드 ── */
-.section-card{background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:18px 20px;margin-bottom:16px}
-.section-title{font-size:13px;font-weight:700;margin-bottom:14px;color:#1a1a1a}
-.section-sub{font-size:11px;color:#aaa;font-weight:400;margin-left:6px}
+.section-card{background:var(--bg2);border-radius:8px;border:1px solid var(--border);padding:16px 18px;margin-bottom:14px}
+.section-title{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.section-sub{font-size:11px;color:var(--text3);font-weight:400;margin-left:6px}
 
 /* ── 바 차트 ── */
-.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.bar-label{font-size:12px;color:#444;min-width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar-wrap{flex:1;background:#f0f0ee;border-radius:3px;height:18px;overflow:hidden}
-.bar-fill{height:18px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;min-width:22px;transition:width .5s ease}
-.bar-cnt{font-size:11px;color:#888;min-width:60px;text-align:right;flex-shrink:0}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bar-label{font-size:12px;color:var(--text2);min-width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-wrap{flex:1;background:var(--bg4);border-radius:3px;height:16px;overflow:hidden}
+.bar-fill{height:16px;border-radius:3px;display:flex;align-items:center;padding-left:5px;font-size:10px;color:#fff;font-weight:600;min-width:20px;transition:width .5s}
+.bar-cnt{font-size:11px;color:var(--text3);min-width:60px;text-align:right;flex-shrink:0}
 
-/* ── 그리드 레이아웃 ── */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+/* ── 그리드 ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
 /* ── 언어 탭 ── */
-.lang-tabs{display:flex;gap:4px;margin-bottom:14px}
-.lang-tab{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid #e8e8e6;border-radius:6px;cursor:pointer;background:#f8f8f6;color:#666}
-.lang-tab.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.lang-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.lang-tab{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--text2)}
+.lang-tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-/* ── Resolution 배지 ── */
-.res-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px}
-.res-agent{background:#EBF4FF;color:#185FA5}
-.res-bot{background:#E8F8F1;color:#0f6e56}
-.res-drop{background:#FEF3E2;color:#854F0B}
-
-/* ── 매트릭스 테이블 ── */
+/* ── 매트릭스 ── */
 .matrix-table{width:100%;border-collapse:collapse;font-size:12px}
-.matrix-table th{padding:8px 10px;text-align:left;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-weight:600;color:#555;white-space:nowrap}
-.matrix-table td{padding:8px 10px;border-bottom:1px solid #f0f0ee;color:#444;vertical-align:middle}
-.matrix-table tr:hover td{background:#fafaf8}
-.badge-priority{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
-.bp-now{background:#FAECE7;color:#993C1D}
-.bp-mon{background:#FAEEDA;color:#854F0B}
-.bp-auto{background:#E1F5EE;color:#0F6E56}
+.matrix-table th{padding:8px 10px;text-align:left;background:var(--bg3);border-bottom:1px solid var(--border2);font-weight:600;color:var(--text2);white-space:nowrap}
+.matrix-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.matrix-table tr:hover td{background:var(--bg3)}
+.bp-now{background:#3D1510;color:#F09575;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;display:inline-block}
+.bp-mon{background:#2D2000;color:#EF9F27;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;display:inline-block}
+.bp-auto{background:#0D2D1E;color:#5DCAA5;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap;display:inline-block}
 .pct-high{color:#D85A30;font-weight:700}
 .pct-mid{color:#BA7517;font-weight:600}
 .pct-low{color:#1D9E75;font-weight:600}
 
 /* ── 원문 카드 ── */
-.sample-card{background:#f8f8f6;border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:3px solid #e8e8e6}
-.sample-card.auto{border-left-color:#1D9E75}
-.sample-card.manual{border-left-color:#D85A30}
-.sample-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
-.sample-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
-.tag-product{background:#EBF4FF;color:#185FA5}
-.tag-event{background:#FAECE7;color:#993C1D}
-.tag-intent{background:#E8F8F1;color:#0f6e56}
-.sample-text{font-size:12px;color:#333;line-height:1.6;margin-bottom:5px}
-.sample-memo{font-size:11px;color:#888;font-style:italic}
+.sample-card{background:var(--bg3);border-radius:7px;padding:11px 13px;margin-bottom:7px;border-left:3px solid var(--border)}
+.sample-card.auto{border-left-color:var(--green)}
+.sample-card.manual{border-left-color:var(--red)}
+.sample-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.sample-tag{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+.tag-product{background:#0D2040;color:#85B7EB}
+.tag-event{background:#2D1208;color:#F09575}
+.tag-intent{background:#0D2D1E;color:#5DCAA5}
+.sample-text{font-size:12px;color:var(--text);line-height:1.6;margin-bottom:4px}
+.sample-memo{font-size:11px;color:var(--text3);font-style:italic}
 
-/* ── 자동화 시나리오 ── */
-.scenario-card{background:#f8f8f6;border-radius:8px;padding:14px 16px;margin-bottom:10px;border:1px solid #e8e8e6}
-.scenario-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.scenario-label{font-size:13px;font-weight:700;color:#1a1a1a}
-.scenario-cnt{font-size:11px;background:#1D9E7520;color:#0f6e56;padding:2px 8px;border-radius:10px;font-weight:600}
-.scenario-quote{background:#fff;border-radius:6px;padding:8px 12px;font-size:12px;color:#555;margin-bottom:4px;border-left:2px solid #ddd;font-style:italic}
-.scenario-improvement{font-size:12px;color:#185FA5;background:#EBF4FF;border-radius:6px;padding:8px 12px;margin-top:8px}
+/* ── 시나리오 ── */
+.scenario-card{background:var(--bg3);border-radius:7px;padding:13px 15px;margin-bottom:9px;border:1px solid var(--border)}
+.scenario-quote{background:var(--bg4);border-radius:5px;padding:7px 11px;font-size:12px;color:var(--text2);margin-bottom:4px;border-left:2px solid var(--border2);font-style:italic}
+.scenario-improvement{font-size:12px;color:#85B7EB;background:#0D2040;border-radius:5px;padding:8px 11px;margin-top:7px}
 
-/* ── Sentiment 크로스탭 ── */
-.sent-bar{height:28px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:4px}
-.sent-bar-seg{display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;transition:width .5s}
-
-/* ── KG 탭 ── */
-#t2,#t4{height:calc(100vh - 52px);display:flex;flex-direction:column;max-width:none}
+/* ══ KNOWLEDGE GRAPH ══ */
+#t2,#t4{height:calc(100vh - 50px);display:flex;flex-direction:column;max-width:none;padding:0}
 .kg-wrap{flex:1;display:flex;min-height:0}
-.kg-legend{width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto}
-.graph-area{flex:1;position:relative;background:#fafaf8;overflow:hidden}
-.kg-insight{width:280px;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column;flex-shrink:0}
-.kg-dp{background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s;flex-shrink:0;position:relative}
+.kg-legend{width:180px;background:var(--bg2);border-right:1px solid var(--border);padding:14px;flex-shrink:0;overflow-y:auto}
+.graph-area{flex:1;position:relative;background:var(--bg);overflow:hidden}
+.kg-right{width:300px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.kg-right-header{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.kg-right-body{flex:1;overflow-y:auto;padding:12px 14px}
 
-/* ── 로딩 스켈레톤 ── */
-.skeleton{background:linear-gradient(90deg,#f0f0ee 25%,#e8e8e6 50%,#f0f0ee 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;height:14px;margin-bottom:7px}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.loading-placeholder{padding:20px 0}
+/* ── 하단 패널 ── */
+.kg-dp{background:var(--bg2);border-top:1px solid var(--border2);height:0;overflow:hidden;transition:height .3s;flex-shrink:0;position:relative}
+.kg-dp-close{position:absolute;right:14px;top:10px;cursor:pointer;color:var(--text3);font-size:15px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg3);z-index:10}
+.dp-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:0;height:100%}
+.dp-col{border-right:1px solid var(--border);overflow-y:auto;padding:12px}
+.dp-col:last-child{border-right:none}
+.dp-col-title{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.dp-col-badge{font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700}
+.dp-row{display:flex;align-items:center;justify-content:space-between;padding:5px 7px;border-radius:5px;margin-bottom:3px;cursor:pointer;transition:background .1s}
+.dp-row:hover{background:var(--bg3)}
+.dp-row.selected{background:var(--bg4)}
+.dp-row-label{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.dp-row-cnt{font-size:11px;color:var(--text3);flex-shrink:0;margin-left:6px}
+.dp-bar{height:3px;background:var(--border);border-radius:2px;margin-top:2px}
+.dp-bar-fill{height:3px;border-radius:2px}
+
+/* ── Quick Insight 패널 ── */
+.qi-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.qi-sub{font-size:10px;color:var(--text3);margin-bottom:12px}
+.qi-item{background:var(--bg3);border-radius:6px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:background .1s;border:1px solid transparent}
+.qi-item:hover{background:var(--bg4);border-color:var(--border2)}
+.qi-item.expanded{border-color:var(--accent)}
+.qi-item-header{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px}
+.qi-name{font-size:12px;font-weight:600;color:var(--text);flex:1}
+.qi-badge{font-size:9px;padding:2px 5px;border-radius:4px;font-weight:700;background:var(--bg4);color:var(--text3);margin-left:2px}
+.qi-pct{font-size:12px;font-weight:700;color:var(--accent)}
+.qi-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:6px}
+.qi-bar-fill{height:4px;border-radius:2px;background:var(--accent)}
+.qi-analysis{font-size:11px;color:var(--text2);line-height:1.6;display:none;padding-top:4px;border-top:1px solid var(--border)}
+.qi-item.expanded .qi-analysis{display:block}
+.qi-ai-btn{font-size:10px;padding:3px 8px;background:#0D2040;color:#85B7EB;border-radius:4px;cursor:pointer;border:none;font-weight:600;margin-top:4px}
 
 /* ── Sentiment 분포 바 ── */
-.sent-dist-bar{height:24px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:14px}
+.sent-dist-bar{height:22px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:12px}
 
-/* ── 스크롤 ── */
-.scroll-y{overflow-y:auto}
+/* ── 필터 버튼 ── */
+.filter-btn{display:flex;align-items:center;gap:7px;font-size:12px;padding:5px 8px;border-radius:5px;cursor:pointer;transition:background .1s;color:var(--text2)}
+.filter-btn:hover{background:var(--bg3)}
+.filter-btn.on{background:var(--bg3);font-weight:600;color:var(--text)}
+.filter-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── 스켈레톤 ── */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;height:14px;margin-bottom:7px}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.lp{padding:16px 0}
+
+/* ── 스크롤바 ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── 크로스필터 상세 패널 ── */
+.cf-detail{background:var(--bg3);border:1px solid var(--accent);border-radius:6px;padding:12px;margin-top:8px}
+.cf-detail-title{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px}
 </style>
 </head>
 <body>
 
-<!-- ══ 상단 네비 ══ -->
+<!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
     <div class="nav-logo">PUBG Mobile CS 분석<span id="nav-sub">데이터 로딩 중...</span></div>
@@ -142,27 +182,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     <div class="nav-right">
       <label>기간</label>
       <input type="date" id="date-start" value="2026-03-01">
-      <span style="font-size:11px;color:#bbb">~</span>
+      <span style="font-size:11px;color:var(--text3)">~</span>
       <input type="date" id="date-end" value="2026-03-31">
       <button class="btn-load" id="btn-load" onclick="loadData()">불러오기</button>
-      <span id="load-status" style="color:#bbb"></span>
+      <span id="load-status" style="color:var(--text3)"></span>
     </div>
   </div>
 </nav>
 
-<!-- ══ 탭1: CS 온톨로지 분석 ══ -->
+<!-- ══ 탭1: CS 온톨로지 ══ -->
 <div id="t1" class="tab-panel on">
-
-  <!-- KPI -->
-  <div class="kpi-grid" id="ont-kpi">
+  <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-label">총 문의</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-sub" id="kpi-period">날짜 선택 후 불러오기</div></div>
-    <div class="kpi-card"><div class="kpi-label">불만 Sentiment</div><div class="kpi-val" id="kpi-bad" style="color:#D85A30">—</div><div class="kpi-sub" id="kpi-bad-sub"></div></div>
-    <div class="kpi-card"><div class="kpi-label">자동화 가능</div><div class="kpi-val" id="kpi-auto" style="color:#1D9E75">—</div><div class="kpi-sub" id="kpi-auto-sub"></div></div>
-    <div class="kpi-card"><div class="kpi-label">상담원 처리</div><div class="kpi-val" id="kpi-agent" style="color:#378ADD">—</div><div class="kpi-sub" id="kpi-agent-sub"></div></div>
-    <div class="kpi-card"><div class="kpi-label">챗봇 1회 해결</div><div class="kpi-val" id="kpi-bot" style="color:#7F77DD">—</div><div class="kpi-sub" id="kpi-bot-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">불만 Sentiment</div><div class="kpi-val" id="kpi-bad" style="color:var(--red)">—</div><div class="kpi-sub" id="kpi-bad-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">자동화 가능</div><div class="kpi-val" id="kpi-auto" style="color:var(--green)">—</div><div class="kpi-sub" id="kpi-auto-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">상담원 처리</div><div class="kpi-val" id="kpi-agent" style="color:var(--blue)">—</div><div class="kpi-sub" id="kpi-agent-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">챗봇 1회 해결</div><div class="kpi-val" id="kpi-bot" style="color:var(--purple)">—</div><div class="kpi-sub" id="kpi-bot-sub"></div></div>
   </div>
-
-  <!-- 서브탭 -->
   <div class="sub-tabs">
     <div class="sub-tab on" onclick="swOnt('ont-lang',this)">언어별 상세 패턴</div>
     <div class="sub-tab" onclick="swOnt('ont-matrix',this)">Product × Event 매트릭스</div>
@@ -170,885 +206,627 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     <div class="sub-tab" onclick="swOnt('ont-samples',this)">실제 원문 예시</div>
     <div class="sub-tab" onclick="swOnt('ont-sentiment',this)">Sentiment 분석</div>
   </div>
-
-  <!-- 언어별 상세 패턴 -->
   <div id="ont-lang">
     <div class="lang-tabs" id="lang-tab-btns"></div>
-    <div id="lang-content"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:80%"></div><div class="skeleton" style="width:60%"></div></div></div>
+    <div id="lang-content"><div class="lp"><div class="skeleton"></div><div class="skeleton" style="width:80%"></div></div></div>
   </div>
-
-  <!-- Product × Event 매트릭스 -->
   <div id="ont-matrix" style="display:none">
-    <div class="section-card">
-      <div class="section-title">Product × Event × Intent 상위 조합<span class="section-sub">건수·자동화%·불만% 기준</span></div>
-      <div id="matrix-table-wrap"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:90%"></div></div></div>
-    </div>
+    <div class="section-card"><div class="section-title">Product × Event × Intent 상위 조합</div><div id="matrix-table-wrap"><div class="lp"><div class="skeleton"></div></div></div></div>
   </div>
-
-  <!-- 자동화 시나리오 -->
   <div id="ont-scenario" style="display:none">
-    <div class="section-card">
-      <div class="section-title">자동화 시나리오 — 즉시 구현 가능 Top 5<span class="section-sub">CF_Automatable=가능 기반</span></div>
-      <div id="scenario-content"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:75%"></div></div></div>
-    </div>
+    <div class="section-card"><div class="section-title">자동화 시나리오 Top 5</div><div id="scenario-content"><div class="lp"><div class="skeleton"></div></div></div></div>
   </div>
-
-  <!-- 실제 원문 예시 -->
   <div id="ont-samples" style="display:none">
-    <div style="display:flex;gap:8px;margin-bottom:14px">
-      <div class="lang-tab on" id="samp-auto-btn" onclick="swSample('auto',this)">● 자동화 가능</div>
-      <div class="lang-tab" id="samp-manual-btn" onclick="swSample('manual',this)">● 상담원 필수</div>
+    <div class="lang-tabs" style="margin-bottom:14px">
+      <div class="lang-tab on" onclick="swSample('auto',this)">● 자동화 가능</div>
+      <div class="lang-tab" onclick="swSample('manual',this)">● 상담원 필수</div>
     </div>
-    <div id="samples-auto"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:70%"></div></div></div>
+    <div id="samples-auto"></div>
     <div id="samples-manual" style="display:none"></div>
   </div>
-
-  <!-- Sentiment 분석 -->
   <div id="ont-sentiment" style="display:none">
     <div class="section-card">
       <div class="section-title">전체 Sentiment 분포</div>
       <div id="sent-dist-bar" class="sent-dist-bar"></div>
-      <div class="grid2">
-        <div>
-          <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:10px">Sentiment × 해결유형</div>
-          <div id="sent-crosstab"></div>
-        </div>
-        <div id="sent-insights"></div>
-      </div>
+      <div class="grid2"><div id="sent-crosstab"></div><div id="sent-insights"></div></div>
     </div>
   </div>
-
 </div>
 
 <!-- ══ 탭2: CS Knowledge Graph ══ -->
-<div id="t2" style="display:none;height:calc(100vh - 52px);flex-direction:column">
+<div id="t2" style="display:none">
   <div class="kg-wrap">
-    <div class="kg-legend" id="kg-legend">
-      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
-      <div id="kg-filter-btns" style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px"></div>
-      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">주요 지표</div>
+    <div class="kg-legend">
+      <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
+      <div id="kg-filter-btns" style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px"></div>
+      <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">주요 지표</div>
       <div id="kg-kpi-side"></div>
     </div>
     <div class="graph-area">
       <svg id="kg-svg" style="width:100%;height:100%"></svg>
-      <div id="kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
-      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 상세 분석이 표시됩니다</div>
+      <div id="kg-tt" style="position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:9px 13px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.4)"></div>
+      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text3);background:var(--bg2);padding:4px 14px;border-radius:20px;border:1px solid var(--border);pointer-events:none;white-space:nowrap">노드를 클릭하면 상세 분석이 표시됩니다</div>
     </div>
-    <div class="kg-insight">
-      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6">
-        <div style="font-size:13px;font-weight:700">⚡ Quick Insight</div>
-        <div style="font-size:11px;color:#bbb" id="kg-ip-sub">노드를 선택하세요</div>
+    <div class="kg-right">
+      <div class="kg-right-header">
+        <div style="font-size:12px;font-weight:700;color:var(--accent)">⚡ Quick Insight</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px" id="kg-ip-sub">노드를 클릭하세요</div>
       </div>
-      <div style="flex:1;overflow-y:auto;padding:12px 16px" id="kg-ip-body"></div>
+      <div class="kg-right-body" id="kg-ip-body">
+        <div style="font-size:11px;color:var(--text3);padding:12px 0">노드를 클릭하면<br>상위 연관 분석이 표시됩니다</div>
+      </div>
     </div>
   </div>
   <div class="kg-dp" id="kg-dp">
-    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeKgDp()">✕</div>
-    <div style="display:flex;height:100%" id="kg-dp-inner"></div>
+    <div class="kg-dp-close" onclick="closeKgDp()">✕</div>
+    <div class="dp-cols" id="kg-dp-inner"></div>
   </div>
 </div>
 
-<!-- ══ 탭3: 챗봇 플로우 분석 ══ -->
+<!-- ══ 탭3: 챗봇 플로우 ══ -->
 <div id="t3" style="display:none" class="tab-panel">
-
-  <!-- KPI -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
     <div class="kpi-card"><div class="kpi-label">총 문의</div><div class="kpi-val" id="cf-kpi-total">—</div><div class="kpi-sub" id="cf-kpi-period"></div></div>
-    <div class="kpi-card"><div class="kpi-label">상담원 전환</div><div class="kpi-val" id="cf-kpi-transfer" style="color:#D85A30">—</div><div class="kpi-sub" id="cf-kpi-transfer-sub"></div></div>
-    <div class="kpi-card"><div class="kpi-label">중도포기</div><div class="kpi-val" id="cf-kpi-drop" style="color:#BA7517">—</div><div class="kpi-sub" id="cf-kpi-drop-sub"></div></div>
-    <div class="kpi-card"><div class="kpi-label">챗봇 1회 해결</div><div class="kpi-val" id="cf-kpi-bot" style="color:#1D9E75">—</div><div class="kpi-sub" id="cf-kpi-bot-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">상담원 전환</div><div class="kpi-val" id="cf-kpi-transfer" style="color:var(--red)">—</div><div class="kpi-sub" id="cf-kpi-transfer-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">중도포기</div><div class="kpi-val" id="cf-kpi-drop" style="color:var(--amber)">—</div><div class="kpi-sub" id="cf-kpi-drop-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">챗봇 1회 해결</div><div class="kpi-val" id="cf-kpi-bot" style="color:var(--green)">—</div><div class="kpi-sub" id="cf-kpi-bot-sub"></div></div>
   </div>
-
-  <!-- 서브탭 -->
   <div class="sub-tabs">
     <div class="sub-tab on" onclick="swCf('cf-overview',this)">전환 분석</div>
     <div class="sub-tab" onclick="swCf('cf-problem',this)">챗봇 문제점</div>
     <div class="sub-tab" onclick="swCf('cf-lang',this)">언어별 패턴</div>
     <div class="sub-tab" onclick="swCf('cf-improve',this)">개선 제안</div>
   </div>
-
-  <!-- 전환 분석 -->
   <div id="cf-overview">
     <div class="grid2">
-      <div class="section-card">
-        <div class="section-title">해결 유형 분포 (CF_Resolution)</div>
-        <div id="cf-resolution-bars"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:70%"></div></div></div>
-      </div>
-      <div class="section-card">
-        <div class="section-title">상담원 전환 원인 (Transfer_Reason)</div>
-        <div id="cf-transfer-bars"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:70%"></div></div></div>
-      </div>
+      <div class="section-card"><div class="section-title">해결 유형 (CF_Resolution)</div><div id="cf-resolution-bars"><div class="lp"><div class="skeleton"></div></div></div></div>
+      <div class="section-card"><div class="section-title">상담원 전환 원인 (Transfer_Reason)</div><div id="cf-transfer-bars"><div class="lp"><div class="skeleton"></div></div></div></div>
     </div>
-    <div class="section-card">
-      <div class="section-title">언어별 해결 유형 분포</div>
-      <div id="cf-lang-resolution"></div>
-    </div>
+    <div class="section-card"><div class="section-title">언어별 해결 유형 분포</div><div id="cf-lang-resolution"></div></div>
   </div>
-
-  <!-- 챗봇 문제점 -->
   <div id="cf-problem" style="display:none">
     <div class="grid2">
-      <div class="section-card">
-        <div class="section-title">챗봇 문제점 (Chatbot_Problem)</div>
-        <div id="cf-problem-bars"></div>
-      </div>
-      <div class="section-card">
-        <div class="section-title">핑퐁 횟수 분포 (Pingpong)</div>
-        <div id="cf-pingpong-bars"></div>
-      </div>
+      <div class="section-card"><div class="section-title">챗봇 문제점 (Chatbot_Problem)</div><div id="cf-problem-bars"></div></div>
+      <div class="section-card"><div class="section-title">핑퐁 횟수 (Pingpong)</div><div id="cf-pingpong-bars"></div></div>
     </div>
   </div>
-
-  <!-- 언어별 패턴 -->
   <div id="cf-lang" style="display:none">
     <div class="lang-tabs" id="cf-lang-tab-btns"></div>
     <div id="cf-lang-content"></div>
   </div>
-
-  <!-- 개선 제안 -->
   <div id="cf-improve" style="display:none">
-    <div class="section-card">
-      <div class="section-title">챗봇 개선 제안 Top 5<span class="section-sub">CF_Automatable=가능 기반</span></div>
-      <div id="cf-improve-content"></div>
-    </div>
+    <div class="section-card"><div class="section-title">챗봇 개선 제안 Top 5</div><div id="cf-improve-content"></div></div>
   </div>
-
 </div>
 
-<!-- ══ 탭4: 챗봇 Knowledge Graph ══ -->
-<div id="t4" style="display:none;height:calc(100vh - 52px);flex-direction:column">
+<!-- ══ 탭4: 챗봇 KG ══ -->
+<div id="t4" style="display:none">
   <div class="kg-wrap">
     <div class="kg-legend">
-      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
-      <div id="cf-kg-filter-btns" style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px"></div>
-      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">주요 지표</div>
+      <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
+      <div id="cf-kg-filter-btns" style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px"></div>
+      <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">주요 지표</div>
       <div id="cf-kg-kpi-side"></div>
     </div>
     <div class="graph-area">
       <svg id="cf-kg-svg" style="width:100%;height:100%"></svg>
-      <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
-      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 하단에 상세 분석이 표시됩니다</div>
+      <div id="cf-kg-tt" style="position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:9px 13px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.4)"></div>
+      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text3);background:var(--bg2);padding:4px 14px;border-radius:20px;border:1px solid var(--border);pointer-events:none;white-space:nowrap">노드를 클릭하면 상세 분석이 표시됩니다</div>
     </div>
-    <div class="kg-insight">
-      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6">
-        <div style="font-size:13px;font-weight:700">⚡ Quick Insight</div>
-        <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하세요</div>
+    <div class="kg-right">
+      <div class="kg-right-header">
+        <div style="font-size:12px;font-weight:700;color:var(--accent)">⚡ Quick Insight</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px" id="cf-ip-sub">노드를 클릭하세요</div>
       </div>
-      <div style="flex:1;overflow-y:auto;padding:12px 16px" id="cf-ip-body"></div>
+      <div class="kg-right-body" id="cf-ip-body">
+        <div style="font-size:11px;color:var(--text3);padding:12px 0">노드를 클릭하면<br>상위 연관 분석이 표시됩니다</div>
+      </div>
     </div>
   </div>
   <div class="kg-dp" id="cf-dp">
-    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
-    <div style="display:flex;height:100%" id="cf-dp-inner"></div>
+    <div class="kg-dp-close" onclick="closeCfDp()">✕</div>
+    <div class="dp-cols" id="cf-dp-inner"></div>
   </div>
 </div>
 
-<div style="font-size:11px;color:#ccc;text-align:center;padding:16px;border-top:1px solid #e8e8e6;margin-top:8px">
-  PUBG Mobile CS 분석 대시보드 · Claude API (claude-haiku-4-5) 기반 실시간 분석 · Google Sheets 연동
+<div style="font-size:11px;color:var(--text3);text-align:center;padding:14px;border-top:1px solid var(--border);margin-top:8px">
+  PUBG Mobile CS 분석 대시보드 · Claude API (claude-haiku-4-5) 기반 · Google Sheets 실시간 연동
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════
-   CONFIG
-══════════════════════════════════════════════════ */
 var API_URL = 'https://script.google.com/macros/s/AKfycbwA_6or2CLhGtaJPk-0ND63TYQpBWMB8dzeQwU9HIQINJRZvJLO-HdHJRgnVQ03dYJEVQ/exec';
 
-var GC = {product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD',transfer:'#D85A30',problem:'#7F77DD'};
-var SENT_COLORS = {'불만':'#D85A30','중립':'#888','긍정':'#1D9E75','negative':'#D85A30','neutral':'#888','positive':'#1D9E75','dissatisfied':'#D85A30','satisfied':'#1D9E75'};
-var RES_COLORS  = {'챗봇해결':'#1D9E75','상담원처리':'#378ADD','timeout':'#BA7517','미분류':'#bbb'};
+var GC = {product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD',transfer:'#D85A30',problem:'#7F77DD',lang:'#4f8ef7'};
+var GL = {product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution',transfer:'전환원인',problem:'챗봇문제',lang:'언어'};
+var SENT_C = {'불만':'#D85A30','중립':'#888','긍정':'#1D9E75'};
+var RES_C  = {'챗봇해결':'#1D9E75','상담원처리':'#378ADD','timeout':'#BA7517'};
 
-var _data = null; // 캐시된 API 데이터
+var _data = null;
 
 /* ══ 탭 전환 ══ */
 function switchTab(id, el) {
   ['t1','t2','t3','t4'].forEach(function(t){
     var p = document.getElementById(t);
-    if(p) { p.style.display = (t===id) ? (t==='t1'||t==='t3' ? 'block' : 'flex') : 'none'; }
-    if(p && (t==='t1'||t==='t3')) p.classList.toggle('on', t===id);
+    if(!p) return;
+    if(t==='t2'||t==='t4') p.style.display = t===id ? 'flex' : 'none';
+    else { p.style.display = t===id ? 'block' : 'none'; p.classList.toggle('on',t===id); }
   });
   document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('on'); });
   el.classList.add('on');
-  if(id==='t2' && !window._kgInit && _data) { window._kgInit=1; setTimeout(function(){ buildKG(_data); },300); }
-  if(id==='t4' && !window._cfInit && _data) { window._cfInit=1; setTimeout(function(){ buildCFKG(_data); },300); }
+  if(id==='t2'&&!window._kgInit&&_data){ window._kgInit=1; setTimeout(function(){ buildKG(_data); },300); }
+  if(id==='t4'&&!window._cfInit&&_data){ window._cfInit=1; setTimeout(function(){ buildCFKG(_data); },300); }
+}
+function swOnt(id,el){
+  ['ont-lang','ont-matrix','ont-scenario','ont-samples','ont-sentiment'].forEach(function(x){ document.getElementById(x).style.display=x===id?'block':'none'; });
+  document.querySelectorAll('#t1 .sub-tab').forEach(function(t){ t.classList.remove('on'); }); el.classList.add('on');
+}
+function swCf(id,el){
+  ['cf-overview','cf-problem','cf-lang','cf-improve'].forEach(function(x){ document.getElementById(x).style.display=x===id?'block':'none'; });
+  document.querySelectorAll('#t3 .sub-tab').forEach(function(t){ t.classList.remove('on'); }); el.classList.add('on');
+}
+function swSample(type,el){
+  document.getElementById('samples-auto').style.display   = type==='auto'  ?'block':'none';
+  document.getElementById('samples-manual').style.display = type==='manual'?'block':'none';
+  document.querySelectorAll('#ont-samples .lang-tab').forEach(function(t){ t.classList.remove('on'); }); el.classList.add('on');
 }
 
-function swOnt(id, el) {
-  ['ont-lang','ont-matrix','ont-scenario','ont-samples','ont-sentiment'].forEach(function(x){
-    document.getElementById(x).style.display = (x===id) ? 'block' : 'none';
-  });
-  document.querySelectorAll('#t1 .sub-tab').forEach(function(t){ t.classList.remove('on'); });
-  el.classList.add('on');
+function setStatus(msg,type){
+  var el=document.getElementById('load-status'); el.textContent=msg;
+  el.style.color=type==='ok'?'#1D9E75':type==='err'?'#D85A30':type==='loading'?'#BA7517':'var(--text3)';
 }
 
-function swCf(id, el) {
-  ['cf-overview','cf-problem','cf-lang','cf-improve'].forEach(function(x){
-    document.getElementById(x).style.display = (x===id) ? 'block' : 'none';
-  });
-  document.querySelectorAll('#t3 .sub-tab').forEach(function(t){ t.classList.remove('on'); });
-  el.classList.add('on');
-}
-
-function swSample(type, el) {
-  document.getElementById('samples-auto').style.display   = (type==='auto')   ? 'block' : 'none';
-  document.getElementById('samples-manual').style.display = (type==='manual') ? 'block' : 'none';
-  document.querySelectorAll('#ont-samples .lang-tab').forEach(function(t){ t.classList.remove('on'); });
-  el.classList.add('on');
-}
-
-/* ══ 상태 ══ */
-function setStatus(msg, type) {
-  var el = document.getElementById('load-status');
-  el.textContent = msg;
-  el.style.color = type==='ok' ? '#1D9E75' : type==='err' ? '#D85A30' : type==='loading' ? '#BA7517' : '#bbb';
-}
-
-/* ══ 바 차트 렌더 ══ */
-function renderBars(containerId, data, color, total, maxItems) {
-  var el = document.getElementById(containerId);
-  if(!el) return;
-  maxItems = maxItems || 8;
-  var entries = Object.entries(data||{})
-    .filter(function(e){ return e[0]!=='미분류' && e[0]!==''; })
-    .sort(function(a,b){ return b[1]-a[1]; })
-    .slice(0, maxItems);
-  if(!entries.length) { el.innerHTML='<div style="font-size:11px;color:#bbb;padding:8px 0">데이터 없음 (분석 진행 중)</div>'; return; }
-  var max = entries[0][1];
-  el.innerHTML = entries.map(function(e) {
-    var w   = Math.round(e[1]/max*100);
-    var pct = total>0 ? Math.round(e[1]/total*1000)/10 : 0;
-    var lbl = e[0].length>14 ? e[0].slice(0,13)+'…' : e[0];
-    return '<div class="bar-row">' +
-      '<div class="bar-label" title="'+e[0]+'">'+lbl+'</div>' +
-      '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+w+'%">'+(w>25?e[1].toLocaleString():'')+'</div></div>' +
-      '<div class="bar-cnt">'+e[1].toLocaleString()+' <span style="color:#ccc">('+pct+'%)</span></div>' +
-    '</div>';
+/* ══ 바 차트 ══ */
+function renderBars(cid, data, color, total, max){
+  var el=document.getElementById(cid); if(!el) return;
+  max=max||8;
+  var entries=Object.entries(data||{}).filter(function(e){ return e[0]!=='미분류'&&e[0]!==''; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,max);
+  if(!entries.length){ el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0">데이터 없음 (분석 진행 중)</div>'; return; }
+  var mx=entries[0][1];
+  el.innerHTML=entries.map(function(e){
+    var w=Math.round(e[1]/mx*100), pct=total>0?Math.round(e[1]/total*1000)/10:0;
+    var lbl=e[0].length>15?e[0].slice(0,14)+'…':e[0];
+    return '<div class="bar-row"><div class="bar-label" title="'+e[0]+'">'+lbl+'</div>'+
+      '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+w+'%">'+(w>28?e[1].toLocaleString():'')+'</div></div>'+
+      '<div class="bar-cnt">'+e[1].toLocaleString()+' <span style="color:var(--text3)">('+pct+'%)</span></div></div>';
   }).join('');
 }
 
 /* ══ 메인 로드 ══ */
-async function loadData() {
-  var start = document.getElementById('date-start').value;
-  var end   = document.getElementById('date-end').value;
-  if(!start||!end) { setStatus('날짜를 선택하세요','err'); return; }
-  if(start>end)    { setStatus('시작 ≤ 종료 확인','err'); return; }
-
-  var btn = document.getElementById('btn-load');
-  btn.disabled = true;
-  setStatus('⏳ 로딩 중...','loading');
-
+async function loadData(){
+  var start=document.getElementById('date-start').value, end=document.getElementById('date-end').value;
+  if(!start||!end){ setStatus('날짜를 선택하세요','err'); return; }
+  if(start>end){ setStatus('시작 ≤ 종료 확인','err'); return; }
+  var btn=document.getElementById('btn-load'); btn.disabled=true; setStatus('⏳ 로딩 중...','loading');
   try {
-    var res  = await fetch(API_URL+'?start='+start+'&end='+end);
-    var data = await res.json();
+    var res=await fetch(API_URL+'?start='+start+'&end='+end);
+    var data=await res.json();
     if(data.error) throw new Error(data.error);
-
-    _data = data;
-    window._kgInit = 0;
-    window._cfInit = 0;
-
+    _data=data; window._kgInit=0; window._cfInit=0;
     renderAll(data);
     setStatus('✅ '+data.meta.total.toLocaleString()+'건 로드 완료','ok');
-
-    // 현재 KG 탭이면 즉시 빌드
-    var activeTab = document.querySelector('.nav-tab.on');
-    if(activeTab) {
-      var idx = Array.from(document.querySelectorAll('.nav-tab')).indexOf(activeTab);
-      if(idx===1) { window._kgInit=1; setTimeout(function(){ buildKG(data); },300); }
-      if(idx===3) { window._cfInit=1; setTimeout(function(){ buildCFKG(data); },300); }
-    }
-
-  } catch(e) {
-    setStatus('❌ '+e.message,'err');
-  } finally {
-    btn.disabled = false;
-  }
+    var activeIdx=Array.from(document.querySelectorAll('.nav-tab')).findIndex(function(t){ return t.classList.contains('on'); });
+    if(activeIdx===1){ window._kgInit=1; setTimeout(function(){ buildKG(data); },300); }
+    if(activeIdx===3){ window._cfInit=1; setTimeout(function(){ buildCFKG(data); },300); }
+  } catch(e){ setStatus('❌ '+e.message,'err'); } finally { btn.disabled=false; }
 }
 
-/* ══ 전체 렌더 ══ */
-function renderAll(d) {
-  var t = d.meta.total;
-  var start = d.meta.start, end = d.meta.end;
-
-  // Nav 업데이트
-  document.getElementById('nav-sub').textContent = start+' ~ '+end+' · '+t.toLocaleString()+'건';
-  document.getElementById('badge-t1').textContent = t.toLocaleString()+'건';
-  document.getElementById('badge-t3').textContent = t.toLocaleString()+'건';
-
-  renderOntology(d);
-  renderChatbot(d);
+function renderAll(d){
+  var t=d.meta.total;
+  document.getElementById('nav-sub').textContent=d.meta.start+' ~ '+d.meta.end+' · '+t.toLocaleString()+'건';
+  document.getElementById('badge-t1').textContent=t.toLocaleString()+'건';
+  document.getElementById('badge-t3').textContent=t.toLocaleString()+'건';
+  renderOntology(d); renderChatbot(d);
 }
 
-/* ══════════════ 온톨로지 ══════════════ */
-function renderOntology(d) {
-  var t   = d.meta.total;
-  var ont = d.ontology;
-  var cb  = d.chatbot;
-
-  // Sentiment 집계
-  var badCnt=0, neutralCnt=0, goodCnt=0;
-  Object.entries(ont.sentiment||{}).forEach(function(e){
-    var k=e[0].toLowerCase();
-    if(k.includes('불만')||k.includes('negative')||k.includes('dissatisfied')) badCnt+=e[1];
-    else if(k.includes('긍정')||k.includes('positive')||k.includes('satisfied')) goodCnt+=e[1];
-    else neutralCnt+=e[1];
-  });
-
-  // Resolution 집계
-  var agentCnt=0, botCnt=0, dropCnt=0;
-  Object.entries(cb.resolution||{}).forEach(function(e){
-    var k=e[0].toLowerCase();
-    if(k.includes('상담원')||k.includes('agent')||k.includes('human')||k.includes('transfer')) agentCnt+=e[1];
-    else if(k.includes('챗봇')||k.includes('bot')||k.includes('1회')||k.includes('resolved')) botCnt+=e[1];
-    else if(k.includes('포기')||k.includes('timeout')||k.includes('drop')) dropCnt+=e[1];
-  });
-
-  // KPI
-  document.getElementById('kpi-total').textContent    = t.toLocaleString()+'건';
-  document.getElementById('kpi-period').textContent   = d.meta.start+' ~ '+d.meta.end;
-  document.getElementById('kpi-bad').textContent      = badCnt.toLocaleString()+'건';
-  document.getElementById('kpi-bad-sub').textContent  = t>0?Math.round(badCnt/t*100)+'% 불만':'';
-  document.getElementById('kpi-auto').textContent     = d.kpi.automatable.toLocaleString()+'건';
-  document.getElementById('kpi-auto-sub').textContent = d.kpi.auto_pct+'% 자동화 가능';
-  document.getElementById('kpi-agent').textContent    = agentCnt.toLocaleString()+'건';
-  document.getElementById('kpi-agent-sub').textContent= t>0?Math.round(agentCnt/t*100)+'% 상담원':'';
-  document.getElementById('kpi-bot').textContent      = botCnt.toLocaleString()+'건';
-  document.getElementById('kpi-bot-sub').textContent  = t>0?Math.round(botCnt/t*100)+'% 챗봇 해결':'';
-
-  renderLangPatterns(d);
-  renderMatrix(d);
-  renderScenarios(d);
-  renderSamples(d);
-  renderSentiment(d);
+/* ══ 온톨로지 ══ */
+function renderOntology(d){
+  var t=d.meta.total, ont=d.ontology, cb=d.chatbot;
+  var badCnt=0,neuCnt=0,goodCnt=0;
+  Object.entries(ont.sentiment||{}).forEach(function(e){ var k=e[0].toLowerCase(); if(k.includes('불만')||k.includes('negative')) badCnt+=e[1]; else if(k.includes('긍정')||k.includes('positive')) goodCnt+=e[1]; else neuCnt+=e[1]; });
+  var agentCnt=0,botCnt=0;
+  Object.entries(cb.resolution||{}).forEach(function(e){ var k=e[0].toLowerCase(); if(k.includes('상담원')||k.includes('agent')) agentCnt+=e[1]; else if(k.includes('챗봇')||k.includes('bot')||k.includes('1회')) botCnt+=e[1]; });
+  document.getElementById('kpi-total').textContent=t.toLocaleString()+'건';
+  document.getElementById('kpi-period').textContent=d.meta.start+' ~ '+d.meta.end;
+  document.getElementById('kpi-bad').textContent=badCnt.toLocaleString()+'건';
+  document.getElementById('kpi-bad-sub').textContent=t>0?Math.round(badCnt/t*100)+'% 불만':'';
+  document.getElementById('kpi-auto').textContent=d.kpi.automatable.toLocaleString()+'건';
+  document.getElementById('kpi-auto-sub').textContent=d.kpi.auto_pct+'% 자동화 가능';
+  document.getElementById('kpi-agent').textContent=agentCnt.toLocaleString()+'건';
+  document.getElementById('kpi-agent-sub').textContent=t>0?Math.round(agentCnt/t*100)+'% 상담원':'';
+  document.getElementById('kpi-bot').textContent=botCnt.toLocaleString()+'건';
+  document.getElementById('kpi-bot-sub').textContent=t>0?Math.round(botCnt/t*100)+'% 챗봇 해결':'';
+  renderLangPatterns(d); renderMatrix(d); renderScenarios(d); renderSamples(d); renderSentiment(d);
 }
 
-/* ── 언어별 패턴 ── */
-function renderLangPatterns(d) {
-  var lp  = d.lang_patterns || {};
-  var langs = Object.keys(lp).filter(function(l){ return lp[l].total>0; }).sort(function(a,b){ return lp[b].total-lp[a].total; });
-  if(!langs.length) {
-    document.getElementById('lang-tab-btns').innerHTML='';
-    document.getElementById('lang-content').innerHTML='<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
-    return;
-  }
-
-  // 탭 버튼
-  document.getElementById('lang-tab-btns').innerHTML = langs.map(function(lg,i){
-    return '<div class="lang-tab'+(i===0?' on':'')+'" onclick="showLangTab(\''+lg+'\',this)">'+lg+' <span style="font-size:10px;color:#888">('+lp[lg].total.toLocaleString()+'건)</span></div>';
+function renderLangPatterns(d){
+  var lp=d.lang_patterns||{};
+  var langs=Object.keys(lp).filter(function(l){ return (lp[l].total||0)>0; }).sort(function(a,b){ return (lp[b].total||0)-(lp[a].total||0); });
+  if(!langs.length){ document.getElementById('lang-tab-btns').innerHTML=''; document.getElementById('lang-content').innerHTML='<div style="font-size:12px;color:var(--text3);padding:16px 0">데이터 없음</div>'; return; }
+  document.getElementById('lang-tab-btns').innerHTML=langs.map(function(lg,i){
+    return '<div class="lang-tab'+(i===0?' on':'')+'" onclick="showLangTab(\''+lg+'\',this)">'+lg+' <span style="font-size:10px;opacity:.6">('+lp[lg].total.toLocaleString()+'건)</span></div>';
   }).join('');
-
-  // 첫 번째 언어 표시
-  window._langPatterns = lp;
-  showLangContent(langs[0]);
+  window._LP=lp; showLangContent(langs[0]);
 }
-
-function showLangTab(lg, el) {
-  document.querySelectorAll('#lang-tab-btns .lang-tab').forEach(function(t){ t.classList.remove('on'); });
-  el.classList.add('on');
-  showLangContent(lg);
-}
-
-function showLangContent(lg) {
-  var lp  = window._langPatterns || {};
-  var d   = lp[lg];
-  if(!d) return;
-  var total = d.total || 0;
-
-  // Resolution 분포
-  var resBars = Object.entries(d.resolution||{}).sort(function(a,b){ return b[1]-a[1]; }).map(function(e){
-    var pct = total>0 ? Math.round(e[1]/total*100) : 0;
-    var color = RES_COLORS[e[0]] || '#888';
-    return '<div class="bar-row"><div class="bar-label">'+e[0]+'</div>' +
-      '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+(total>0?Math.round(e[1]/Object.values(d.resolution)[0]*100):0)+'%">'+e[1].toLocaleString()+'건</div></div>' +
-      '<div class="bar-cnt">'+pct+'%</div></div>';
+function showLangTab(lg,el){ document.querySelectorAll('#lang-tab-btns .lang-tab').forEach(function(t){ t.classList.remove('on'); }); el.classList.add('on'); showLangContent(lg); }
+function showLangContent(lg){
+  var lp=window._LP||{}, d=lp[lg]; if(!d) return;
+  var total=d.total||0;
+  var resBars=Object.entries(d.resolution||{}).sort(function(a,b){ return b[1]-a[1]; }).map(function(e){
+    var pct=total>0?Math.round(e[1]/total*100):0, color=RES_C[e[0]]||'#888';
+    var w=total>0?Math.round(e[1]/Object.values(d.resolution)[0]*100):0;
+    return '<div class="bar-row"><div class="bar-label">'+e[0]+'</div><div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+w+'%">'+e[1].toLocaleString()+'건</div></div><div class="bar-cnt">'+pct+'%</div></div>';
   }).join('');
-
-  // 상위 패턴
-  var patternRows = (d.patterns||[]).map(function(p){
-    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-      '<div style="font-size:11px;font-weight:700;color:#378ADD;min-width:40px">'+p.pct+'%</div>' +
-      '<div style="flex:1;font-size:12px;color:#333">'+p.label+'</div>' +
-      '<div style="font-size:11px;color:#888">'+p.count.toLocaleString()+'건</div>' +
-    '</div>';
+  var patRows=(d.patterns||[]).map(function(p){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="font-size:11px;font-weight:700;color:var(--accent);min-width:38px">'+p.pct+'%</div><div style="flex:1;font-size:12px;color:var(--text2)">'+p.label+'</div><div style="font-size:11px;color:var(--text3)">'+p.count.toLocaleString()+'건</div></div>';
   }).join('');
-
-  // 원문 샘플
-  var sampleHtml = (d.samples||[]).map(function(s){
-    var auto = s.auto;
-    return '<div class="sample-card '+(auto?'auto':'manual')+'">' +
-      '<div class="sample-tags">' +
-        (s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+
-        (s.event  ?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+
-        (s.intent ?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+
-        '<span style="font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:'+(auto?'#E8F8F1':'#FAECE7')+';color:'+(auto?'#0f6e56':'#993C1D')+'">'+(auto?'자동화 가능':'상담원 필수')+'</span>' +
-      '</div>' +
-      '<div class="sample-text">"'+s.text+'"</div>' +
-      (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
-    '</div>';
-  }).join('') || '<div style="font-size:11px;color:#bbb;padding:8px 0">원문 없음</div>';
-
-  document.getElementById('lang-content').innerHTML =
-    '<div class="grid2">' +
-      '<div class="section-card"><div class="section-title">'+lg+' 해결 유형 분포<span class="section-sub">총 '+total.toLocaleString()+'건</span></div>'+resBars+'</div>' +
-      '<div class="section-card"><div class="section-title">'+lg+' 주요 패턴 (Product × Event)</div>'+patternRows+'</div>' +
-    '</div>' +
-    '<div class="section-card"><div class="section-title">'+lg+' 원문 예시</div>'+sampleHtml+'</div>';
+  var sampHtml=(d.samples||[]).map(function(s){
+    return '<div class="sample-card '+(s.auto?'auto':'manual')+'">'+'<div class="sample-tags">'+(s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+(s.event?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+(s.intent?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+'<span style="font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600;background:'+(s.auto?'#0D2D1E':'#2D1208')+';color:'+(s.auto?'#5DCAA5':'#F09575')+'">'+(s.auto?'자동화 가능':'상담원 필수')+'</span></div><div class="sample-text">"'+s.text+'"</div>'+(s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'')+'</div>';
+  }).join('')||'<div style="font-size:11px;color:var(--text3);padding:8px 0">원문 없음</div>';
+  document.getElementById('lang-content').innerHTML=
+    '<div class="grid2"><div class="section-card"><div class="section-title">'+lg+' 해결 유형 분포<span class="section-sub">총 '+total.toLocaleString()+'건</span></div>'+resBars+'</div><div class="section-card"><div class="section-title">'+lg+' 주요 패턴 (Product × Event)</div>'+patRows+'</div></div>'+
+    '<div class="section-card"><div class="section-title">'+lg+' 원문 예시</div>'+sampHtml+'</div>';
 }
 
-/* ── 매트릭스 ── */
-function renderMatrix(d) {
-  var matrix = d.matrix || [];
-  if(!matrix.length) {
-    document.getElementById('matrix-table-wrap').innerHTML='<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
-    return;
-  }
-  var rows = matrix.map(function(r){
-    var autoPctClass = r.auto_pct>=50?'pct-low':r.auto_pct>=20?'pct-mid':'pct-high';
-    var badPctClass  = r.bad_pct >=70?'pct-high':r.bad_pct >=40?'pct-mid':'pct-low';
-    var priority = r.bad_pct>=70&&r.auto_pct<10  ? '<span class="badge-priority bp-now">● 즉시</span>'
-                 : r.bad_pct>=40||r.auto_pct>=30 ? '<span class="badge-priority bp-mon">● 모니터링</span>'
-                 : r.auto_pct>=50                ? '<span class="badge-priority bp-auto">● 자동화</span>'
-                 : '<span class="badge-priority bp-mon">● 검토</span>';
-    return '<tr>' +
-      '<td>'+r.product+'</td>' +
-      '<td>'+r.event+'</td>' +
-      '<td>'+r.intent+'</td>' +
-      '<td style="font-weight:700;color:'+(r.count>100?'#D85A30':r.count>50?'#BA7517':'#444')+'">'+r.count.toLocaleString()+'</td>' +
-      '<td class="'+autoPctClass+'">'+r.auto_pct+'%</td>' +
-      '<td class="'+badPctClass+'">'+r.bad_pct+'%</td>' +
-      '<td>'+priority+'</td>' +
-    '</tr>';
+function renderMatrix(d){
+  var mx=d.matrix||[];
+  if(!mx.length){ document.getElementById('matrix-table-wrap').innerHTML='<div style="font-size:12px;color:var(--text3);padding:16px 0">데이터 없음</div>'; return; }
+  var rows=mx.map(function(r){
+    var apc=r.auto_pct>=50?'pct-low':r.auto_pct>=20?'pct-mid':'pct-high';
+    var bpc=r.bad_pct>=70?'pct-high':r.bad_pct>=40?'pct-mid':'pct-low';
+    var pr=r.bad_pct>=70&&r.auto_pct<10?'<span class="bp-now">● 즉시</span>':r.auto_pct>=50?'<span class="bp-auto">● 자동화</span>':'<span class="bp-mon">● 모니터링</span>';
+    return '<tr><td>'+r.product+'</td><td>'+r.event+'</td><td>'+r.intent+'</td><td style="font-weight:700;color:'+(r.count>100?'#D85A30':r.count>50?'#BA7517':'var(--text2)')+'">'+r.count.toLocaleString()+'</td><td class="'+apc+'">'+r.auto_pct+'%</td><td class="'+bpc+'">'+r.bad_pct+'%</td><td>'+pr+'</td></tr>';
   }).join('');
-
-  document.getElementById('matrix-table-wrap').innerHTML =
-    '<table class="matrix-table">' +
-      '<thead><tr><th>Product</th><th>Event</th><th>Intent</th><th>건수</th><th>자동화%</th><th>불만%</th><th>우선순위</th></tr></thead>' +
-      '<tbody>'+rows+'</tbody>' +
-    '</table>';
+  document.getElementById('matrix-table-wrap').innerHTML='<table class="matrix-table"><thead><tr><th>Product</th><th>Event</th><th>Intent</th><th>건수</th><th>자동화%</th><th>불만%</th><th>우선순위</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 
-/* ── 자동화 시나리오 ── */
-function renderScenarios(d) {
-  var sc = d.scenarios || [];
-  if(!sc.length) {
-    document.getElementById('scenario-content').innerHTML='<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
-    return;
-  }
-  document.getElementById('scenario-content').innerHTML = sc.map(function(s,i){
-    var exHtml = (s.examples||[]).map(function(e){ return '<div class="scenario-quote">"'+e+'"</div>'; }).join('');
-    return '<div class="scenario-card">' +
-      '<div class="scenario-header">' +
-        '<span style="font-size:13px;font-weight:700;color:#1D9E75">'+(i+1)+'순위</span>' +
-        '<span class="scenario-label">'+s.label+'</span>' +
-        '<span class="scenario-cnt">'+s.count.toLocaleString()+'건</span>' +
-      '</div>' +
-      exHtml +
-      (s.improvement?'<div class="scenario-improvement">💡 '+s.improvement+'</div>':'') +
-    '</div>';
-  }).join('');
+function renderScenarios(d){
+  var sc=d.scenarios||[];
+  document.getElementById('scenario-content').innerHTML=sc.length?sc.map(function(s,i){
+    return '<div class="scenario-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:var(--green)">'+(i+1)+'순위</span><span style="font-size:13px;font-weight:700;color:var(--text)">'+s.label+'</span><span style="font-size:11px;background:#0D2D1E;color:#5DCAA5;padding:2px 8px;border-radius:8px;font-weight:600">'+s.count.toLocaleString()+'건</span></div>'+(s.examples||[]).map(function(e){ return '<div class="scenario-quote">"'+e+'"</div>'; }).join('')+(s.improvement?'<div class="scenario-improvement">💡 '+s.improvement+'</div>':'')+'</div>';
+  }).join(''):'<div style="font-size:12px;color:var(--text3);padding:16px 0">데이터 없음</div>';
 }
 
-/* ── 원문 샘플 ── */
-function renderSamples(d) {
-  var sp = d.samples || {};
+function renderSamples(d){
+  var sp=d.samples||{};
   ['auto','manual'].forEach(function(type){
-    var items = sp[type] || [];
-    var html = items.length ? items.map(function(s){
-      return '<div class="sample-card '+type+'">' +
-        '<div class="sample-tags">' +
-          (s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+
-          (s.event  ?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+
-          (s.intent ?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+
-          '<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#f0f0ee;color:#888">'+s.lang+'</span>' +
-        '</div>' +
-        '<div class="sample-text">"'+s.text+'"</div>' +
-        (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
-      '</div>';
-    }).join('') : '<div style="font-size:12px;color:#bbb;padding:8px 0">데이터 없음</div>';
-    document.getElementById('samples-'+type).innerHTML = html;
+    var items=sp[type]||[];
+    document.getElementById('samples-'+type).innerHTML=items.length?items.map(function(s){
+      return '<div class="sample-card '+type+'"><div class="sample-tags">'+(s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+(s.event?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+(s.intent?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+'<span style="font-size:10px;padding:2px 7px;border-radius:8px;background:var(--bg4);color:var(--text3)">'+s.lang+'</span></div><div class="sample-text">"'+s.text+'"</div>'+(s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'')+'</div>';
+    }).join(''):'<div style="font-size:12px;color:var(--text3);padding:8px 0">데이터 없음</div>';
   });
 }
 
-/* ── Sentiment 분석 ── */
-function renderSentiment(d) {
-  var sentData = d.ontology.sentiment || {};
-  var total    = d.meta.total;
-
-  // 분포 바
-  var bad=0, neutral=0, good=0;
-  Object.entries(sentData).forEach(function(e){
-    var k=e[0].toLowerCase();
-    if(k.includes('불만')||k.includes('negative')) bad+=e[1];
-    else if(k.includes('긍정')||k.includes('positive')) good+=e[1];
-    else neutral+=e[1];
-  });
-  var tot2 = bad+neutral+good || 1;
-  var bPct = Math.round(bad/tot2*100), nPct = Math.round(neutral/tot2*100), gPct = Math.round(good/tot2*100);
-  document.getElementById('sent-dist-bar').innerHTML =
-    '<div style="background:#D85A30;width:'+bPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;min-width:40px">불만 '+bPct+'%</div>' +
-    '<div style="background:#888;width:'+nPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">중립 '+nPct+'%</div>' +
-    '<div style="background:#1D9E75;width:'+gPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;min-width:'+(gPct>0?'40':'0')+'px">'+(gPct>3?'긍정 '+gPct+'%':'')+'</div>';
-
-  // 크로스탭
-  var sr = d.sentiment_resolution || {};
-  var allRes = new Set();
-  Object.values(sr).forEach(function(v){ Object.keys(v).forEach(function(k){ if(k!=='total') allRes.add(k); }); });
-  allRes = Array.from(allRes).filter(function(k){ return k!=='미분류'; });
-
-  var tableHead = '<tr><th style="padding:7px 10px;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-size:11px;font-weight:600;text-align:left">Sentiment</th>' +
-    allRes.map(function(r){ return '<th style="padding:7px 10px;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-size:11px;font-weight:600;text-align:right">'+r+'</th>'; }).join('') + '</tr>';
-  var tableBody = Object.entries(sr).map(function(e){
-    var s=e[0], v=e[1];
-    var stTotal = v.total || 0;
-    var sentColor = SENT_COLORS[s.toLowerCase()] || '#888';
-    var cells = allRes.map(function(r){
-      var cnt = v[r]||0;
-      var pct = stTotal>0 ? Math.round(cnt/stTotal*100) : 0;
-      var highlight = pct>=50 ? 'background:#fff0f0;color:#D85A30;font-weight:700' : pct>=25 ? 'color:#BA7517;font-weight:600' : '';
-      return '<td style="padding:7px 10px;border-bottom:1px solid #f0f0ee;text-align:right;font-size:12px;'+highlight+'">'+cnt.toLocaleString()+' <span style="color:#ccc;font-size:10px">'+pct+'%</span></td>';
-    }).join('');
-    return '<tr><td style="padding:7px 10px;border-bottom:1px solid #f0f0ee;font-size:12px;font-weight:600;color:'+sentColor+'">'+s+'<br><span style="font-size:10px;color:#aaa;font-weight:400">'+stTotal.toLocaleString()+'건</span></td>'+cells+'</tr>';
+function renderSentiment(d){
+  var sd=d.ontology.sentiment||{}, total=d.meta.total;
+  var bad=0,neu=0,good=0;
+  Object.entries(sd).forEach(function(e){ var k=e[0].toLowerCase(); if(k.includes('불만')||k.includes('negative')) bad+=e[1]; else if(k.includes('긍정')||k.includes('positive')) good+=e[1]; else neu+=e[1]; });
+  var tot2=bad+neu+good||1;
+  var bp=Math.round(bad/tot2*100), np=Math.round(neu/tot2*100), gp=Math.round(good/tot2*100);
+  document.getElementById('sent-dist-bar').innerHTML=
+    '<div style="background:#D85A30;width:'+bp+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;min-width:40px">불만 '+bp+'%</div>'+
+    '<div style="background:#555;width:'+np+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#ddd">중립 '+np+'%</div>'+
+    '<div style="background:#1D9E75;width:'+gp+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;min-width:'+(gp>0?'40':'0')+'px">'+(gp>3?'긍정 '+gp+'%':'')+'</div>';
+  var sr=d.sentiment_resolution||{};
+  var allRes=new Set(); Object.values(sr).forEach(function(v){ Object.keys(v).forEach(function(k){ if(k!=='total'&&k!=='미분류') allRes.add(k); }); }); allRes=Array.from(allRes);
+  var thead='<tr><th style="padding:7px 10px;background:var(--bg3);border-bottom:1px solid var(--border2);font-size:11px;font-weight:600;text-align:left;color:var(--text2)">Sentiment</th>'+allRes.map(function(r){ return '<th style="padding:7px 10px;background:var(--bg3);border-bottom:1px solid var(--border2);font-size:11px;font-weight:600;text-align:right;color:var(--text2)">'+r+'</th>'; }).join('')+'</tr>';
+  var tbody=Object.entries(sr).map(function(e){
+    var s=e[0],v=e[1],st=v.total||0;
+    var sc=SENT_C[s]||'var(--text2)';
+    return '<tr><td style="padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:'+sc+'">'+s+'<br><span style="font-size:10px;color:var(--text3);font-weight:400">'+st.toLocaleString()+'건</span></td>'+allRes.map(function(r){ var cnt=v[r]||0,pct=st>0?Math.round(cnt/st*100):0; var hi=pct>=50?'background:#2D1208;color:#F09575;font-weight:700':pct>=25?'color:#BA7517;font-weight:600':'color:var(--text2)'; return '<td style="padding:7px 10px;border-bottom:1px solid var(--border);text-align:right;font-size:12px;'+hi+'">'+cnt.toLocaleString()+' <span style="color:var(--text3);font-size:10px">'+pct+'%</span></td>'; }).join('')+'</tr>';
   }).join('');
-
-  document.getElementById('sent-crosstab').innerHTML =
-    '<table style="width:100%;border-collapse:collapse"><thead>'+tableHead+'</thead><tbody>'+tableBody+'</tbody></table>';
-
-  // 인사이트
-  var badPct = total>0?Math.round(bad/total*100):0;
-  document.getElementById('sent-insights').innerHTML =
-    '<div style="display:flex;flex-direction:column;gap:10px">' +
-    '<div style="border-left:3px solid #D85A30;padding:10px 14px;background:#fef8f6;border-radius:0 8px 8px 0">' +
-      '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">불만 유저 집중 분석</div>' +
-      '<div style="font-size:12px;color:#555;line-height:1.6">전체의 <b>'+badPct+'%</b>가 불만 상태. 불만 감지 즉시 우선 배정 라우팅 필요.</div>' +
-    '</div>' +
-    '<div style="border-left:3px solid #1D9E75;padding:10px 14px;background:#f0fbf6;border-radius:0 8px 8px 0">' +
-      '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">챗봇 해결 → CSAT 직결</div>' +
-      '<div style="font-size:12px;color:#555;line-height:1.6">중립 유저의 챗봇 해결율 향상 = CSAT 직접 향상.</div>' +
-    '</div>' +
+  document.getElementById('sent-crosstab').innerHTML='<table style="width:100%;border-collapse:collapse"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table>';
+  document.getElementById('sent-insights').innerHTML=
+    '<div style="display:flex;flex-direction:column;gap:10px">'+
+    '<div style="border-left:3px solid var(--red);padding:10px 13px;background:var(--bg3);border-radius:0 7px 7px 0"><div style="font-size:13px;font-weight:700;margin-bottom:4px">불만 유저 집중 분석</div><div style="font-size:12px;color:var(--text2);line-height:1.6">전체의 <b style="color:var(--red)">'+Math.round(bad/total*100)+'%</b>가 불만 상태. 즉시 우선 배정 라우팅 필요.</div></div>'+
+    '<div style="border-left:3px solid var(--green);padding:10px 13px;background:var(--bg3);border-radius:0 7px 7px 0"><div style="font-size:13px;font-weight:700;margin-bottom:4px">챗봇 해결 → CSAT 직결</div><div style="font-size:12px;color:var(--text2);line-height:1.6">중립 유저 챗봇 해결율 향상 = CSAT 직접 향상.</div></div>'+
     '</div>';
 }
 
-/* ══════════════ 챗봇 ══════════════ */
-function renderChatbot(d) {
-  var t  = d.meta.total;
-  var cb = d.chatbot;
-
-  // KPI
-  var transferCnt=0, dropCnt=0, botCnt=0;
-  Object.entries(cb.resolution||{}).forEach(function(e){
-    var k=e[0].toLowerCase();
-    if(k.includes('상담원')||k.includes('agent')||k.includes('transfer')) transferCnt+=e[1];
-    else if(k.includes('포기')||k.includes('timeout')||k.includes('drop')) dropCnt+=e[1];
-    else if(k.includes('챗봇')||k.includes('bot')||k.includes('1회')) botCnt+=e[1];
-  });
-
-  document.getElementById('cf-kpi-total').textContent        = t.toLocaleString()+'건';
-  document.getElementById('cf-kpi-period').textContent       = d.meta.start+' ~ '+d.meta.end;
-  document.getElementById('cf-kpi-transfer').textContent     = transferCnt.toLocaleString()+'건';
-  document.getElementById('cf-kpi-transfer-sub').textContent = t>0?Math.round(transferCnt/t*100)+'% 전환율':'';
-  document.getElementById('cf-kpi-drop').textContent         = dropCnt.toLocaleString()+'건';
-  document.getElementById('cf-kpi-drop-sub').textContent     = t>0?Math.round(dropCnt/t*100)+'% 이탈율':'';
-  document.getElementById('cf-kpi-bot').textContent          = botCnt.toLocaleString()+'건';
-  document.getElementById('cf-kpi-bot-sub').textContent      = t>0?Math.round(botCnt/t*100)+'% 해결율':'';
-
-  // 바 차트
+/* ══ 챗봇 ══ */
+function renderChatbot(d){
+  var t=d.meta.total, cb=d.chatbot;
+  var transferCnt=0,dropCnt=0,botCnt=0;
+  Object.entries(cb.resolution||{}).forEach(function(e){ var k=e[0].toLowerCase(); if(k.includes('상담원')||k.includes('agent')) transferCnt+=e[1]; else if(k.includes('포기')||k.includes('timeout')) dropCnt+=e[1]; else if(k.includes('챗봇')||k.includes('bot')||k.includes('1회')) botCnt+=e[1]; });
+  document.getElementById('cf-kpi-total').textContent=t.toLocaleString()+'건';
+  document.getElementById('cf-kpi-period').textContent=d.meta.start+' ~ '+d.meta.end;
+  document.getElementById('cf-kpi-transfer').textContent=transferCnt.toLocaleString()+'건';
+  document.getElementById('cf-kpi-transfer-sub').textContent=t>0?Math.round(transferCnt/t*100)+'% 전환율':'';
+  document.getElementById('cf-kpi-drop').textContent=dropCnt.toLocaleString()+'건';
+  document.getElementById('cf-kpi-drop-sub').textContent=t>0?Math.round(dropCnt/t*100)+'% 이탈율':'';
+  document.getElementById('cf-kpi-bot').textContent=botCnt.toLocaleString()+'건';
+  document.getElementById('cf-kpi-bot-sub').textContent=t>0?Math.round(botCnt/t*100)+'% 해결율':'';
   renderBars('cf-resolution-bars', cb.resolution,      '#7F77DD', t);
   renderBars('cf-transfer-bars',   cb.transfer_reason, '#D85A30', t);
   renderBars('cf-problem-bars',    cb.chatbot_problem, '#7F77DD', t);
   renderBars('cf-pingpong-bars',   cb.pingpong,        '#BA7517', t);
-
-  // 언어별 Resolution
-  var lr = d.lang_resolution || {};
-  var langKeys = Object.keys(lr).sort(function(a,b){ return Object.values(lr[b]).reduce(function(s,v){return s+v},0) - Object.values(lr[a]).reduce(function(s,v){return s+v},0); });
-  document.getElementById('cf-lang-resolution').innerHTML = langKeys.length ?
-    '<div class="grid3">'+langKeys.slice(0,6).map(function(lg){
-      var lrData  = lr[lg];
-      var lgTotal = Object.values(lrData).reduce(function(a,b){ return a+b; },0);
-      var bars    = Object.entries(lrData).sort(function(a,b){ return b[1]-a[1]; }).map(function(e){
-        var pct = lgTotal>0?Math.round(e[1]/lgTotal*100):0;
-        var color = RES_COLORS[e[0]] || '#888';
-        return '<div class="bar-row"><div class="bar-label" style="min-width:80px">'+e[0]+'</div>' +
-          '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+pct+'%"></div></div>' +
-          '<div class="bar-cnt">'+pct+'%</div></div>';
-      }).join('');
-      return '<div class="section-card" style="padding:12px 14px"><div class="section-title">'+lg+' <span class="section-sub">'+lgTotal.toLocaleString()+'건</span></div>'+bars+'</div>';
-    }).join('')+'</div>'
-  : '<div style="font-size:12px;color:#bbb;padding:8px 0">데이터 없음</div>';
-
-  // 챗봇 언어별 패턴
-  var lp = d.lang_patterns || {};
-  var cfLangs = Object.keys(lp).sort(function(a,b){ return (lp[b].total||0)-(lp[a].total||0); });
-  document.getElementById('cf-lang-tab-btns').innerHTML = cfLangs.map(function(lg,i){
-    return '<div class="lang-tab'+(i===0?' on':'')+'" onclick="showCfLangTab(\''+lg+'\',this)">'+lg+' <span style="font-size:10px;color:#888">('+((lp[lg]||{}).total||0).toLocaleString()+'건)</span></div>';
-  }).join('');
-  window._cfLangPatterns = lp;
-  if(cfLangs.length) showCfLangContent(cfLangs[0]);
-
-  // 개선 제안
-  renderCfImprove(d);
+  var lr=d.lang_resolution||{};
+  var lks=Object.keys(lr).sort(function(a,b){ return Object.values(lr[b]).reduce(function(s,v){return s+v},0)-Object.values(lr[a]).reduce(function(s,v){return s+v},0); });
+  document.getElementById('cf-lang-resolution').innerHTML=lks.length?'<div class="grid3">'+lks.slice(0,6).map(function(lg){
+    var ld=lr[lg], tot=Object.values(ld).reduce(function(a,b){return a+b},0);
+    return '<div class="section-card" style="padding:12px 14px"><div class="section-title">'+lg+' <span class="section-sub">'+tot.toLocaleString()+'건</span></div>'+Object.entries(ld).sort(function(a,b){return b[1]-a[1];}).map(function(e){ var pct=tot>0?Math.round(e[1]/tot*100):0, color=RES_C[e[0]]||'#888'; return '<div class="bar-row"><div class="bar-label" style="min-width:80px">'+e[0]+'</div><div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+pct+'%"></div></div><div class="bar-cnt">'+pct+'%</div></div>'; }).join('')+'</div>'; }).join('')+'</div>':'<div style="font-size:12px;color:var(--text3);padding:8px 0">데이터 없음</div>';
+  var lp=d.lang_patterns||{};
+  var cfLangs=Object.keys(lp).sort(function(a,b){return (lp[b].total||0)-(lp[a].total||0);});
+  document.getElementById('cf-lang-tab-btns').innerHTML=cfLangs.map(function(lg,i){ return '<div class="lang-tab'+(i===0?' on':'')+'" onclick="showCfLangTab(\''+lg+'\',this)">'+lg+' <span style="font-size:10px;opacity:.6">('+(lp[lg].total||0).toLocaleString()+'건)</span></div>'; }).join('');
+  window._CFLP=lp; if(cfLangs.length) showCfLangContent(cfLangs[0]);
+  document.getElementById('cf-improve-content').innerHTML=(d.scenarios||[]).length?(d.scenarios).map(function(s,i){
+    return '<div class="scenario-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:var(--blue)">'+(i+1)+'순위</span><span style="font-size:13px;font-weight:700;color:var(--text)">'+s.label+'</span><span style="font-size:11px;background:#0D2040;color:#85B7EB;padding:2px 8px;border-radius:8px">'+s.count.toLocaleString()+'건</span></div>'+(s.examples||[]).map(function(e){return '<div class="scenario-quote">"'+e+'"</div>';}).join('')+(s.improvement?'<div class="scenario-improvement">💡 '+s.improvement+'</div>':'')+'</div>';
+  }).join(''):'<div style="font-size:12px;color:var(--text3);padding:16px 0">데이터 없음</div>';
+}
+function showCfLangTab(lg,el){ document.querySelectorAll('#cf-lang-tab-btns .lang-tab').forEach(function(t){t.classList.remove('on');}); el.classList.add('on'); showCfLangContent(lg); }
+function showCfLangContent(lg){
+  var lp=window._CFLP||{}, d=lp[lg]; if(!d) return;
+  var total=d.total||0;
+  var patRows=(d.patterns||[]).map(function(p){ return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="font-size:11px;font-weight:700;color:var(--red);min-width:38px">'+p.pct+'%</div><div style="flex:1;font-size:12px;color:var(--text2)">'+p.label+'</div><div style="font-size:11px;color:var(--text3)">'+p.count.toLocaleString()+'건</div></div>'; }).join('')||'<div style="font-size:11px;color:var(--text3)">데이터 없음</div>';
+  var sampHtml=(d.samples||[]).map(function(s){ return '<div class="sample-card '+(s.auto?'auto':'manual')+'"><div class="sample-tags"><span class="sample-tag tag-product">'+s.product+'</span><span class="sample-tag tag-event">'+s.event+'</span></div><div class="sample-text">"'+s.text+'"</div>'+(s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'')+'</div>'; }).join('')||'<div style="font-size:11px;color:var(--text3)">데이터 없음</div>';
+  document.getElementById('cf-lang-content').innerHTML='<div class="grid2"><div class="section-card"><div class="section-title">'+lg+' 주요 패턴<span class="section-sub">'+total.toLocaleString()+'건</span></div>'+patRows+'</div><div class="section-card"><div class="section-title">'+lg+' 원문 예시</div>'+sampHtml+'</div></div>';
 }
 
-function showCfLangTab(lg, el) {
-  document.querySelectorAll('#cf-lang-tab-btns .lang-tab').forEach(function(t){ t.classList.remove('on'); });
-  el.classList.add('on');
-  showCfLangContent(lg);
-}
+/* ══════════════ KNOWLEDGE GRAPH ══════════════ */
+function nodeR(d){ var b={product:13,event:10,intent:10,sentiment:15,resolution:16,transfer:10,problem:10,lang:10}; return Math.max(8,Math.min((b[d.group]||10)*Math.sqrt(d.count/40),36)); }
 
-function showCfLangContent(lg) {
-  var lp = window._cfLangPatterns || {};
-  var d  = lp[lg];
-  if(!d) return;
-  var total = d.total || 0;
-  var patternRows = (d.patterns||[]).map(function(p){
-    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-      '<div style="font-size:11px;font-weight:700;color:#D85A30;min-width:40px">'+p.pct+'%</div>' +
-      '<div style="flex:1;font-size:12px;color:#333">'+p.label+'</div>' +
-      '<div style="font-size:11px;color:#888">'+p.count.toLocaleString()+'건</div>' +
-    '</div>';
-  }).join('') || '<div style="font-size:11px;color:#bbb">데이터 없음</div>';
+var _svgSel={};
 
-  var sampleHtml = (d.samples||[]).map(function(s){
-    return '<div class="sample-card '+(s.auto?'auto':'manual')+'">' +
-      '<div class="sample-tags"><span class="sample-tag tag-product">'+s.product+'</span><span class="sample-tag tag-event">'+s.event+'</span></div>' +
-      '<div class="sample-text">"'+s.text+'"</div>' +
-      (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
-    '</div>';
-  }).join('') || '<div style="font-size:11px;color:#bbb">데이터 없음</div>';
+function buildKG(d){
+  var ont=d.ontology, cb=d.chatbot, t=d.meta.total||1;
+  var nodes=[];
+  function addN(data,group,max){ Object.entries(data||{}).filter(function(e){return e[0]!=='미분류'&&e[0]!=='';}).slice(0,max||8).forEach(function(e){ nodes.push({id:group+':'+e[0],label:e[0],group:group,count:e[1]}); }); }
+  addN(ont.product,'product',7); addN(ont.event,'event',8); addN(ont.intent,'intent',7); addN(ont.sentiment,'sentiment',3); addN(cb.resolution,'resolution',4);
+  var edges=[];
+  var cr=d.cross||{};
+  if(cr.product_x_resolution) Object.entries(cr.product_x_resolution).forEach(function(e){ var src='product:'+e[0]; Object.entries(e[1]).forEach(function(e2){ var tgt='resolution:'+e2[0]; if(nodes.find(function(n){return n.id===src;})&&nodes.find(function(n){return n.id===tgt;})) edges.push({source:src,target:tgt,weight:e2[1]}); }); });
+  if(cr.product_x_sentiment) Object.entries(cr.product_x_sentiment).forEach(function(e){ var src='product:'+e[0]; Object.entries(e[1]).forEach(function(e2){ var tgt='sentiment:'+e2[0]; if(nodes.find(function(n){return n.id===src;})&&nodes.find(function(n){return n.id===tgt;})) edges.push({source:src,target:tgt,weight:e2[1]}); }); });
 
-  document.getElementById('cf-lang-content').innerHTML =
-    '<div class="grid2">' +
-      '<div class="section-card"><div class="section-title">'+lg+' 주요 패턴<span class="section-sub">'+total.toLocaleString()+'건</span></div>'+patternRows+'</div>' +
-      '<div class="section-card"><div class="section-title">'+lg+' 원문 예시</div>'+sampleHtml+'</div>' +
-    '</div>';
-}
-
-function renderCfImprove(d) {
-  var sc = d.scenarios || [];
-  document.getElementById('cf-improve-content').innerHTML = sc.length ? sc.map(function(s,i){
-    var exHtml = (s.examples||[]).map(function(e){ return '<div class="scenario-quote">"'+e+'"</div>'; }).join('');
-    return '<div class="scenario-card">' +
-      '<div class="scenario-header"><span style="font-size:13px;font-weight:700;color:#378ADD">'+(i+1)+'순위</span><span class="scenario-label">'+s.label+'</span><span class="scenario-cnt">'+s.count.toLocaleString()+'건</span></div>' +
-      exHtml +
-      (s.improvement?'<div class="scenario-improvement">💡 '+s.improvement+'</div>':'') +
-    '</div>';
-  }).join('') : '<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
-}
-
-/* ══════════════ Knowledge Graph ══════════════ */
-var GCL = {product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
-
-function buildKG(d) {
-  var ont = d.ontology;
-  var cb  = d.chatbot;
-  var t   = d.meta.total || 1;
-
-  // 노드 생성
-  var nodes = [];
-  function addNodes(data, group, maxItems) {
-    Object.entries(data||{}).filter(function(e){ return e[0]!=='미분류'; }).slice(0,maxItems||8).forEach(function(e){
-      nodes.push({id:group+':'+e[0], label:e[0], group:group, count:e[1]});
-    });
-  }
-  addNodes(ont.product,   'product',   7);
-  addNodes(ont.event,     'event',     8);
-  addNodes(ont.intent,    'intent',    7);
-  addNodes(ont.sentiment, 'sentiment', 3);
-  addNodes(cb.resolution, 'resolution',4);
-
-  // 엣지 (크로스 데이터)
-  var edges = [];
-  var cross = d.cross || {};
-  if(cross.product_x_resolution) {
-    Object.entries(cross.product_x_resolution).forEach(function(e){
-      var src = 'product:'+e[0];
-      Object.entries(e[1]).forEach(function(e2){
-        var tgt = 'resolution:'+e2[0];
-        if(nodes.find(function(n){ return n.id===src; }) && nodes.find(function(n){ return n.id===tgt; }))
-          edges.push({source:src, target:tgt, weight:e2[1]});
-      });
-    });
-  }
-  if(cross.product_x_sentiment) {
-    Object.entries(cross.product_x_sentiment).forEach(function(e){
-      var src = 'product:'+e[0];
-      Object.entries(e[1]).forEach(function(e2){
-        var tgt = 'sentiment:'+e2[0];
-        if(nodes.find(function(n){ return n.id===src; }) && nodes.find(function(n){ return n.id===tgt; }))
-          edges.push({source:src, target:tgt, weight:e2[1]});
-      });
-    });
-  }
-
-  renderGraph('kg-svg', nodes, edges, 'kg-tt', 'kg-dp', 'kg-dp-inner', 'kg-ip-sub', 'kg-ip-body', t);
-
-  // 범례 버튼
-  var groups = ['product','event','intent','sentiment','resolution'];
-  document.getElementById('kg-filter-btns').innerHTML =
-    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="kgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
-    groups.map(function(g){
-      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="kgFilter(\''+g+'\',this)"><div style="width:9px;height:9px;border-radius:50%;background:'+GC[g]+';flex-shrink:0"></div>'+(GCL[g]||g)+'</div>';
-    }).join('');
-
-  // 사이드 KPI
-  document.getElementById('kg-kpi-side').innerHTML = [
-    ['자동화 가능', d.kpi.auto_pct+'%', '#1D9E75'],
-    ['총 문의', d.meta.total.toLocaleString()+'건', '#1a1a1a'],
-  ].map(function(kv){
-    return '<div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
-  }).join('');
-}
-
-function buildCFKG(d) {
-  var cb = d.chatbot;
-  var t  = d.meta.total || 1;
-
-  var nodes = [];
-  function addN(data, group, max) {
-    Object.entries(data||{}).filter(function(e){ return e[0]!=='미분류'; }).slice(0,max||6).forEach(function(e){
-      nodes.push({id:group+':'+e[0], label:e[0], group:group, count:e[1]});
-    });
-  }
-  addN(cb.resolution,      'resolution', 4);
-  addN(cb.transfer_reason, 'transfer',   6);
-  addN(cb.chatbot_problem, 'problem',    5);
-  addN(cb.cf_lang,         'lang',       4);
-
-  var edges = [];
-  // transfer → resolution edges
-  Object.entries(cb.transfer_reason||{}).slice(0,5).forEach(function(e){
-    var src = 'transfer:'+e[0];
-    if(nodes.find(function(n){ return n.id===src; })) {
-      edges.push({source:src, target:'resolution:상담원처리', weight:e[1]});
-    }
-  });
-
-  renderGraph('cf-kg-svg', nodes, edges, 'cf-kg-tt', 'cf-dp', 'cf-dp-inner', 'cf-ip-sub', 'cf-ip-body', t);
+  renderGraph('kg-svg', nodes, edges, 'kg-tt', 'kg-dp', 'kg-dp-inner', 'kg-ip-sub', 'kg-ip-body', t, d);
 
   // 범례
-  var groups = ['resolution','transfer','problem','lang'];
-  document.getElementById('cf-kg-filter-btns').innerHTML =
-    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
-    groups.map(function(g){
-      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter(\''+g+'\',this)"><div style="width:9px;height:9px;border-radius:50%;background:'+GC[g]+';flex-shrink:0"></div>'+g+'</div>';
-    }).join('');
+  var groups=['product','event','intent','sentiment','resolution'];
+  document.getElementById('kg-filter-btns').innerHTML=
+    '<div class="filter-btn on" onclick="kgFilt(\'all\',this)"><div class="filter-dot" style="background:#888"></div>전체</div>'+
+    groups.map(function(g){ return '<div class="filter-btn" onclick="kgFilt(\''+g+'\',this)"><div class="filter-dot" style="background:'+GC[g]+'"></div>'+(GL[g]||g)+'</div>'; }).join('');
 
-  document.getElementById('cf-kg-kpi-side').innerHTML = [
-    ['상담원 전환', Object.values(cb.resolution)[0]+'건', '#D85A30'],
-    ['챗봇 해결', Object.values(cb.resolution)[1]+'건', '#1D9E75'],
-  ].map(function(kv){
-    return '<div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
+  document.getElementById('kg-kpi-side').innerHTML=[['자동화 가능',d.kpi.auto_pct+'%','var(--green)'],['총 문의',d.meta.total.toLocaleString()+'건','var(--text)']].map(function(kv){
+    return '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
   }).join('');
 }
 
-function nodeR(d){ var b={product:14,event:11,intent:11,sentiment:16,resolution:18,transfer:11,problem:11,lang:11}; return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38)); }
+function buildCFKG(d){
+  var cb=d.chatbot, t=d.meta.total||1;
+  var nodes=[];
+  function addN(data,group,max){ Object.entries(data||{}).filter(function(e){return e[0]!=='미분류'&&e[0]!=='';}).slice(0,max||6).forEach(function(e){ nodes.push({id:group+':'+e[0],label:e[0],group:group,count:e[1]}); }); }
+  addN(cb.resolution,'resolution',4); addN(cb.transfer_reason,'transfer',6); addN(cb.chatbot_problem,'problem',5); addN(cb.cf_lang,'lang',4);
+  var edges=[];
+  Object.entries(cb.transfer_reason||{}).slice(0,5).forEach(function(e){ var src='transfer:'+e[0]; if(nodes.find(function(n){return n.id===src;})) edges.push({source:src,target:'resolution:상담원처리',weight:e[1]}); });
 
-var _svgNodes={}, _svgLinks={};
+  renderGraph('cf-kg-svg', nodes, edges, 'cf-kg-tt', 'cf-dp', 'cf-dp-inner', 'cf-ip-sub', 'cf-ip-body', t, d);
 
-function renderGraph(svgId, nodes, edges, ttId, dpId, dpInnerId, ipSubId, ipBodyId, total) {
-  var svg  = d3.select('#'+svgId);
-  svg.selectAll('*').remove();
-  var area = document.getElementById(svgId).closest('.graph-area') || document.getElementById(svgId).parentElement;
-  var w    = area.clientWidth || 800;
-  var h    = area.clientHeight || 500;
+  var groups=['resolution','transfer','problem','lang'];
+  document.getElementById('cf-kg-filter-btns').innerHTML=
+    '<div class="filter-btn on" onclick="cfKgFilt(\'all\',this)"><div class="filter-dot" style="background:#888"></div>전체</div>'+
+    groups.map(function(g){ return '<div class="filter-btn" onclick="cfKgFilt(\''+g+'\',this)"><div class="filter-dot" style="background:'+GC[g]+'"></div>'+(GL[g]||g)+'</div>'; }).join('');
+
+  var resVals=Object.values(cb.resolution||{});
+  document.getElementById('cf-kg-kpi-side').innerHTML=[['상담원 전환',(resVals[0]||0).toLocaleString()+'건','var(--red)'],['챗봇 해결',(resVals[1]||0).toLocaleString()+'건','var(--green)']].map(function(kv){
+    return '<div style="background:var(--bg3);border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
+  }).join('');
+}
+
+function renderGraph(svgId, nodes, edges, ttId, dpId, dpInnerId, ipSubId, ipBodyId, total, fullData){
+  var svg=d3.select('#'+svgId); svg.selectAll('*').remove();
+  var area=document.getElementById(svgId).closest('.graph-area')||document.getElementById(svgId).parentElement;
+  var w=area.clientWidth||800, h=area.clientHeight||500;
   svg.attr('viewBox','0 0 '+w+' '+h);
-  var g = svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',function(e){ g.attr('transform',e.transform); }));
+  var g=svg.append('g');
+  svg.call(d3.zoom().scaleExtent([0.2,4]).on('zoom',function(e){ g.attr('transform',e.transform); }));
+  var ns=nodes.map(function(d){ return Object.assign({},d); });
+  var es=edges.map(function(d){ return Object.assign({},d); });
 
-  var ns = nodes.map(function(d){ return Object.assign({},d); });
-  var es = edges.map(function(d){ return Object.assign({},d); });
-
-  var sim = d3.forceSimulation(ns)
-    .force('link', d3.forceLink(es).id(function(d){ return d.id; }).distance(function(d){ return 140-Math.min(d.weight/6,70); }).strength(function(d){ return Math.min(d.weight/250,.7); }))
-    .force('charge', d3.forceManyBody().strength(-230))
+  // ← 노드 간격 줄이기: charge 약화, distance 줄임
+  var sim=d3.forceSimulation(ns)
+    .force('link', d3.forceLink(es).id(function(d){return d.id;}).distance(function(d){return 70-Math.min(d.weight/10,40);}).strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-120))
     .force('center', d3.forceCenter(w/2, h/2))
-    .force('collision', d3.forceCollide().radius(function(d){ return nodeR(d)+10; }));
+    .force('collision', d3.forceCollide().radius(function(d){return nodeR(d)+8;}));
 
-  var linkSel = g.append('g').selectAll('line').data(es).enter().append('line')
-    .attr('stroke','#ddd').attr('stroke-width',function(d){ return Math.max(.8,Math.min(d.weight/60,5)); }).attr('stroke-opacity',.8);
+  var linkSel=g.append('g').selectAll('line').data(es).enter().append('line')
+    .attr('stroke','#333').attr('stroke-width',function(d){return Math.max(.6,Math.min(d.weight/80,4));}).attr('stroke-opacity',.7);
 
-  var nodeSel = g.append('g').selectAll('g').data(ns).enter().append('g').attr('cursor','pointer')
+  var nodeSel=g.append('g').selectAll('g').data(ns).enter().append('g').attr('cursor','pointer')
     .call(d3.drag()
-      .on('start',function(e,d){ if(!e.active) sim.alphaTarget(.3).restart(); d.fx=d.x; d.fy=d.y; })
-      .on('drag', function(e,d){ d.fx=e.x; d.fy=e.y; })
-      .on('end',  function(e,d){ if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }))
-    .on('click', function(e,d){ e.stopPropagation(); onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId); })
-    .on('mouseover', function(e,d){ showTip(e, d, svgId, ttId, total); })
+      .on('start',function(e,d){if(!e.active) sim.alphaTarget(.3).restart(); d.fx=d.x; d.fy=d.y;})
+      .on('drag', function(e,d){d.fx=e.x; d.fy=e.y;})
+      .on('end',  function(e,d){if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null;}))
+    .on('click', function(e,d){ e.stopPropagation(); onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId, total, fullData, svgId); })
+    .on('mouseover', function(e,d){ showTip(e,d,svgId,ttId,total); })
     .on('mouseout',  function(){ document.getElementById(ttId).style.opacity=0; });
 
-  nodeSel.append('circle').attr('r',nodeR).attr('fill',function(d){ return GC[d.group]||'#888'; })
-    .attr('fill-opacity',.9).attr('stroke','#fff').attr('stroke-width',2.5).attr('class','nc');
-  nodeSel.append('text').text(function(d){ return d.label.length>9?d.label.slice(0,8)+'…':d.label; })
+  nodeSel.append('circle').attr('r',nodeR).attr('fill',function(d){return GC[d.group]||'#888';}).attr('fill-opacity',.85).attr('stroke','#222').attr('stroke-width',1.5).attr('class','nc');
+  nodeSel.append('text').text(function(d){return d.label.length>8?d.label.slice(0,7)+'…':d.label;})
     .attr('dy','0.35em').attr('text-anchor','middle')
-    .attr('font-size',function(d){ return nodeR(d)>20?'11px':nodeR(d)>14?'10px':'9px'; })
-    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
+    .attr('font-size',function(d){return nodeR(d)>18?'11px':nodeR(d)>12?'10px':'9px';})
+    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','700');
 
   sim.on('tick',function(){
-    linkSel.attr('x1',function(d){ return d.source.x; }).attr('y1',function(d){ return d.source.y; })
-           .attr('x2',function(d){ return d.target.x; }).attr('y2',function(d){ return d.target.y; });
-    nodeSel.attr('transform',function(d){ return 'translate('+d.x+','+d.y+')'; });
+    linkSel.attr('x1',function(d){return d.source.x;}).attr('y1',function(d){return d.source.y;}).attr('x2',function(d){return d.target.x;}).attr('y2',function(d){return d.target.y;});
+    nodeSel.attr('transform',function(d){return 'translate('+d.x+','+d.y+')';});
   });
-
   svg.on('click',function(){
-    nodeSel.selectAll('.nc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
-    linkSel.attr('stroke-opacity',.8).attr('stroke','#ddd');
+    nodeSel.selectAll('.nc').attr('stroke','#222').attr('stroke-width',1.5).attr('fill-opacity',.85);
+    linkSel.attr('stroke-opacity',.7).attr('stroke','#333');
     document.getElementById(dpId).style.height='0';
+    document.getElementById(ipSubId).textContent='노드를 클릭하세요';
+    document.getElementById(ipBodyId).innerHTML='<div style="font-size:11px;color:var(--text3);padding:12px 0">노드를 클릭하면<br>상위 연관 분석이 표시됩니다</div>';
   });
-
-  _svgNodes[svgId] = nodeSel;
-  _svgLinks[svgId] = linkSel;
+  _svgSel[svgId]={nodes:nodeSel, links:linkSel};
 }
 
-function showTip(e, d, svgId, ttId, total) {
-  var tt   = document.getElementById(ttId);
-  var area = document.getElementById(svgId).closest('.graph-area') || document.getElementById(svgId).parentElement;
-  var rect = area.getBoundingClientRect();
-  tt.innerHTML = '<div style="font-size:13px;font-weight:700;color:'+GC[d.group]+'">'+d.label+'</div>' +
-    '<div style="font-size:11px;color:#888">'+d.group+' · '+d.count.toLocaleString()+'건 ('+(Math.round(d.count/total*100))+'%)</div>' +
-    '<div style="font-size:10px;color:#bbb;margin-top:2px">클릭해서 상세 분석</div>';
-  tt.style.left = (e.clientX-rect.left+14)+'px';
-  tt.style.top  = (e.clientY-rect.top-10)+'px';
-  tt.style.opacity = 1;
+function showTip(e,d,svgId,ttId,total){
+  var tt=document.getElementById(ttId);
+  var area=document.getElementById(svgId).closest('.graph-area')||document.getElementById(svgId).parentElement;
+  var rect=area.getBoundingClientRect();
+  tt.innerHTML='<div style="font-size:12px;font-weight:700;color:'+GC[d.group]+'">'+d.label+'</div>'+
+    '<div style="font-size:11px;color:var(--text2)">'+d.group+' · '+d.count.toLocaleString()+'건 ('+Math.round(d.count/total*100)+'%)</div>'+
+    '<div style="font-size:10px;color:var(--text3);margin-top:2px">클릭해서 상세 분석</div>';
+  tt.style.left=(e.clientX-rect.left+14)+'px'; tt.style.top=(e.clientY-rect.top-10)+'px'; tt.style.opacity=1;
 }
 
-function onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId) {
+/* ── 노드 클릭 → Quick Insight + 하단 패널 ── */
+function onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId, total, fullData, svgId){
+  // 하이라이트
   nodeSel.selectAll('.nc')
-    .attr('stroke',function(n){ return n.id===d.id?'#1a1a1a':'#fff'; })
-    .attr('stroke-width',function(n){ return n.id===d.id?3.5:2.5; })
-    .attr('fill-opacity',function(n){ return n.id===d.id?1:.3; });
-  linkSel.attr('stroke-opacity',function(l){ return (l.source.id===d.id||l.target.id===d.id)?.9:.08; })
-         .attr('stroke',function(l){ return (l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#ddd'; });
+    .attr('stroke',function(n){return n.id===d.id?'#fff':'#222';})
+    .attr('stroke-width',function(n){return n.id===d.id?3:1.5;})
+    .attr('fill-opacity',function(n){return n.id===d.id?1:.25;});
+  linkSel.attr('stroke-opacity',function(l){return (l.source.id===d.id||l.target.id===d.id)?.9:.05;})
+         .attr('stroke',function(l){return (l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#333';});
 
-  document.getElementById(ipSubId).textContent = d.label+' ('+d.count.toLocaleString()+'건)';
-  document.getElementById(ipBodyId).innerHTML =
-    '<div style="background:#f8f8f6;border-radius:6px;padding:10px;margin-bottom:8px">' +
-      '<div style="font-size:11px;color:#999;margin-bottom:4px">그룹</div>' +
-      '<div style="font-size:13px;font-weight:700;color:'+GC[d.group]+'">'+d.group+'</div>' +
-    '</div>' +
-    '<div style="background:#f8f8f6;border-radius:6px;padding:10px">' +
-      '<div style="font-size:11px;color:#999;margin-bottom:4px">건수</div>' +
-      '<div style="font-size:16px;font-weight:700">'+d.count.toLocaleString()+'건</div>' +
+  // Quick Insight — Top 3 연관 노드
+  document.getElementById(ipSubId).textContent=d.label+' ('+d.count.toLocaleString()+'건 · '+Math.round(d.count/total*100)+'%)';
+
+  var relatedItems = getRelatedItems(d, fullData, total);
+  var qiHtml = relatedItems.slice(0,3).map(function(item, i){
+    var barW = Math.round(item.pct);
+    return '<div class="qi-item" id="qi-'+svgId+'-'+i+'" onclick="toggleQI(\'qi-'+svgId+'-'+i+'\',\''+item.analysis.replace(/'/g,"\\'")+'\')">' +
+      '<div class="qi-item-header">' +
+        '<span style="font-size:11px;font-weight:700;color:var(--text3)">'+(i+1)+'.</span>' +
+        '<span class="qi-name">'+item.label+'</span>' +
+        '<span class="qi-badge">'+item.group+'</span>' +
+        '<span class="qi-pct">'+item.pct.toFixed(1)+'%</span>' +
+      '</div>' +
+      '<div class="qi-bar"><div class="qi-bar-fill" style="width:'+Math.min(barW,100)+'%;background:'+GC[item.group]+'"></div></div>' +
+      '<div class="qi-analysis">'+item.analysis+'</div>' +
     '</div>';
+  }).join('');
+
+  document.getElementById(ipBodyId).innerHTML =
+    '<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px">Top 3 주요 연관</div>' +
+    (qiHtml || '<div style="font-size:11px;color:var(--text3)">연관 데이터 없음</div>') +
+    '<div style="font-size:10px;color:var(--text3);margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">항목을 클릭하면 분석 내용이 펼쳐집니다</div>';
+
+  // 하단 패널 — Actor/Intent/Event/Product 크로스 분석
+  var dpData = getDpData(d, fullData);
+  var dpHtml = Object.entries(dpData).map(function(entry){
+    var colTitle=entry[0], items=entry[1];
+    var total2=items.reduce(function(s,x){return s+x.cnt;},0)||1;
+    return '<div class="dp-col"><div class="dp-col-title" style="color:'+GC[colTitle.toLowerCase()]||'var(--text3)+'">'+
+      '<div style="width:8px;height:8px;border-radius:50%;background:'+(GC[colTitle.toLowerCase()]||'#888')+';flex-shrink:0"></div>'+
+      colTitle+' <span class="dp-col-badge" style="background:'+(GC[colTitle.toLowerCase()]||'#333')+';color:#fff">이슈</span></div>'+
+      items.slice(0,10).map(function(item){
+        var pct=Math.round(item.cnt/total2*100);
+        return '<div class="dp-row"><div class="dp-row-label" title="'+item.label+'">'+item.label+'</div><div class="dp-row-cnt">'+item.cnt.toLocaleString()+'건</div>'+
+          '<div class="dp-bar"><div class="dp-bar-fill" style="width:'+pct+'%;background:'+(GC[colTitle.toLowerCase()]||'#555')+'"></div></div></div>';
+      }).join('')+
+    '</div>';
+  }).join('');
+
+  document.getElementById(dpInnerId).innerHTML = dpHtml;
+  document.getElementById(dpId).style.height = '240px';
 }
 
-function kgFilter(type, el) {
-  document.querySelectorAll('#kg-filter-btns div').forEach(function(t){ t.style.background=''; t.style.fontWeight=''; });
-  el.style.background='#f0f0ee'; el.style.fontWeight='600';
-  if(!_svgNodes['kg-svg']) return;
-  _svgNodes['kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.15; });
+function toggleQI(id, analysis){
+  var el=document.getElementById(id);
+  if(!el) return;
+  var isExp=el.classList.contains('expanded');
+  document.querySelectorAll('.qi-item').forEach(function(q){ q.classList.remove('expanded'); });
+  if(!isExp) el.classList.add('expanded');
 }
 
-function cfKgFilter(type, el) {
-  document.querySelectorAll('#cf-kg-filter-btns div').forEach(function(t){ t.style.background=''; t.style.fontWeight=''; });
-  el.style.background='#f0f0ee'; el.style.fontWeight='600';
-  if(!_svgNodes['cf-kg-svg']) return;
-  _svgNodes['cf-kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.15; });
+/* ── 연관 아이템 계산 ── */
+function getRelatedItems(d, fullData, total){
+  if(!fullData) return [];
+  var items=[], ont=fullData.ontology||{}, cb=fullData.chatbot||{};
+  var group=d.group;
+
+  function pct(cnt){ return total>0?cnt/total*100:0; }
+  function analysis(label, group, cnt){
+    var p=Math.round(cnt/total*100);
+    return label+' 관련 문의 '+cnt.toLocaleString()+'건 (전체의 '+p+'%). '+
+      (group==='sentiment'&&label.includes('불만')?'즉시 우선 배정 라우팅 및 전담 상담원 배치가 필요합니다.':
+       group==='resolution'&&label.includes('상담원')?'상담원 처리 비중이 높아 챗봇 FAQ 강화로 전환율 감소가 가능합니다.':
+       group==='intent'&&label.includes('복구')?'계정 복구 요청의 대부분이 상담원 처리로 이어져 자동화 여지가 낮습니다.':
+       '해당 카테고리의 상세 분석이 필요합니다.');
+  }
+
+  // cross 데이터 활용
+  var cr=fullData.cross||{};
+  if(group==='product'&&cr.product_x_resolution){
+    var resData=cr.product_x_resolution[d.label]||{};
+    Object.entries(resData).sort(function(a,b){return b[1]-a[1];}).slice(0,5).forEach(function(e){
+      items.push({label:e[0], group:'resolution', cnt:e[1], pct:pct(e[1]), analysis:analysis(e[0],'resolution',e[1])});
+    });
+  }
+  if(group==='product'&&cr.product_x_sentiment){
+    var sentData=cr.product_x_sentiment[d.label]||{};
+    Object.entries(sentData).sort(function(a,b){return b[1]-a[1];}).slice(0,3).forEach(function(e){
+      items.push({label:e[0], group:'sentiment', cnt:e[1], pct:pct(e[1]), analysis:analysis(e[0],'sentiment',e[1])});
+    });
+  }
+
+  // 같은 그룹 외 다른 그룹에서 연관성 높은 것
+  if(items.length<3){
+    var allData = Object.assign({}, ont, cb);
+    Object.entries(allData).forEach(function(entry){
+      var gName=entry[0], gData=entry[1];
+      if(gName===group||typeof gData!=='object') return;
+      Object.entries(gData).sort(function(a,b){return b[1]-a[1];}).slice(0,2).forEach(function(e){
+        if(items.length<5) items.push({label:e[0], group:gName, cnt:e[1], pct:pct(e[1]), analysis:analysis(e[0],gName,e[1])});
+      });
+    });
+  }
+
+  return items.sort(function(a,b){return b.cnt-a.cnt;}).slice(0,3);
 }
 
-function closeKgDp() { document.getElementById('kg-dp').style.height='0'; }
-function closeCfDp() { document.getElementById('cf-dp').style.height='0'; }
+/* ── 하단 패널 데이터 계산 ── */
+function getDpData(d, fullData){
+  if(!fullData) return {};
+  var ont=fullData.ontology||{}, cb=fullData.chatbot||{};
+  var cols = {};
 
-/* ══ 자동 로드 ══ */
-document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(loadData, 500);
-});
+  // 그룹별로 관련 컬럼 매핑
+  var colMap = {
+    product:   ['intent','event','sentiment','resolution'],
+    event:     ['product','intent','sentiment','resolution'],
+    intent:    ['product','event','sentiment','resolution'],
+    sentiment: ['product','intent','resolution'],
+    resolution:['product','intent','sentiment'],
+    transfer:  ['resolution','problem'],
+    problem:   ['transfer','resolution'],
+  };
+
+  var relCols = colMap[d.group] || ['product','intent','sentiment'];
+  var allSrc  = Object.assign({}, ont, cb);
+
+  relCols.forEach(function(col){
+    var src = allSrc[col] || allSrc['cf_'+col] || {};
+    if(typeof src==='object'&&Object.keys(src).length){
+      var colName = col.charAt(0).toUpperCase()+col.slice(1);
+      cols[colName] = Object.entries(src)
+        .filter(function(e){return e[0]!=='미분류'&&e[0]!=='';})
+        .sort(function(a,b){return b[1]-a[1];})
+        .slice(0,8)
+        .map(function(e){return {label:e[0], cnt:e[1]};});
+    }
+  });
+  return cols;
+}
+
+function kgFilt(type,el){
+  document.querySelectorAll('#kg-filter-btns .filter-btn').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+  var sel=_svgSel['kg-svg'];
+  if(sel) sel.nodes.selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.1; });
+}
+function cfKgFilt(type,el){
+  document.querySelectorAll('#cf-kg-filter-btns .filter-btn').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+  var sel=_svgSel['cf-kg-svg'];
+  if(sel) sel.nodes.selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.1; });
+}
+
+function closeKgDp(){ document.getElementById('kg-dp').style.height='0'; }
+function closeCfDp(){ document.getElementById('cf-dp').style.height='0'; }
+
+document.addEventListener('DOMContentLoaded',function(){ setTimeout(loadData,500); });
 </script>
 </body>
 </html>
