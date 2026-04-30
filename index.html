@@ -6,2138 +6,1049 @@
 <title>PUBG Mobile CS 분석 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
-/* ── 탭1 스타일 ── */
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:#f8f8f6;color:#1a1a1a;font-size:14px}
-
-/* ── 상단 네비 ── */
-.nav{background:#fff;border-bottom:1px solid #e8e8e6;box-shadow:0 1px 3px rgba(0,0,0,.06);position:sticky;top:0;z-index:200}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:0}
-.nav-logo{font-size:15px;font-weight:700;color:#1a1a1a;padding:14px 20px 14px 0;border-right:1px solid #e8e8e6;margin-right:8px;white-space:nowrap}
-.nav-logo span{font-size:11px;font-weight:400;color:#999;display:block;margin-top:1px}
-.nav-tabs{display:flex;gap:0;flex:1}
-.nav-tab{padding:16px 20px;font-size:13px;font-weight:500;color:#888;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.nav-tab:hover{color:#1a1a1a;background:#f8f8f6}
-.nav-tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:600}
-.nav-tab .tab-badge{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600}
-.nav-tab.on .tab-badge{background:#1a1a1a;color:#fff}
-.nav-tab:not(.on) .tab-badge{background:#f0f0ee;color:#888}
-.nav-tab.disabled{opacity:.4;cursor:not-allowed}
-.nav-right{margin-left:auto;font-size:11px;color:#bbb;padding-left:16px}
-
-/* ── 탭 패널 ── */
-/* tab-panel removed */
-
-
-/* ══════════════════════════
-   탭1: CS 온톨로지 분석
-═══════════════════════════ */
-.page{max-width:1100px;margin:0 auto;padding:28px 24px}
-h1{font-size:22px;font-weight:700;margin-bottom:4px}
-h2{font-size:16px;font-weight:600;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid #e0e0de}
-h3{font-size:14px;font-weight:600;margin-bottom:8px}
-.badge{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px}
-.bg{background:#e1f5ee;color:#0f6e56}.bb{background:#e6f1fb;color:#185fa5}.bo{background:#fff3dc;color:#854F0B}.br{background:#fee;color:#c00}
-.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-.kc{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6}
-.kc .l{font-size:11px;color:#888;margin-bottom:4px}
-.kc .v{font-size:22px;font-weight:700}
-.kc .s{font-size:11px;color:#aaa;margin-top:2px}
-.sec{margin-bottom:28px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px}
-.p-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.p-tab{padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666}
-.p-tab.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.pp{display:none}.pp.on{display:block}
-.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.bl{font-size:12px;color:#333;min-width:130px;flex-shrink:0}
-.bw{flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden}
-.bf{height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:11px;color:#fff;font-weight:600;white-space:nowrap;min-width:24px}
-.bc{font-size:11px;color:#888;min-width:48px;text-align:right;flex-shrink:0}
-.mx{width:100%;border-collapse:collapse;font-size:12px}
-.mx th{background:#f8f8f6;padding:6px 8px;border:1px solid #e8e8e6;font-weight:500;font-size:11px;color:#555;text-align:center;white-space:nowrap}
-.mx td{padding:6px 8px;border:1px solid #e8e8e6;text-align:center;white-space:nowrap}
-.mx .hot{background:#fde8e8;color:#b00;font-weight:700}
-.mx .mid{background:#fff8e6;color:#854F0B;font-weight:600}
-.mx .low{background:#f0fbf6;color:#0f6e56}
-.mx .lab{text-align:left;font-size:12px;color:#333;background:#fafaf8;white-space:normal;min-width:120px}
-.ib{background:#f8f8f6;border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px}
-.ib.g{border-color:#1D9E75;background:#f0fbf6}
-.ib.r{border-color:#D85A30;background:#fef5f0}
-.ib.o{border-color:#BA7517;background:#fffaf0}
-.ib .it{font-size:13px;font-weight:600;margin-bottom:3px}
-.ib .id{font-size:12px;color:#444;line-height:1.6}
-.quote{background:#f8f8f6;border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #ddd}
-.quote .qt{font-size:12px;color:#333;line-height:1.6;margin-bottom:4px}
-.quote .qr{font-size:11px;color:#888;font-style:italic}
-.quote .ql{font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;display:inline-block;margin-bottom:5px}
-.res-block{border:1px solid #e8e8e6;border-radius:10px;overflow:hidden;margin-bottom:14px}
-.res-hdr{padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.res-body{padding:14px 16px}
-.pat-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f3;align-items:flex-start}
-.pat-item:last-child{border:none}
-.pat-pct{min-width:38px;font-size:13px;font-weight:700;flex-shrink:0;padding-top:1px}
-.pat-name{font-size:13px;font-weight:500}
-.pat-cnt{font-size:11px;color:#aaa;margin-left:6px}
-.pat-bar{margin-top:3px;background:#f0f0ee;height:4px;border-radius:2px}
-.pat-fill{height:4px;border-radius:2px}
-.sc-box{background:#fff;border:1px solid #e8e8e6;border-radius:10px;overflow:hidden;margin-bottom:12px}
-.sc-hdr{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f0f0ee}
-.sc-body{padding:12px 14px}
-.draft{background:#f0fbf6;border:1px solid #1D9E7540;border-radius:8px;padding:10px 12px;font-size:12px;color:#0f6e56;line-height:1.7;margin-top:8px;white-space:pre-line}
-.sent-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;margin:6px 0}
-.sent-seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
-
-/* ══════════════════════════
-   탭2: CS Knowledge Graph
-═══════════════════════════ */
-.kg-wrap{display:flex;height:calc(100vh - 51px);flex-direction:column}
-.kg-main{flex:1;display:flex;min-height:0}
-.kg-legend{width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto}
-.kg-legend h3{font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
-.leg{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
-.leg-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#444;cursor:pointer;padding:4px 6px;border-radius:5px;transition:background .15s}
-.leg-item:hover,.leg-item.active{background:#f0f0ee;font-weight:600}
-.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.kpi-sm{background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6}
-.kpi-sm .kl{font-size:10px;color:#999;margin-bottom:2px}
-.kpi-sm .kv{font-size:15px;font-weight:700}
-.kg-canvas{flex:1;background:#fafaf8;position:relative;overflow:hidden}
-#kg-svg{width:100%;height:100%}
-.kg-tooltip{position:absolute;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.kg-tooltip .tt-name{font-weight:700;font-size:13px;margin-bottom:3px}
-.kg-tooltip .tt-sub{color:#888;font-size:11px}
-.kg-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 12px;border-radius:12px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap}
-.dp{background:#fff;border-top:2px solid #e8e8e6;overflow:hidden;height:0;transition:height .3s ease;flex-shrink:0}
-.dp.open{height:270px}
-.dp-inner{display:flex;height:100%}
-.dp-left{width:210px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto}
-.dp-left .ds-name{font-size:15px;font-weight:700;margin-bottom:3px}
-.dp-left .ds-group{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:8px}
-.dp-left .ds-cnt{font-size:12px;color:#666;margin-bottom:10px}
-.dp-cols{flex:1;display:grid;grid-template-columns:repeat(3,1fr);overflow:hidden}
-.dp-col{padding:12px 14px;border-right:1px solid #e8e8e6;overflow-y:auto}
-.dp-col:last-child{border:none}
-.dp-col-title{font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.dp-li{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f3;font-size:12px}
-.dp-li:last-child{border:none}
-.dp-key{color:#333;flex:1}
-.dp-val{color:#888;font-size:11px;margin-left:6px}
-.dp-analysis{width:250px;padding:14px 16px;background:#f8f8f6;border-left:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto}
-.dp-analysis h4{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.dp-analysis p{font-size:12px;color:#444;line-height:1.7}
-.dp-tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;margin:2px 2px 0 0}
-.dp-close{position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;z-index:10;line-height:1}
-.dp-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.dp-bar-label{font-size:11px;color:#888;min-width:48px}
-.dp-bar{flex:1;background:#f0f0ee;border-radius:2px;height:5px}
-.dp-bar-fill{height:5px;border-radius:2px}
-
-/* ══════════════════════════
-   탭3,4: 준비중
-═══════════════════════════ */
-.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;color:#bbb}
-.coming-soon .cs-icon{font-size:48px}
-.coming-soon .cs-title{font-size:20px;font-weight:600;color:#888}
-.coming-soon .cs-desc{font-size:14px;color:#bbb;text-align:center;line-height:1.7}
-.coming-soon .cs-badge{background:#f0f0ee;color:#888;font-size:12px;padding:6px 16px;border-radius:20px;border:1px solid #e8e8e6}
-
-@media(max-width:768px){.kpi{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.kg-legend{display:none}.dp-cols{grid-template-columns:1fr}.dp-analysis{display:none}}
-
-/* ── 날짜 필터 바 ── */
-.date-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:#fff;border-bottom:1px solid #e8e8e6;flex-wrap:wrap}
-.date-bar label{font-size:11px;color:#888;font-weight:500}
-.date-bar input[type=date]{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;color:#1a1a1a;background:#fafaf8;cursor:pointer;outline:none}
-.date-bar input[type=date]:focus{border-color:#1a1a1a}
-.date-bar .sep{font-size:12px;color:#bbb}
-.btn-load{padding:6px 18px;font-size:12px;font-weight:700;background:#1a1a1a;color:#fff;border:none;border-radius:6px;cursor:pointer;transition:background .15s}
+.nav{background:#fff;border-bottom:1px solid #e8e8e6;position:sticky;top:0;z-index:200;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:0;height:52px}
+.nav-logo{font-size:14px;font-weight:700;padding-right:16px;border-right:1px solid #e8e8e6;margin-right:8px;white-space:nowrap;line-height:1.3}
+.nav-logo span{font-size:10px;font-weight:400;color:#999;display:block}
+.nav-tabs{display:flex;flex:1}
+.nav-tab{padding:0 16px;height:52px;font-size:12px;font-weight:500;color:#888;cursor:pointer;border-bottom:3px solid transparent;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
+.nav-tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
+.nav-tab:hover{color:#1a1a1a}
+.nav-badge{font-size:10px;background:#f0f0ee;color:#888;padding:2px 6px;border-radius:10px}
+.nav-tab.on .nav-badge{background:#1a1a1a;color:#fff}
+.nav-right{display:flex;align-items:center;gap:6px;padding-left:12px}
+.nav-right label{font-size:11px;color:#888;white-space:nowrap}
+.nav-right input[type=date]{font-size:11px;padding:4px 7px;border:1px solid #ddd;border-radius:5px;color:#1a1a1a;background:#fafaf8;outline:none;cursor:pointer}
+.nav-right input[type=date]:focus{border-color:#1a1a1a}
+.btn-load{padding:5px 14px;font-size:12px;font-weight:700;background:#1a1a1a;color:#fff;border:none;border-radius:5px;cursor:pointer;white-space:nowrap;transition:background .15s}
 .btn-load:hover{background:#333}
 .btn-load:disabled{background:#bbb;cursor:not-allowed}
-.load-status{font-size:11px;color:#bbb;margin-left:4px}
-.load-status.ok{color:#1D9E75}
-.load-status.err{color:#D85A30}
-.load-status.loading{color:#BA7517}
-/* ── 라이브 데이터 섹션 ── */
-.live-section{background:#f0fbf6;border:1px solid #1D9E7540;border-radius:10px;padding:16px;margin-bottom:20px}
-.live-title{font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.live-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
-.live-kpi{background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #1D9E7530}
-.live-kpi .lk-label{font-size:10px;color:#888;margin-bottom:3px}
-.live-kpi .lk-val{font-size:18px;font-weight:700}
-.live-kpi .lk-sub{font-size:10px;color:#aaa;margin-top:2px}
-.live-charts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.live-chart-card{background:#fff;border-radius:8px;padding:12px 14px;border:1px solid #e8e8e6}
-.live-chart-title{font-size:11px;font-weight:700;color:#555;margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
-.live-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
-.live-bar-label{font-size:11px;color:#444;min-width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.live-bar-wrap{flex:1;background:#f0f0ee;border-radius:3px;height:16px;overflow:hidden}
-.live-bar-fill{height:16px;border-radius:3px;display:flex;align-items:center;padding-left:5px;font-size:10px;color:#fff;font-weight:600;min-width:20px;transition:width .4s ease}
-.live-bar-cnt{font-size:10px;color:#888;min-width:40px;text-align:right;flex-shrink:0}
-/* ── 챗봇 라이브 ── */
-.chatbot-live-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.chatbot-live-charts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-/* ── 스켈레톤 로딩 ── */
-.skeleton{background:linear-gradient(90deg,#f0f0ee 25%,#e8e8e6 50%,#f0f0ee 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px}
+#load-status{font-size:11px;white-space:nowrap}
+
+/* ── 탭 패널 ── */
+.tab-panel{display:none;max-width:1400px;margin:0 auto;padding:24px 20px}
+.tab-panel.on{display:block}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:14px 16px}
+.kpi-label{font-size:10px;color:#888;margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.kpi-val{font-size:24px;font-weight:700;margin-bottom:3px}
+.kpi-sub{font-size:11px;color:#aaa}
+
+/* ── 서브탭 ── */
+.sub-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.sub-tab{padding:7px 14px;font-size:12px;font-weight:500;border:1px solid #e8e8e6;border-radius:20px;cursor:pointer;background:#fff;color:#666;transition:all .15s}
+.sub-tab.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+
+/* ── 섹션 카드 ── */
+.section-card{background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:18px 20px;margin-bottom:16px}
+.section-title{font-size:13px;font-weight:700;margin-bottom:14px;color:#1a1a1a}
+.section-sub{font-size:11px;color:#aaa;font-weight:400;margin-left:6px}
+
+/* ── 바 차트 ── */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{font-size:12px;color:#444;min-width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-wrap{flex:1;background:#f0f0ee;border-radius:3px;height:18px;overflow:hidden}
+.bar-fill{height:18px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;min-width:22px;transition:width .5s ease}
+.bar-cnt{font-size:11px;color:#888;min-width:60px;text-align:right;flex-shrink:0}
+
+/* ── 그리드 레이아웃 ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ── 언어 탭 ── */
+.lang-tabs{display:flex;gap:4px;margin-bottom:14px}
+.lang-tab{padding:5px 12px;font-size:12px;font-weight:600;border:1px solid #e8e8e6;border-radius:6px;cursor:pointer;background:#f8f8f6;color:#666}
+.lang-tab.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+
+/* ── Resolution 배지 ── */
+.res-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px}
+.res-agent{background:#EBF4FF;color:#185FA5}
+.res-bot{background:#E8F8F1;color:#0f6e56}
+.res-drop{background:#FEF3E2;color:#854F0B}
+
+/* ── 매트릭스 테이블 ── */
+.matrix-table{width:100%;border-collapse:collapse;font-size:12px}
+.matrix-table th{padding:8px 10px;text-align:left;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-weight:600;color:#555;white-space:nowrap}
+.matrix-table td{padding:8px 10px;border-bottom:1px solid #f0f0ee;color:#444;vertical-align:middle}
+.matrix-table tr:hover td{background:#fafaf8}
+.badge-priority{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.bp-now{background:#FAECE7;color:#993C1D}
+.bp-mon{background:#FAEEDA;color:#854F0B}
+.bp-auto{background:#E1F5EE;color:#0F6E56}
+.pct-high{color:#D85A30;font-weight:700}
+.pct-mid{color:#BA7517;font-weight:600}
+.pct-low{color:#1D9E75;font-weight:600}
+
+/* ── 원문 카드 ── */
+.sample-card{background:#f8f8f6;border-radius:8px;padding:12px 14px;margin-bottom:8px;border-left:3px solid #e8e8e6}
+.sample-card.auto{border-left-color:#1D9E75}
+.sample-card.manual{border-left-color:#D85A30}
+.sample-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.sample-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+.tag-product{background:#EBF4FF;color:#185FA5}
+.tag-event{background:#FAECE7;color:#993C1D}
+.tag-intent{background:#E8F8F1;color:#0f6e56}
+.sample-text{font-size:12px;color:#333;line-height:1.6;margin-bottom:5px}
+.sample-memo{font-size:11px;color:#888;font-style:italic}
+
+/* ── 자동화 시나리오 ── */
+.scenario-card{background:#f8f8f6;border-radius:8px;padding:14px 16px;margin-bottom:10px;border:1px solid #e8e8e6}
+.scenario-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.scenario-label{font-size:13px;font-weight:700;color:#1a1a1a}
+.scenario-cnt{font-size:11px;background:#1D9E7520;color:#0f6e56;padding:2px 8px;border-radius:10px;font-weight:600}
+.scenario-quote{background:#fff;border-radius:6px;padding:8px 12px;font-size:12px;color:#555;margin-bottom:4px;border-left:2px solid #ddd;font-style:italic}
+.scenario-improvement{font-size:12px;color:#185FA5;background:#EBF4FF;border-radius:6px;padding:8px 12px;margin-top:8px}
+
+/* ── Sentiment 크로스탭 ── */
+.sent-bar{height:28px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:4px}
+.sent-bar-seg{display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;transition:width .5s}
+
+/* ── KG 탭 ── */
+#t2,#t4{height:calc(100vh - 52px);display:flex;flex-direction:column;max-width:none}
+.kg-wrap{flex:1;display:flex;min-height:0}
+.kg-legend{width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto}
+.graph-area{flex:1;position:relative;background:#fafaf8;overflow:hidden}
+.kg-insight{width:280px;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column;flex-shrink:0}
+.kg-dp{background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s;flex-shrink:0;position:relative}
+
+/* ── 로딩 스켈레톤 ── */
+.skeleton{background:linear-gradient(90deg,#f0f0ee 25%,#e8e8e6 50%,#f0f0ee 75%);background-size:200% 100%;animation:skel 1.2s infinite;border-radius:4px;height:14px;margin-bottom:7px}
 @keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.loading-placeholder{padding:20px 0}
 
+/* ── Sentiment 분포 바 ── */
+.sent-dist-bar{height:24px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:14px}
 
-/* ── KG 스타일 (스코프 제한) ── */
-
-*{box-sizing:border-box;margin:0;padding:0}
-/* body height removed */
-/* ── 상단 헤더 ── */
-#t2 .header{background:#fff;border-bottom:1px solid #e8e8e6;padding:10px 20px;display:flex;align-items:center;gap:12px;height:46px;flex-shrink:0}
-.header h1{font-size:15px;font-weight:700;color:#1a1a1a}
-.header .sub{font-size:11px;color:#999}
-.header .badges{margin-left:auto;display:flex;gap:6px;align-items:center}
-.hbadge{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600}
-/* ── 메인 레이아웃 ── */
-#t2 .main{display:flex;height:calc(100vh - 51px)}
-/* ── 왼쪽: 그래프 ── */
-.graph-area{flex:1;position:relative;overflow:hidden;background:#fafaf8;border-right:1px solid #e8e8e6}
-#kg-svg{width:100%;height:100%}
-.kg-tt{position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1);max-width:180px}
-.kg-tt .tn{font-weight:700;font-size:13px;margin-bottom:3px;color:#1a1a1a}
-.kg-tt .ts{color:#888;font-size:11px}
-.kg-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap}
-/* 범례 */
-.legend{position:absolute;top:12px;left:12px;background:#fff;border:1px solid #e8e8e6;border-radius:8px;padding:10px 14px;font-size:11px}
-.legend-title{font-weight:600;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px}
-.legend-item{display:flex;align-items:center;gap:6px;margin-bottom:4px;color:#555;cursor:pointer;padding:2px 4px;border-radius:4px}
-.legend-item:hover,.legend-item.active{background:#f0f0ee;font-weight:600}
-.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-/* ── 오른쪽: Quick Insight ── */
-.insight-panel{width:300px;background:#fff;display:flex;flex-direction:column;flex-shrink:0}
-.ip-header{padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0}
-.ip-title{font-size:13px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px;margin-bottom:2px}
-.ip-subtitle{font-size:11px;color:#bbb}
-.ip-body{flex:1;overflow-y:auto;padding:12px 16px}
-/* Top 3 리스트 */
-.top-item{border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:all .15s}
-.top-item:hover{border-color:#bbb;background:#fafaf8}
-.top-item.selected{border-color:#1a1a1a;background:#f8f8f6}
-.top-rank{font-size:13px;font-weight:700;color:#999;margin-right:4px}
-.top-name{font-size:13px;font-weight:600;color:#1a1a1a}
-.top-pct{font-size:12px;color:#888;margin-left:auto}
-.top-badges{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
-.t-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:3px}
-.top-bar{height:4px;background:#f0f0ee;border-radius:2px;margin-top:6px}
-.top-bar-fill{height:4px;border-radius:2px}
-/* 종합 분석 */
-.analysis-box{background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px}
-.analysis-title{font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px;display:flex;align-items:center;gap:5px}
-.analysis-text{font-size:12px;color:#333;line-height:1.7}
-/* ── 하단: 상세 패널 ── */
-.detail-panel{position:absolute;bottom:0;left:0;right:300px;background:#fff;border-top:2px solid #e8e8e6;transition:transform .3s ease;transform:translateY(100%);box-shadow:0 -4px 16px rgba(0,0,0,.08)}
-.detail-panel.open{transform:translateY(0)}
-.dp-header{padding:10px 16px;border-bottom:1px solid #e8e8e6;display:flex;align-items:center;gap:8px;background:#fff;position:relative}
-.dp-node-name{font-size:15px;font-weight:700}
-.dp-group-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px}
-.dp-total{font-size:12px;color:#888}
-.dp-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee}
-.dp-close:hover{background:#e0e0de;color:#333}
-.dp-cols{display:grid;grid-template-columns:repeat(4,1fr);height:160px}
-.dp-col{padding:12px 14px;border-right:1px solid #e8e8e6;overflow-y:auto}
-.dp-col:last-child{border:none}
-.dp-col-title{font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.dp-col-badge{font-size:9px;font-weight:600;padding:1px 5px;border-radius:2px}
-.dp-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #f5f5f3;font-size:12px}
-.dp-row:last-child{border:none}
-.dp-key{color:#333;flex:1}
-.dp-val{font-size:11px;color:#888;margin-left:8px;white-space:nowrap}
-/* 필터 조합 섹션 */
-.dp-filter-section{border-top:1px solid #e8e8e6;padding:10px 16px;background:#fafaf8;display:flex;gap:8px;align-items:flex-start}
-.filter-label{font-size:11px;color:#999;margin-bottom:4px}
-.filter-combo{background:#fff;border:1px solid #e8e8e6;border-radius:6px;padding:8px 12px;min-width:160px}
-.filter-combo-title{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:6px;display:flex;align-items:center;gap:5px}
-.filter-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.filter-bar-label{font-size:11px;color:#666;min-width:80px;flex-shrink:0}
-.filter-bar-wrap{flex:1;background:#f0f0ee;border-radius:2px;height:14px;overflow:hidden}
-.filter-bar-fill{height:14px;display:flex;align-items:center;padding-left:4px;font-size:10px;color:#fff;font-weight:600}
-.filter-bar-cnt{font-size:10px;color:#888;min-width:28px;text-align:right}
-.sent-filter-btns{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto;align-self:flex-start;margin-top:2px}
-.sfbtn{font-size:11px;padding:3px 10px;border-radius:4px;cursor:pointer;border:1px solid #e8e8e6;background:#fff;color:#666;transition:all .12s}
-.sfbtn:hover,.sfbtn.active{border-color:#1a1a1a;background:#1a1a1a;color:#fff}
-
-
-/* ── 탭 패널 공통 ── */
-#t2, #t3, #t4 { display:none }
-#t2.on, #t3.on, #t4.on { display:block }
-#t1 { display:block }
-#t1.hidden { display:none }
+/* ── 스크롤 ── */
+.scroll-y{overflow-y:auto}
 </style>
 </head>
 <body>
 
+<!-- ══ 상단 네비 ══ -->
 <nav class="nav">
   <div class="nav-inner">
-    <div class="nav-logo">PUBG Mobile CS 분석<span>2026 Q1 · 90,389건</span></div>
+    <div class="nav-logo">PUBG Mobile CS 분석<span id="nav-sub">데이터 로딩 중...</span></div>
     <div class="nav-tabs">
-      <div class="nav-tab on" id="ntab-t1" onclick="switchMain('t1',this)">
-        📊 CS 온톨로지 분석 <span class="tab-badge">1,000건</span>
-      </div>
-      <div class="nav-tab" id="ntab-t2" onclick="switchMain('t2',this)">
-        🕸 CS Knowledge Graph <span class="tab-badge">33노드</span>
-      </div>
-      <div class="nav-tab" onclick="switchMain('t3',this)">
-        🤖 챗봇 플로우 분석 <span class="tab-badge">2,000건</span>
-      </div>
-      <div class="nav-tab" onclick="switchMain('t4',this)">
-        🕸 챗봇 Knowledge Graph <span class="tab-badge">20노드</span>
-      </div>
+      <div class="nav-tab on" onclick="switchTab('t1',this)">CS 온톨로지 분석<span class="nav-badge" id="badge-t1">—</span></div>
+      <div class="nav-tab" onclick="switchTab('t2',this)">CS Knowledge Graph<span class="nav-badge">KG</span></div>
+      <div class="nav-tab" onclick="switchTab('t3',this)">챗봇 플로우 분석<span class="nav-badge" id="badge-t3">—</span></div>
+      <div class="nav-tab" onclick="switchTab('t4',this)">챗봇 Knowledge Graph<span class="nav-badge">KG</span></div>
     </div>
-    <div class="nav-right" style="display:flex;align-items:center;gap:6px;padding-left:12px">
-      <label style="font-size:11px;color:#888;white-space:nowrap">기간</label>
-      <input type="date" id="date-start" value="2026-03-01" style="font-size:12px;padding:4px 7px;border:1px solid #ddd;border-radius:5px;color:#1a1a1a;background:#fafaf8;outline:none;cursor:pointer">
+    <div class="nav-right">
+      <label>기간</label>
+      <input type="date" id="date-start" value="2026-03-01">
       <span style="font-size:11px;color:#bbb">~</span>
-      <input type="date" id="date-end" value="2026-03-31" style="font-size:12px;padding:4px 7px;border:1px solid #ddd;border-radius:5px;color:#1a1a1a;background:#fafaf8;outline:none;cursor:pointer">
-      <button id="btn-load" onclick="loadLiveData()" style="padding:5px 14px;font-size:12px;font-weight:700;background:#1a1a1a;color:#fff;border:none;border-radius:5px;cursor:pointer;white-space:nowrap">불러오기</button>
-      <span id="load-status" style="font-size:11px;color:#bbb;white-space:nowrap"></span>
+      <input type="date" id="date-end" value="2026-03-31">
+      <button class="btn-load" id="btn-load" onclick="loadData()">불러오기</button>
+      <span id="load-status" style="color:#bbb"></span>
     </div>
   </div>
 </nav>
 
 <!-- ══ 탭1: CS 온톨로지 분석 ══ -->
-<div id="t1" style="display:block">
-<div class="page">
-<h1>CS 온톨로지 분석 — 상세 리포트</h1>
-<div style="font-size:13px;color:#666;margin-bottom:8px">유저 자유 텍스트 기반 5객체 분류 (Actor / Product / Event / Intent / Sentiment)</div>
-<div style="margin-bottom:24px">
-  <span class="badge bg">Conversation 원문 100% 기반</span>
-  <span class="badge bb">Claude API 분류</span>
-  <span class="badge bo">자동화 가능 24.7%</span>
-  <span class="badge br">불만 Sentiment 49.9%</span>
-</div>
-<div class="kpi">
-  <div class="kc"><div class="l">샘플 총 건수</div><div class="v">1,000</div><div class="s">실제 텍스트 있는 것 우선</div></div>
-  <div class="kc"><div class="l">불만 Sentiment</div><div class="v" style="color:#D85A30">499건</div><div class="s">49.9% — 절반이 불만 상태</div></div>
-  <div class="kc"><div class="l">자동화 가능</div><div class="v" style="color:#1D9E75">247건</div><div class="s">24.7% — FAQ 자동 답변 가능</div></div>
-  <div class="kc"><div class="l">상담원 필수</div><div class="v" style="color:#378ADD">753건</div><div class="s">75.3% — 상담원 개입 필요</div></div>
-</div>
-<!-- ── 라이브 데이터 (API 연동) ── -->
-<div class="live-section" id="live-t1">
-  <div class="live-title">🔴 <span id="live-t1-title">라이브 데이터 — 날짜를 선택하고 불러오기를 클릭하세요</span></div>
-  <div class="live-grid" id="live-t1-kpi">
-    <div class="live-kpi"><div class="lk-label">총 문의</div><div class="lk-val" id="lv1-total">—</div><div class="lk-sub">선택 기간</div></div>
-    <div class="live-kpi"><div class="lk-label">자동화 가능</div><div class="lk-val" id="lv1-auto" style="color:#1D9E75">—</div><div class="lk-sub" id="lv1-auto-pct"></div></div>
-    <div class="live-kpi"><div class="lk-label">불만 Sentiment</div><div class="lk-val" id="lv1-bad" style="color:#D85A30">—</div><div class="lk-sub" id="lv1-bad-pct"></div></div>
-    <div class="live-kpi"><div class="lk-label">상담원 필수</div><div class="lk-val" id="lv1-agent" style="color:#378ADD">—</div><div class="lk-sub" id="lv1-agent-pct"></div></div>
-    <div class="live-kpi"><div class="lk-label">챗봇 해결</div><div class="lk-val" id="lv1-bot" style="color:#7F77DD">—</div><div class="lk-sub" id="lv1-bot-pct"></div></div>
-  </div>
-  <div class="live-charts">
-    <div class="live-chart-card">
-      <div class="live-chart-title">📦 Product 분포</div>
-      <div id="live-product-bars"><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px;width:80%"></div><div class="skeleton" style="height:14px;width:60%"></div></div>
-    </div>
-    <div class="live-chart-card">
-      <div class="live-chart-title">🎯 Intent 분포</div>
-      <div id="live-intent-bars"><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px;width:75%"></div><div class="skeleton" style="height:14px;width:55%"></div></div>
-    </div>
-    <div class="live-chart-card">
-      <div class="live-chart-title">😡 Sentiment 분포</div>
-      <div id="live-sentiment-bars"><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px;width:70%"></div><div class="skeleton" style="height:14px;width:30%"></div></div>
-    </div>
-  </div>
-</div>
+<div id="t1" class="tab-panel on">
 
-<div class="p-tabs">
-  <div class="p-tab on" onclick="swP('p-lang',this)">언어별 상세 패턴</div>
-  <div class="p-tab" onclick="swP('p-matrix',this)">Product × Event 매트릭스</div>
-  <div class="p-tab" onclick="swP('p-auto',this)">자동화 시나리오</div>
-  <div class="p-tab" onclick="swP('p-examples',this)">실제 원문 예시</div>
-  <div class="p-tab" onclick="swP('p-sentiment',this)">Sentiment 분석</div>
-</div>
-
-<!-- 언어별 -->
-<div class="pp on" id="p-lang">
-  <div class="p-tabs" style="margin-bottom:14px">
-    <div class="p-tab on" onclick="swLang('lko',this)">한국어 (KO)</div>
-    <div class="p-tab" onclick="swLang('len',this)">영어/글로벌 (EN)</div>
+  <!-- KPI -->
+  <div class="kpi-grid" id="ont-kpi">
+    <div class="kpi-card"><div class="kpi-label">총 문의</div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-sub" id="kpi-period">날짜 선택 후 불러오기</div></div>
+    <div class="kpi-card"><div class="kpi-label">불만 Sentiment</div><div class="kpi-val" id="kpi-bad" style="color:#D85A30">—</div><div class="kpi-sub" id="kpi-bad-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">자동화 가능</div><div class="kpi-val" id="kpi-auto" style="color:#1D9E75">—</div><div class="kpi-sub" id="kpi-auto-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">상담원 처리</div><div class="kpi-val" id="kpi-agent" style="color:#378ADD">—</div><div class="kpi-sub" id="kpi-agent-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">챗봇 1회 해결</div><div class="kpi-val" id="kpi-bot" style="color:#7F77DD">—</div><div class="kpi-sub" id="kpi-bot-sub"></div></div>
   </div>
-  <div id="lko">
-    <div class="ib o"><div class="it">KO — 70건 상담원처리, 챗봇 해결 낮음</div><div class="id">KO 유저는 대부분 상담원 처리. 결제 환불(10건)과 계정 제재(7건)가 주요 이슈. 챗봇으로 해결되는 경우가 적어 FAQ 보강 필요.</div></div>
-    <div class="res-block">
-      <div class="res-hdr" style="background:#E8F1FB;border-bottom:1px solid #378ADD40">
-        <span style="width:9px;height:9px;border-radius:50%;background:#378ADD;display:inline-block"></span>
-        <span style="font-size:14px;font-weight:600;color:#378ADD">상담원 처리</span><span style="font-size:12px;color:#888">70건</span>
-        <span style="font-size:11px;color:#aaa;margin-left:auto">핑퐁 평균 높음</span>
-      </div>
-      <div class="res-body"><div class="grid2">
+
+  <!-- 서브탭 -->
+  <div class="sub-tabs">
+    <div class="sub-tab on" onclick="swOnt('ont-lang',this)">언어별 상세 패턴</div>
+    <div class="sub-tab" onclick="swOnt('ont-matrix',this)">Product × Event 매트릭스</div>
+    <div class="sub-tab" onclick="swOnt('ont-scenario',this)">자동화 시나리오</div>
+    <div class="sub-tab" onclick="swOnt('ont-samples',this)">실제 원문 예시</div>
+    <div class="sub-tab" onclick="swOnt('ont-sentiment',this)">Sentiment 분석</div>
+  </div>
+
+  <!-- 언어별 상세 패턴 -->
+  <div id="ont-lang">
+    <div class="lang-tabs" id="lang-tab-btns"></div>
+    <div id="lang-content"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:80%"></div><div class="skeleton" style="width:60%"></div></div></div>
+  </div>
+
+  <!-- Product × Event 매트릭스 -->
+  <div id="ont-matrix" style="display:none">
+    <div class="section-card">
+      <div class="section-title">Product × Event × Intent 상위 조합<span class="section-sub">건수·자동화%·불만% 기준</span></div>
+      <div id="matrix-table-wrap"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:90%"></div></div></div>
+    </div>
+  </div>
+
+  <!-- 자동화 시나리오 -->
+  <div id="ont-scenario" style="display:none">
+    <div class="section-card">
+      <div class="section-title">자동화 시나리오 — 즉시 구현 가능 Top 5<span class="section-sub">CF_Automatable=가능 기반</span></div>
+      <div id="scenario-content"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:75%"></div></div></div>
+    </div>
+  </div>
+
+  <!-- 실제 원문 예시 -->
+  <div id="ont-samples" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <div class="lang-tab on" id="samp-auto-btn" onclick="swSample('auto',this)">● 자동화 가능</div>
+      <div class="lang-tab" id="samp-manual-btn" onclick="swSample('manual',this)">● 상담원 필수</div>
+    </div>
+    <div id="samples-auto"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:70%"></div></div></div>
+    <div id="samples-manual" style="display:none"></div>
+  </div>
+
+  <!-- Sentiment 분석 -->
+  <div id="ont-sentiment" style="display:none">
+    <div class="section-card">
+      <div class="section-title">전체 Sentiment 분포</div>
+      <div id="sent-dist-bar" class="sent-dist-bar"></div>
+      <div class="grid2">
         <div>
-          <h3 style="font-size:12px;color:#888;margin-bottom:8px">주요 패턴 (Product × Event)</h3>
-          <div class="pat-item"><div class="pat-pct" style="color:#378ADD">14.3%</div><div style="flex:1"><div><span class="pat-name">결제시스템 × 환불 요청</span><span class="pat-cnt">10건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#378ADD;width:100%"></div></div></div></div>
-          <div class="pat-item"><div class="pat-pct" style="color:#378ADD">10.0%</div><div style="flex:1"><div><span class="pat-name">제재시스템 × 계정 제재</span><span class="pat-cnt">7건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#378ADD;width:70%"></div></div></div></div>
-          <div class="pat-item"><div class="pat-pct" style="color:#378ADD">8.6%</div><div style="flex:1"><div><span class="pat-name">결제시스템 × 결제 후 미지급</span><span class="pat-cnt">6건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#378ADD;width:60%"></div></div></div></div>
+          <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:10px">Sentiment × 해결유형</div>
+          <div id="sent-crosstab"></div>
         </div>
-        <div>
-          <h3 style="font-size:12px;color:#888;margin-bottom:8px">실제 원문 예시</h3>
-          <div class="quote"><span class="ql" style="background:#fee;color:#c00">결제 × 환불</span><div class="qt">미다스바이로 인한 iOS충전보상 350UC 우편함에서 안 받고 있으니 회수 부탁드립니다. 확실한 답변 부탁드립니다.</div><div class="qr">→ UC 회수 가능 여부 정책 문의 + 실제 처리 요청 → 상담원 필수</div></div>
-          <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">결제 × 정보문의</span><div class="qt">토스 거래내역서랑 구글 결제내역이랑 같이 보내야되는건가요?</div><div class="qr">→ 제출 절차 정보 문의 → 자동화 가능</div></div>
-          <div class="quote"><span class="ql" style="background:#fee;color:#c00">제재 × 이의신청</span><div class="qt">UC 상환 완료 후 계정 이용 제한 해제를 요청합니다. 동의한 대로 진행했는데 아직 해제가 안 됩니다.</div><div class="qr">→ 상담원 개입 필수, 내부 확인 필요</div></div>
-        </div>
-      </div></div>
-    </div>
-  </div>
-  <div id="len" style="display:none">
-    <div class="ib o"><div class="it">EN — 전체의 90%+ · 계정·제재 집중</div><div class="id">EN은 계정 복구(123건)와 계정 제재 이의(118건)가 상담원 처리의 핵심. 챗봇 해결(240건)은 대부분 로그인 불가 절차 안내로 해결됨.</div></div>
-    <div class="res-block">
-      <div class="res-hdr" style="background:#E8F8F2;border-bottom:1px solid #1D9E7540">
-        <span style="width:9px;height:9px;border-radius:50%;background:#1D9E75;display:inline-block"></span>
-        <span style="font-size:14px;font-weight:600;color:#1D9E75">챗봇 1회 해결</span><span style="font-size:12px;color:#888">240건</span>
-      </div>
-      <div class="res-body"><div class="grid2">
-        <div>
-          <h3 style="font-size:12px;color:#888;margin-bottom:8px">주요 패턴</h3>
-          <div class="pat-item"><div class="pat-pct" style="color:#1D9E75">27.9%</div><div style="flex:1"><div><span class="pat-name">계정시스템 × 로그인 불가</span><span class="pat-cnt">67건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#1D9E75;width:100%"></div></div></div></div>
-          <div class="pat-item"><div class="pat-pct" style="color:#1D9E75">11.7%</div><div style="flex:1"><div><span class="pat-name">계정시스템 × 기타</span><span class="pat-cnt">28건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#1D9E75;width:42%"></div></div></div></div>
-          <div class="pat-item"><div class="pat-pct" style="color:#1D9E75">10.4%</div><div style="flex:1"><div><span class="pat-name">제재시스템 × 계정 제재</span><span class="pat-cnt">25건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#1D9E75;width:37%"></div></div></div></div>
-        </div>
-        <div>
-          <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">계정 × 정보문의</span><div class="qt">Can I link my account on other OS devices? → The issue has been resolved</div><div class="qr">→ 연동 가능 여부 안내 → 즉시 종결. 자동화 확장 가능.</div></div>
-          <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">기술 × 설치오류</span><div class="qt">Problems installing the Market → The issue has been resolved</div><div class="qr">→ 에러코드 대응 FAQ로 해결.</div></div>
-        </div>
-      </div></div>
-    </div>
-    <div class="res-block">
-      <div class="res-hdr" style="background:#FFF5E0;border-bottom:1px solid #BA751740">
-        <span style="width:9px;height:9px;border-radius:50%;background:#BA7517;display:inline-block"></span>
-        <span style="font-size:14px;font-weight:600;color:#BA7517">챗봇 timeout</span><span style="font-size:12px;color:#888">130건</span>
-        <span style="font-size:11px;color:#aaa;margin-left:auto">정보 요청 후 무응답이 원인</span>
-      </div>
-      <div class="res-body">
-        <div class="ib r"><div class="it">Account dropout 43건 (33.1%) — 가장 많음</div><div class="id">챗봇이 UID, 닉네임, 가입 이메일 요청 → 유저가 정보 모르거나 찾기 어려워 무응답 → 48시간 후 자동 종료.</div></div>
-        <div class="ib r"><div class="it">기술/설치 오류 13건 — 에러코드 모름</div><div class="id">챗봇이 "에러코드를 알려주세요" 요청 → 유저가 에러코드 확인 방법 모름 → 이탈.</div></div>
-      </div>
-    </div>
-    <div class="res-block">
-      <div class="res-hdr" style="background:#E8F1FB;border-bottom:1px solid #378ADD40">
-        <span style="width:9px;height:9px;border-radius:50%;background:#378ADD;display:inline-block"></span>
-        <span style="font-size:14px;font-weight:600;color:#378ADD">상담원 처리</span><span style="font-size:12px;color:#888">518건</span>
-      </div>
-      <div class="res-body">
-        <div class="pat-item"><div class="pat-pct" style="color:#378ADD">23.7%</div><div style="flex:1"><div><span class="pat-name">계정시스템 × 계정 분실/도용</span><span class="pat-cnt">123건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#378ADD;width:100%"></div></div></div></div>
-        <div class="pat-item"><div class="pat-pct" style="color:#378ADD">22.8%</div><div style="flex:1"><div><span class="pat-name">제재시스템 × 계정 제재</span><span class="pat-cnt">118건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#378ADD;width:96%"></div></div></div></div>
-        <div class="pat-item"><div class="pat-pct" style="color:#378ADD">11.8%</div><div style="flex:1"><div><span class="pat-name">신고시스템 × 기타</span><span class="pat-cnt">61건</span></div><div class="pat-bar"><div class="pat-fill" style="background:#378ADD;width:50%"></div></div></div></div>
+        <div id="sent-insights"></div>
       </div>
     </div>
   </div>
+
 </div>
 
-<!-- Product × Event 매트릭스 -->
-<div class="pp" id="p-matrix">
-  <div class="sec"><h2>Product × Event × Intent 상위 조합</h2>
-  <div style="overflow-x:auto">
-  <table class="mx">
-    <thead><tr><th>Product</th><th>Event</th><th>Intent</th><th>건수</th><th>자동화</th><th>불만%</th><th>우선순위</th></tr></thead>
-    <tbody>
-      <tr><td class="lab">제재시스템</td><td class="lab">계정 제재</td><td class="lab">제재 이의 신청</td><td class="hot">139</td><td>1.4%</td><td class="hot">89.9%</td><td class="hot">🔴 즉시</td></tr>
-      <tr><td class="lab">계정시스템</td><td class="lab">계정 분실/도용</td><td class="lab">계정 복구 요청</td><td class="hot">128</td><td>0%</td><td class="hot">88.3%</td><td class="hot">🔴 즉시</td></tr>
-      <tr><td class="lab">계정시스템</td><td class="lab">로그인 불가</td><td class="lab">계정 복구 요청</td><td class="mid">69</td><td>10.1%</td><td class="mid">55.1%</td><td class="mid">🟡 모니터링</td></tr>
-      <tr><td class="lab">신고시스템</td><td class="lab">기타</td><td class="lab">신고 접수</td><td class="mid">68</td><td>0%</td><td>20.6%</td><td class="hot">🔴 즉시</td></tr>
-      <tr><td class="lab">계정시스템</td><td class="lab">로그인 불가</td><td class="lab">기술 지원 요청</td><td class="mid">51</td><td>21.6%</td><td class="mid">47.1%</td><td class="mid">🟡 모니터링</td></tr>
-      <tr><td class="lab">계정시스템</td><td class="lab">기타</td><td class="lab">정보/정책 문의</td><td>42</td><td class="low">81.0%</td><td>7.1%</td><td class="low">🟢 자동화</td></tr>
-      <tr><td class="lab">계정시스템</td><td class="lab">소셜계정 연동 오류</td><td class="lab">계정 복구 요청</td><td>38</td><td>0%</td><td class="mid">57.9%</td><td class="hot">🔴 즉시</td></tr>
-      <tr><td class="lab">기술시스템</td><td class="lab">실행/설치 오류</td><td class="lab">기술 지원 요청</td><td>31</td><td class="low">29.0%</td><td>38.7%</td><td class="mid">🟡 모니터링</td></tr>
-      <tr><td class="lab">결제시스템</td><td class="lab">기타</td><td class="lab">정보/정책 문의</td><td>20</td><td class="low">85.0%</td><td>15.0%</td><td class="low">🟢 자동화</td></tr>
-      <tr><td class="lab">인게임시스템</td><td class="lab">기타</td><td class="lab">정보/정책 문의</td><td>17</td><td class="low">100%</td><td>0%</td><td class="low">🟢 자동화</td></tr>
-      <tr><td class="lab">결제시스템</td><td class="lab">환불 요청</td><td class="lab">환불/취소 요청</td><td>17</td><td>0%</td><td>23.5%</td><td class="hot">🔴 즉시</td></tr>
-      <tr><td class="lab">결제시스템</td><td class="lab">결제 후 미지급</td><td class="lab">보상/복구 요청</td><td>16</td><td>0%</td><td class="hot">75.0%</td><td class="hot">🔴 즉시</td></tr>
-    </tbody>
-  </table>
-  </div></div>
-</div>
-
-<!-- 자동화 시나리오 -->
-<div class="pp" id="p-auto">
-  <div class="sec"><h2>자동화 시나리오 — 실제 답변 초안</h2>
-  <div class="ib g"><div class="it">심플 버전 권장 — 즉시 구현 가능</div><div class="id">DB 연동 없이 태그 기반으로 답변 초안 생성 → 상담원 검토 후 발송. 구현 기간 2~4주.</div></div>
-  <div class="sc-box">
-    <div class="sc-hdr" style="background:#f0fbf6">
-      <span style="background:#1D9E75;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px">🟢 자동화 가능</span>
-      <span style="font-size:13px;font-weight:600;margin-left:6px">계정시스템 × 정보/정책 문의 (42건)</span>
+<!-- ══ 탭2: CS Knowledge Graph ══ -->
+<div id="t2" style="display:none;height:calc(100vh - 52px);flex-direction:column">
+  <div class="kg-wrap">
+    <div class="kg-legend" id="kg-legend">
+      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
+      <div id="kg-filter-btns" style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px"></div>
+      <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">주요 지표</div>
+      <div id="kg-kpi-side"></div>
     </div>
-    <div class="sc-body">
-      <div class="quote"><div class="qt">"Can I link my account on other OS devices?"<br>"How to link accounts"</div></div>
-      <div class="draft">Hello!
-Thank you for contacting PUBG Mobile Support.
-✅ Yes, you can link your account to the same social media on different devices.
-Simply log in with the same linked account on the new device.
-If you're having trouble, please check your social media app is updated.
-PUBG Mobile Support</div>
+    <div class="graph-area">
+      <svg id="kg-svg" style="width:100%;height:100%"></svg>
+      <div id="kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 상세 분석이 표시됩니다</div>
     </div>
-  </div>
-  <div class="sc-box">
-    <div class="sc-hdr" style="background:#f0fbf6">
-      <span style="background:#1D9E75;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px">🟢 자동화 가능</span>
-      <span style="font-size:13px;font-weight:600;margin-left:6px">결제시스템 × 정보/정책 문의 (20건)</span>
-    </div>
-    <div class="sc-body">
-      <div class="quote"><div class="qt">"토스 거래내역서랑 구글 결제내역이랑 같이 보내야되는건가요?"</div></div>
-      <div class="draft">안녕하세요, PUBG Mobile 고객지원팀입니다.
-📋 환불 신청 시 필요한 서류:
-• 구글 플레이: Gmail에서 'Google Play 주문 영수증' 검색
-• 앱스토어: 설정 → Apple ID → 구입 내역
-• 토스/카드: 거래내역서 1개만 제출하시면 됩니다 ✅
-추가 문의사항이 있으시면 말씀해주세요!</div>
-    </div>
-  </div>
-  </div>
-</div>
-
-<!-- 실제 원문 예시 -->
-<div class="pp" id="p-examples">
-  <div class="sec"><h2>실제 유저 문의 원문 — Claude 분류 이유 포함</h2>
-  <div class="p-tabs" style="margin-bottom:14px">
-    <div class="p-tab on" onclick="swEx('ex-auto',this)">🟢 자동화 가능</div>
-    <div class="p-tab" onclick="swEx('ex-manual',this)">🔴 상담원 필수</div>
-  </div>
-  <div id="ex-auto">
-    <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">계정시스템 × 소셜계정 연동 오류 × 정보/정책 문의</span><div class="qt">"Can I link my account on other OS devices? Sure, I will now close the inquiry."</div><div class="qr">Claude 분류 이유: 다른 OS 기기 계정 연동 가능 여부 단순 정보 문의. 이미 해결됨.</div></div>
-    <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">결제시스템 × 기타 × 정보/정책 문의</span><div class="qt">"토스 거래내역서랑 구글 결제내역이랑 같이 보내야되는건가요?"</div><div class="qr">Claude 분류 이유: 제출 절차 정보 문의. 정책 안내만으로 해결 가능.</div></div>
-    <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">제재시스템 × 계정 제재 × 정보/정책 문의</span><div class="qt">"Does using GearUP Booster ban account?"</div><div class="qr">Claude 분류 이유: 특정 프로그램 사용에 대한 정책 문의. 제재 기준 FAQ로 해결 가능.</div></div>
-    <div class="quote"><span class="ql" style="background:#e1f5ee;color:#0f6e56">인게임시스템 × 기타 × 정보/정책 문의</span><div class="qt">"How to change servers / I've confirmed it. You can close the inquiry now."</div><div class="qr">Claude 분류 이유: 서버 변경 방법 문의. 정보 제공 후 종결.</div></div>
-  </div>
-  <div id="ex-manual" style="display:none">
-    <div class="quote"><span class="ql" style="background:#fee;color:#c00">제재시스템 × 계정 제재 × 제재 이의 신청 (불만)</span><div class="qt">"Appeal for Account Ban - ID: [5217990250]. I am writing to formally appeal the 10-year ban... due to network instability, not intentional cheating."</div><div class="qr">Claude 분류 이유: 10년 밴 이의신청. 케이스별 내부 조사 필수.</div></div>
-    <div class="quote"><span class="ql" style="background:#fee;color:#c00">계정시스템 × 계정 분실/도용 × 계정 복구 요청 (불만)</span><div class="qt">"My Account has been log out And email change and number change And No OTP Send Please tell me this account information"</div><div class="qr">Claude 분류 이유: 계정 정보 변경으로 접근 불가. 본인인증 + DB 조회 필수.</div></div>
-    <div class="quote"><span class="ql" style="background:#fee;color:#c00">신고시스템 × 기타 × 신고 접수 (중립)</span><div class="qt">"Unauthorized Use of PUBG Logo – Telegram Group Report. I would like to report a Telegram group that appears to be using the PUBG logo without authorization..."</div><div class="qr">Claude 분류 이유: PUBG 로고 무단 사용 신고. 법무팀 검토 필요.</div></div>
-  </div></div>
-</div>
-
-<!-- Sentiment -->
-<div class="pp" id="p-sentiment">
-  <div class="sec"><h2>Sentiment 분석</h2>
-  <div class="card" style="margin-bottom:16px">
-    <div style="font-size:12px;color:#888;margin-bottom:6px">전체 Sentiment 분포</div>
-    <div class="sent-bar">
-      <div class="sent-seg" style="background:#D85A30;width:49.9%">😡 불만 49.9%</div>
-      <div class="sent-seg" style="background:#888;width:46.1%">😐 중립 46.1%</div>
-      <div class="sent-seg" style="background:#1D9E75;width:4%">😊 4%</div>
-    </div>
-  </div>
-  <div class="grid2">
-    <div class="card">
-      <h3 style="margin-bottom:12px">Sentiment × 해결유형</h3>
-      <table class="mx">
-        <thead><tr><th>Sentiment</th><th>챗봇 1회 해결</th><th>timeout</th><th>상담원처리</th></tr></thead>
-        <tbody>
-          <tr><td class="lab">😡 불만 (499건)</td><td>36건 7.2%</td><td class="mid">65건 13%</td><td class="hot">387건 77.6%</td></tr>
-          <tr><td class="lab">😐 중립 (461건)</td><td class="mid">190건 41.2%</td><td>65건 14.1%</td><td class="mid">198건 42.9%</td></tr>
-          <tr><td class="lab">😊 긍정 (40건)</td><td class="low">36건 90%</td><td>—</td><td>4건 10%</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <div class="ib r"><div class="it">불만 유저의 77.6%가 상담원처리</div><div class="id">불만 감지 즉시 우선 배정 라우팅 필요. 제재 이의(90% 불만)가 가장 긴급.</div></div>
-      <div class="ib g"><div class="it">챗봇 해결 유저 90%가 긍정</div><div class="id">챗봇 1회 해결율 향상 = CSAT 직접 향상.</div></div>
-      <div class="ib"><div class="it">중립 유저가 자동화 최적 대상</div><div class="id">중립 461건 중 190건(41%)이 챗봇 해결. FAQ 자동 답변으로 충분.</div></div>
-    </div>
-  </div></div>
-</div>
-
-<div style="font-size:11px;color:#aaa;margin-top:24px;padding-top:12px;border-top:1px solid #e8e8e6">
-  * Claude API (claude-sonnet-4-20250514) 기반 · 샘플 1,000건 · 생성일: 2026-04-20
-</div>
-</div>
-</div><!-- end t1 -->
-
-
-
-<div id="t2" style="display:none">
-
-
-<div class="header">
-  <h1>⚡ CS Knowledge Graph</h1>
-  <div class="sub">PUBG Mobile · 온톨로지 분석 1,000건 · 2026-04-20</div>
-  <div class="badges">
-    <span class="hbadge" style="background:#fee;color:#c00">상담원 58.9%</span>
-    <span class="hbadge" style="background:#e1f5ee;color:#0f6e56">자동화가능 24.7%</span>
-    <span class="hbadge" style="background:#fff3dc;color:#854F0B">불만 49.9%</span>
-  </div>
-</div>
-
-<div class="main">
-  <div class="graph-area">
-    <svg id="kg-svg"></svg>
-    <div class="kg-tt" id="kg-tt"></div>
-    <div class="legend" id="legend">
-      <div class="legend-title">노드 그룹</div>
-      <div class="legend-item active" onclick="lgFilter('all',this)"><div class="legend-dot" style="background:#888"></div>전체</div>
-      <div class="legend-item" onclick="lgFilter('product',this)"><div class="legend-dot" style="background:#378ADD"></div>Product</div>
-      <div class="legend-item" onclick="lgFilter('event',this)"><div class="legend-dot" style="background:#D85A30"></div>Event</div>
-      <div class="legend-item" onclick="lgFilter('intent',this)"><div class="legend-dot" style="background:#1D9E75"></div>Intent</div>
-      <div class="legend-item" onclick="lgFilter('sentiment',this)"><div class="legend-dot" style="background:#BA7517"></div>Sentiment</div>
-      <div class="legend-item" onclick="lgFilter('resolution',this)"><div class="legend-dot" style="background:#7F77DD"></div>Resolution</div>
-    </div>
-    <div class="kg-hint">노드를 클릭하면 하단에 상세 분석이 표시됩니다 · 드래그 이동 · 스크롤 줌</div>
-    <!-- 하단 상세 패널 -->
-    <div class="detail-panel" id="detail-panel">
-      <div class="dp-header">
-        <div class="dp-node-name" id="dp-node-name">—</div>
-        <span class="dp-group-badge" id="dp-group-badge"></span>
-        <div class="dp-total" id="dp-total"></div>
-        <div class="dp-close" onclick="closeDp()">✕</div>
+    <div class="kg-insight">
+      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6">
+        <div style="font-size:13px;font-weight:700">⚡ Quick Insight</div>
+        <div style="font-size:11px;color:#bbb" id="kg-ip-sub">노드를 선택하세요</div>
       </div>
-      <div class="dp-cols" id="dp-cols"></div>
-      <div class="dp-filter-section" id="dp-filter-section"></div>
+      <div style="flex:1;overflow-y:auto;padding:12px 16px" id="kg-ip-body"></div>
     </div>
   </div>
-
-  <!-- 우측 Quick Insight -->
-  <div class="insight-panel">
-    <div class="ip-header">
-      <div class="ip-title">⚡ Quick Insight</div>
-      <div class="ip-subtitle" id="ip-subtitle">노드를 선택하면 상세 분석이 업데이트됩니다</div>
-    </div>
-    <div class="ip-body" id="ip-body">
-      <!-- 기본: 전체 Top 3 -->
-    </div>
+  <div class="kg-dp" id="kg-dp">
+    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeKgDp()">✕</div>
+    <div style="display:flex;height:100%" id="kg-dp-inner"></div>
   </div>
-</div>
-
-
-
 </div>
 
 <!-- ══ 탭3: 챗봇 플로우 분석 ══ -->
-<div id="t3" style="display:none">
-<div style="max-width:1100px;margin:0 auto;padding:28px 24px">
+<div id="t3" style="display:none" class="tab-panel">
 
-<h1 style="font-size:22px;font-weight:700;margin-bottom:4px">챗봇 플로우 문제점 분석</h1>
-<div style="font-size:13px;color:#666;margin-bottom:8px">Claude API 실제 대화 흐름 기반 · 2,000건 샘플 분석</div>
-<div style="margin-bottom:24px">
-  <span style="display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px;background:#fee;color:#c00;font-weight:600">EN 언어장벽 80%</span>
-  <span style="display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px;background:#e1f5ee;color:#0f6e56;font-weight:600">자동화가능 67.4%</span>
-  <span style="display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;margin-right:4px;background:#fff3dc;color:#854F0B;font-weight:600">KO 대안없음 39%</span>
-</div>
+  <!-- KPI -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+    <div class="kpi-card"><div class="kpi-label">총 문의</div><div class="kpi-val" id="cf-kpi-total">—</div><div class="kpi-sub" id="cf-kpi-period"></div></div>
+    <div class="kpi-card"><div class="kpi-label">상담원 전환</div><div class="kpi-val" id="cf-kpi-transfer" style="color:#D85A30">—</div><div class="kpi-sub" id="cf-kpi-transfer-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">중도포기</div><div class="kpi-val" id="cf-kpi-drop" style="color:#BA7517">—</div><div class="kpi-sub" id="cf-kpi-drop-sub"></div></div>
+    <div class="kpi-card"><div class="kpi-label">챗봇 1회 해결</div><div class="kpi-val" id="cf-kpi-bot" style="color:#1D9E75">—</div><div class="kpi-sub" id="cf-kpi-bot-sub"></div></div>
+  </div>
 
-<!-- KPI -->
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">
-  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
-    <div style="font-size:11px;color:#888;margin-bottom:4px">분석 샘플</div>
-    <div style="font-size:22px;font-weight:700">2,000건</div>
-    <div style="font-size:11px;color:#aaa">KO/EN 각 500건×2그룹</div>
+  <!-- 서브탭 -->
+  <div class="sub-tabs">
+    <div class="sub-tab on" onclick="swCf('cf-overview',this)">전환 분석</div>
+    <div class="sub-tab" onclick="swCf('cf-problem',this)">챗봇 문제점</div>
+    <div class="sub-tab" onclick="swCf('cf-lang',this)">언어별 패턴</div>
+    <div class="sub-tab" onclick="swCf('cf-improve',this)">개선 제안</div>
   </div>
-  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
-    <div style="font-size:11px;color:#888;margin-bottom:4px">자동화 가능</div>
-    <div style="font-size:22px;font-weight:700;color:#1D9E75">1,348건</div>
-    <div style="font-size:11px;color:#aaa">67.4% — 개선 여지 큼</div>
-  </div>
-  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
-    <div style="font-size:11px;color:#888;margin-bottom:4px">EN 핵심 문제</div>
-    <div style="font-size:22px;font-weight:700;color:#D85A30">언어 장벽</div>
-    <div style="font-size:11px;color:#aaa">EN 상담원 전환의 80%</div>
-  </div>
-  <div style="background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e6">
-    <div style="font-size:11px;color:#888;margin-bottom:4px">KO 핵심 문제</div>
-    <div style="font-size:22px;font-weight:700;color:#BA7517">대안 없음</div>
-    <div style="font-size:11px;color:#aaa">KO 중도포기의 39.2%</div>
-  </div>
-</div>
 
-<!-- ── 라이브 데이터 (챗봇) ── -->
-<div class="live-section" id="live-t3" style="background:#f0f4ff;border-color:#378ADD40">
-  <div class="live-title" style="color:#185fa5">🔴 <span id="live-t3-title">라이브 데이터 — 날짜를 선택하고 불러오기를 클릭하세요</span></div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
-    <div class="live-kpi"><div class="lk-label">총 문의</div><div class="lk-val" id="lv3-total">—</div><div class="lk-sub">선택 기간</div></div>
-    <div class="live-kpi"><div class="lk-label">상담원 전환</div><div class="lk-val" id="lv3-transfer" style="color:#D85A30">—</div><div class="lk-sub" id="lv3-transfer-pct"></div></div>
-    <div class="live-kpi"><div class="lk-label">중도포기</div><div class="lk-val" id="lv3-drop" style="color:#BA7517">—</div><div class="lk-sub" id="lv3-drop-pct"></div></div>
-    <div class="live-kpi"><div class="lk-label">챗봇 1회 해결</div><div class="lk-val" id="lv3-bot" style="color:#1D9E75">—</div><div class="lk-sub" id="lv3-bot-pct"></div></div>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
-    <div class="live-chart-card">
-      <div class="live-chart-title">📤 상담원 전환 원인 (Transfer_Reason)</div>
-      <div id="live-transfer-bars"><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px;width:70%"></div></div>
-    </div>
-    <div class="live-chart-card">
-      <div class="live-chart-title">🤖 챗봇 문제점 (Chatbot_Problem)</div>
-      <div id="live-problem-bars"><div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px;width:75%"></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- 서브탭 -->
-<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap" id="cf-tabs">
-  <div style="padding:5px 14px;font-size:13px;border:1px solid #1a1a1a;border-radius:20px;cursor:pointer;background:#1a1a1a;color:#fff;font-weight:600" onclick="swCF('cf1',this)">상담원 전환 원인</div>
-  <div style="padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666" onclick="swCF('cf2',this)">중도포기 원인</div>
-  <div style="padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666" onclick="swCF('cf3',this)">챗봇 문제점</div>
-  <div style="padding:5px 14px;font-size:13px;border:1px solid #ddd;border-radius:20px;cursor:pointer;background:#fff;color:#666" onclick="swCF('cf4',this)">개선 제안</div>
-</div>
-
-<!-- 상담원 전환 원인 -->
-<div id="cf1">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a">🇰🇷 KO 상담원 전환 원인 (500건)</h3>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">복잡한 케이스</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:100%">174건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">34.8%</div>
+  <!-- 전환 분석 -->
+  <div id="cf-overview">
+    <div class="grid2">
+      <div class="section-card">
+        <div class="section-title">해결 유형 분포 (CF_Resolution)</div>
+        <div id="cf-resolution-bars"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:70%"></div></div></div>
       </div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">정보수집만 → 상담원 전달</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:94%">165건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">33.0%</div>
-      </div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">유저 챗봇 무시 직접요청</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:58%">102건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">20.4%</div>
-      </div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">챗봇 시도 후 에스컬레이션</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:11%">20건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">4.0%</div>
-      </div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">챗봇 해결책 없음</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:6%">12건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">2.4%</div>
+      <div class="section-card">
+        <div class="section-title">상담원 전환 원인 (Transfer_Reason)</div>
+        <div id="cf-transfer-bars"><div class="loading-placeholder"><div class="skeleton"></div><div class="skeleton" style="width:70%"></div></div></div>
       </div>
     </div>
+    <div class="section-card">
+      <div class="section-title">언어별 해결 유형 분포</div>
+      <div id="cf-lang-resolution"></div>
+    </div>
+  </div>
 
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:#1a1a1a">🌐 EN 상담원 전환 원인 (500건)</h3>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">🚨 언어 장벽</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:100%">400건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">80.0%</div>
+  <!-- 챗봇 문제점 -->
+  <div id="cf-problem" style="display:none">
+    <div class="grid2">
+      <div class="section-card">
+        <div class="section-title">챗봇 문제점 (Chatbot_Problem)</div>
+        <div id="cf-problem-bars"></div>
       </div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">복잡한 케이스</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:16%">64건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">12.8%</div>
-      </div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">
-        <div style="font-size:12px;color:#333;min-width:160px">정보수집만 → 상담원 전달</div>
-        <div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600;width:4%">18건</div></div>
-        <div style="font-size:11px;color:#888;min-width:36px">3.6%</div>
-      </div>
-      <div style="background:#fff3dc;border:1px solid #BA751730;border-radius:8px;padding:10px 12px;margin-top:12px">
-        <div style="font-size:12px;font-weight:600;color:#854F0B;margin-bottom:4px">⚠️ 핵심 발견</div>
-        <div style="font-size:12px;color:#555;line-height:1.6">EN 상담원 전환의 80%가 언어 장벽. 영어를 지원하는 챗봇이 없어서 한국어 챗봇이 "Sorry, Korean only" 응답 후 상담원으로 전환. <strong>영어 지원 챗봇 구축이 가장 큰 임팩트.</strong></div>
+      <div class="section-card">
+        <div class="section-title">핑퐁 횟수 분포 (Pingpong)</div>
+        <div id="cf-pingpong-bars"></div>
       </div>
     </div>
   </div>
 
-  <!-- KO 상담원 핑퐁 -->
-  <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px;margin-top:16px">
-    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">핑퐁 평균 비교</h3>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-      <div style="background:#fef5f0;border-radius:8px;padding:12px;text-align:center;border:1px solid #D85A3020">
-        <div style="font-size:11px;color:#888;margin-bottom:4px">KO 상담원처리</div>
-        <div style="font-size:24px;font-weight:700;color:#D85A30">3.95회</div>
-        <div style="font-size:11px;color:#aaa">가장 높음 — 복잡 케이스</div>
-      </div>
-      <div style="background:#f0fbf6;border-radius:8px;padding:12px;text-align:center;border:1px solid #1D9E7520">
-        <div style="font-size:11px;color:#888;margin-bottom:4px">EN 중도포기</div>
-        <div style="font-size:24px;font-weight:700;color:#1D9E75">2.82회</div>
-        <div style="font-size:11px;color:#aaa">FAQ 후 무응답 패턴</div>
-      </div>
-      <div style="background:#fff3dc;border-radius:8px;padding:12px;text-align:center;border:1px solid #BA751720">
-        <div style="font-size:11px;color:#888;margin-bottom:4px">KO 중도포기</div>
-        <div style="font-size:24px;font-weight:700;color:#BA7517">0.76회</div>
-        <div style="font-size:11px;color:#aaa">초반 이탈 — FAQ 미응답</div>
-      </div>
-      <div style="background:#e8f1fb;border-radius:8px;padding:12px;text-align:center;border:1px solid #378ADD20">
-        <div style="font-size:11px;color:#888;margin-bottom:4px">EN 상담원처리</div>
-        <div style="font-size:24px;font-weight:700;color:#378ADD">0.60회</div>
-        <div style="font-size:11px;color:#aaa">언어장벽 → 즉시 전환</div>
-      </div>
-    </div>
+  <!-- 언어별 패턴 -->
+  <div id="cf-lang" style="display:none">
+    <div class="lang-tabs" id="cf-lang-tab-btns"></div>
+    <div id="cf-lang-content"></div>
   </div>
-</div>
 
-<!-- 중도포기 원인 -->
-<div id="cf2" style="display:none">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🇰🇷 KO 중도포기 원인 (500건)</h3>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">대기 타임아웃</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;width:100%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">157건</div></div><div style="font-size:11px;color:#888;min-width:36px">31.4%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">FAQ 도움 안됨</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;width:91%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">143건</div></div><div style="font-size:11px;color:#888;min-width:36px">28.6%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">정보요청 후 무응답</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:52%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">81건</div></div><div style="font-size:11px;color:#888;min-width:36px">16.2%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">카테고리 없음</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:46%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">72건</div></div><div style="font-size:11px;color:#888;min-width:36px">14.4%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">해결책 없이 통보</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:10%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">16건</div></div><div style="font-size:11px;color:#888;min-width:36px">3.2%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">외부 플랫폼 유도</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:10%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">16건</div></div><div style="font-size:11px;color:#888;min-width:36px">3.2%</div></div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🌐 EN 중도포기 원인 (500건)</h3>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">대기 타임아웃</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#BA7517;height:20px;border-radius:3px;width:100%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">240건</div></div><div style="font-size:11px;color:#888;min-width:36px">48.0%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">카테고리 없음</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#D85A30;height:20px;border-radius:3px;width:51%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">123건</div></div><div style="font-size:11px;color:#888;min-width:36px">24.6%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">FAQ 도움 안됨</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:26%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">62건</div></div><div style="font-size:11px;color:#888;min-width:36px">12.4%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">정보요청 후 무응답</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:14%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">33건</div></div><div style="font-size:11px;color:#888;min-width:36px">6.6%</div></div>
-      <div style="margin-bottom:7px;display:flex;align-items:center;gap:8px"><div style="font-size:12px;color:#333;min-width:160px">외부 플랫폼 유도</div><div style="flex:1;background:#f0f0ee;border-radius:3px;height:20px;overflow:hidden"><div style="background:#888;height:20px;border-radius:3px;width:13%;display:flex;align-items:center;padding-left:6px;font-size:10px;color:#fff;font-weight:600">31건</div></div><div style="font-size:11px;color:#888;min-width:36px">6.2%</div></div>
+  <!-- 개선 제안 -->
+  <div id="cf-improve" style="display:none">
+    <div class="section-card">
+      <div class="section-title">챗봇 개선 제안 Top 5<span class="section-sub">CF_Automatable=가능 기반</span></div>
+      <div id="cf-improve-content"></div>
     </div>
   </div>
-</div>
 
-<!-- 챗봇 문제점 -->
-<div id="cf3" style="display:none">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🇰🇷 KO 챗봇 문제점</h3>
-      <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px">상담원처리</div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">문제 없음 (유저 요인)</span><span style="font-weight:600">281건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">117건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#BA7517">과도한 정보 요청</span><span style="font-weight:600">40건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">일반적 응답</span><span style="font-weight:600">23건</span></div>
-      <div style="font-size:12px;font-weight:600;color:#888;margin:12px 0 8px">중도포기</div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">대안 없음 (no_alternative)</span><span style="font-weight:600">198건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#BA7517">과도한 정보 요청</span><span style="font-weight:600">74건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">67건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">일반적 응답</span><span style="font-weight:600">63건</span></div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">🌐 EN 챗봇 문제점</h3>
-      <div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px">상담원처리</div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">🚨 언어 불일치</span><span style="font-weight:600">413건 (82.6%)</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">문제 없음</span><span style="font-weight:600">44건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#888">과도한 정보 요청</span><span style="font-weight:600">14건</span></div>
-      <div style="font-size:12px;font-weight:600;color:#888;margin:12px 0 8px">중도포기</div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">언어 불일치</span><span style="font-weight:600">137건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#BA7517">과도한 정보 요청</span><span style="font-weight:600">84건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">대안 없음</span><span style="font-weight:600">72건</span></div>
-      <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f5f5f3"><span style="color:#D85A30">FAQ 누락</span><span style="font-weight:600">65건</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- 개선 제안 -->
-<div id="cf4" style="display:none">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🟢 즉시 구현 가능</h3>
-      <div style="font-size:12px;color:#888;margin-bottom:12px">자동화가능 67.4% (1,348건)</div>
-      <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;color:#0f6e56;margin-bottom:4px">1순위 — 영어 지원 챗봇 구축</div>
-        <div style="font-size:12px;color:#444;line-height:1.6">EN 상담원 전환의 80%(400건)가 언어 장벽. 영어 지원 챗봇 또는 언어별 자동 라우팅만 구축해도 즉시 400건/그룹 감소.</div>
-      </div>
-      <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;color:#0f6e56;margin-bottom:4px">2순위 — 대안 제시 로직 추가</div>
-        <div style="font-size:12px;color:#444;line-height:1.6">KO 중도포기 no_alternative 198건. "복구 불가" → "SNS 연동으로 보호하는 방법" 대안 안내로 이탈 감소.</div>
-      </div>
-      <div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;color:#0f6e56;margin-bottom:4px">3순위 — FAQ 보강</div>
-        <div style="font-size:12px;color:#444;line-height:1.6">KO missing_faq 117+67건. 플랫폼 변경 시나리오, 제재 유형별 세부 카테고리 추가.</div>
-      </div>
-    </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px">
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🔴 중기 구현 필요</h3>
-      <div style="font-size:12px;color:#888;margin-bottom:12px">상담원 필수 32.6% (652건)</div>
-      <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;color:#c00;margin-bottom:4px">복잡한 케이스 처리 개선</div>
-        <div style="font-size:12px;color:#444;line-height:1.6">KO complex_case 174건. 계정 제재/복구는 DB 연동 없이 자동화 불가. 상담원 초안 생성으로 처리 시간 단축.</div>
-      </div>
-      <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;color:#c00;margin-bottom:4px">정보수집 → 자동처리 연결</div>
-        <div style="font-size:12px;color:#444;line-height:1.6">KO info_collection_only 165건. 챗봇이 정보만 수집하고 상담원에 넘기는 구조. UID+영수증 → 자동 지급 처리 DB 연동 필요.</div>
-      </div>
-      <div style="background:#fef5f0;border:1px solid #D85A3030;border-radius:8px;padding:12px 14px;margin-bottom:8px">
-        <div style="font-size:13px;font-weight:600;color:#c00;margin-bottom:4px">과도한 정보 요청 최소화</div>
-        <div style="font-size:12px;color:#444;line-height:1.6">EN excessive_info_request 98건. 주문번호/스크린샷 선택사항화. UID만으로 처리 시작 가능하도록 플로우 변경.</div>
-      </div>
-    </div>
-  </div>
-  <div style="background:#fff;border-radius:10px;border:1px solid #e8e8e6;padding:16px;margin-top:16px">
-    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Claude API 개선제안 Top 10</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 챗봇 구축 또는 언어별 라우팅</span><span style="color:#1D9E75;font-weight:600">17건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>복구 불가시 상담원 연결 옵션 제공</span><span style="color:#1D9E75;font-weight:600">4건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>Other 카테고리 영어 지원 추가</span><span style="color:#1D9E75;font-weight:600">8건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>제재 유형별 세부 카테고리 및 FAQ 제공</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 챗봇으로 자동 라우팅</span><span style="color:#1D9E75;font-weight:600">6건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>카테고리 선택 후 세부 옵션 즉시 제시</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 챗봇 연결 또는 다국어 FAQ</span><span style="color:#1D9E75;font-weight:600">6건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>응답 시간 알림 또는 재참여 유도 강화</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>영어 지원 강화 또는 즉시 영어권 상담원 연결</span><span style="color:#1D9E75;font-weight:600">5건</span></div>
-      <div style="font-size:12px;padding:6px 10px;background:#f8f8f6;border-radius:6px;display:flex;justify-content:space-between"><span>FAQ 후 해결 여부 확인 및 추가 지원 제공</span><span style="color:#1D9E75;font-weight:600">3건</span></div>
-    </div>
-  </div>
-</div>
-
-<div style="font-size:11px;color:#aaa;margin-top:24px;padding-top:12px;border-top:1px solid #e8e8e6">
-  * Claude API (claude-sonnet-4-20250514) 기반 실제 대화 흐름 분석 · 2,000건 샘플 · 2026-04-20
-</div>
-</div>
 </div>
 
 <!-- ══ 탭4: 챗봇 Knowledge Graph ══ -->
-<div id="t4" style="display:none">
-<div style="height:calc(100vh - 51px);display:flex;flex-direction:column">
-  <!-- 그래프 + 인사이트 -->
-  <div style="flex:1;display:flex;min-height:0">
-    <!-- 범례 -->
-    <div style="width:200px;background:#fff;border-right:1px solid #e8e8e6;padding:16px;flex-shrink:0;overflow-y:auto">
+<div id="t4" style="display:none;height:calc(100vh - 52px);flex-direction:column">
+  <div class="kg-wrap">
+    <div class="kg-legend">
       <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">노드 그룹</div>
-      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter('all',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('transfer',this)"><div style="width:9px;height:9px;border-radius:50%;background:#D85A30;flex-shrink:0"></div>전환 원인</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('problem',this)"><div style="width:9px;height:9px;border-radius:50%;background:#7F77DD;flex-shrink:0"></div>챗봇 문제점</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('resolution',this)"><div style="width:9px;height:9px;border-radius:50%;background:#378ADD;flex-shrink:0"></div>해결 유형</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#444;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter('lang',this)"><div style="width:9px;height:9px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>언어</div>
-      </div>
+      <div id="cf-kg-filter-btns" style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px"></div>
       <div style="font-size:11px;font-weight:600;color:#999;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">주요 지표</div>
-      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">EN 최대 문제</div><div style="font-size:14px;font-weight:700;color:#D85A30">언어 장벽 80%</div></div>
-      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">KO 최대 문제</div><div style="font-size:14px;font-weight:700;color:#BA7517">대안 없음 39%</div></div>
-      <div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">자동화 가능</div><div style="font-size:14px;font-weight:700;color:#1D9E75">67.4%</div></div>
+      <div id="cf-kg-kpi-side"></div>
     </div>
-
-    <!-- 그래프 캔버스 -->
-    <div style="flex:1;position:relative;background:#fafaf8;overflow:hidden">
+    <div class="graph-area">
       <svg id="cf-kg-svg" style="width:100%;height:100%"></svg>
       <div id="cf-kg-tt" style="position:absolute;background:#fff;border:1px solid #e0e0de;border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;opacity:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
       <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#bbb;background:#fff;padding:4px 14px;border-radius:20px;border:1px solid #e8e8e6;pointer-events:none;white-space:nowrap">노드를 클릭하면 하단에 상세 분석이 표시됩니다</div>
     </div>
-
-    <!-- 우측 Quick Insight -->
-    <div style="width:280px;background:#fff;border-left:1px solid #e8e8e6;display:flex;flex-direction:column;flex-shrink:0">
-      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6;flex-shrink:0">
-        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px">⚡ Quick Insight</div>
-        <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하면 상세 분석이 업데이트됩니다</div>
+    <div class="kg-insight">
+      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6">
+        <div style="font-size:13px;font-weight:700">⚡ Quick Insight</div>
+        <div style="font-size:11px;color:#bbb" id="cf-ip-sub">노드를 선택하세요</div>
       </div>
       <div style="flex:1;overflow-y:auto;padding:12px 16px" id="cf-ip-body"></div>
     </div>
   </div>
-
-  <!-- 하단 상세 패널 -->
-  <div id="cf-dp" style="background:#fff;border-top:2px solid #e8e8e6;height:0;overflow:hidden;transition:height .3s ease;flex-shrink:0;position:relative">
+  <div class="kg-dp" id="cf-dp">
     <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
     <div style="display:flex;height:100%" id="cf-dp-inner"></div>
   </div>
 </div>
+
+<div style="font-size:11px;color:#ccc;text-align:center;padding:16px;border-top:1px solid #e8e8e6;margin-top:8px">
+  PUBG Mobile CS 분석 대시보드 · Claude API (claude-haiku-4-5) 기반 실시간 분석 · Google Sheets 연동
 </div>
 
-
-</body>
-</html>
 <script>
-
-/* ══ 탭 전환 ══ */
-function switchMain(id, el) {
-  var panels = {t1:'t1',t2:'t2',t3:'t3',t4:'t4'};
-  ['t1','t2','t3','t4'].forEach(function(tid) {
-    var p = document.getElementById(tid);
-    if (p) p.style.display = (tid === id) ? 'block' : 'none';
-  });
-  document.querySelectorAll('.nav-tab').forEach(function(t) {
-    t.classList.remove('on');
-  });
-  el.classList.add('on');
-  if (id==='t2' && !window._kgInit) {
-    window._kgInit = 1;
-    setTimeout(function() { if(typeof initGraph==='function') initGraph(); }, 400);
-  }
-  if (id==='t4' && !window._cfInit) {
-    window._cfInit = 1;
-    setTimeout(function() { if(typeof initCFGraph==='function') initCFGraph(); }, 400);
-  }
-}
-function swP(id,el){
-  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById(id).classList.add('on'); el.classList.add('on');
-}
-function swLang(id,el){
-  ['lko','len'].forEach(function(x){document.getElementById(x).style.display='none';});
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
-function swEx(id,el){
-  ['ex-auto','ex-manual'].forEach(function(x){document.getElementById(x).style.display='none';});
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
-
-
-var GC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
-var GL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
-var sentColors={불만:'#D85A30','불만 😡':'#D85A30',중립:'#888','중립 😐':'#888',긍정:'#1D9E75','긍정 😊':'#1D9E75'};
-var resColors={상담원처리:'#378ADD',챗봇해결:'#1D9E75',중도포기:'#BA7517'};
-
-// 전체 데이터
-var NODES=[
-  {id:"product:계정시스템",label:"계정시스템",group:"product",count:376},
-  {id:"product:제재시스템",label:"제재시스템",group:"product",count:202},
-  {id:"product:인게임시스템",label:"인게임시스템",group:"product",count:100},
-  {id:"product:결제시스템",label:"결제시스템",group:"product",count:89},
-  {id:"product:기술시스템",label:"기술시스템",group:"product",count:88},
-  {id:"product:신고시스템",label:"신고시스템",group:"product",count:75},
-  {id:"product:챗봇시스템",label:"챗봇시스템",group:"product",count:15},
-  {id:"event:계정 제재",label:"계정 제재",group:"event",count:161},
-  {id:"event:계정 분실/도용",label:"계정 분실/도용",group:"event",count:134},
-  {id:"event:로그인 불가",label:"로그인 불가",group:"event",count:130},
-  {id:"event:소셜계정 연동 오류",label:"소셜계정 연동",group:"event",count:61},
-  {id:"event:게임 버그/오류",label:"게임 버그/오류",group:"event",count:45},
-  {id:"event:실행/설치 오류",label:"실행/설치 오류",group:"event",count:40},
-  {id:"event:제재 이의",label:"제재 이의",group:"event",count:30},
-  {id:"event:아이템/보상 누락",label:"아이템/보상",group:"event",count:26},
-  {id:"event:이중/오류 결제",label:"이중/오류 결제",group:"event",count:20},
-  {id:"event:환불 요청",label:"환불 요청",group:"event",count:17},
-  {id:"intent:계정 복구 요청",label:"계정 복구 요청",group:"intent",count:237},
-  {id:"intent:기술 지원 요청",label:"기술 지원 요청",group:"intent",count:182},
-  {id:"intent:제재 이의 신청",label:"제재 이의 신청",group:"intent",count:173},
-  {id:"intent:정보/정책 문의",label:"정보/정책 문의",group:"intent",count:165},
-  {id:"intent:신고 접수",label:"신고 접수",group:"intent",count:102},
-  {id:"intent:단순 감정 표출",label:"단순 감정 표출",group:"intent",count:55},
-  {id:"intent:보상/복구 요청",label:"보상/복구 요청",group:"intent",count:34},
-  {id:"intent:환불/취소 요청",label:"환불/취소 요청",group:"intent",count:21},
-  {id:"sentiment:불만",label:"불만 😡",group:"sentiment",count:499},
-  {id:"sentiment:중립",label:"중립 😐",group:"sentiment",count:461},
-  {id:"sentiment:긍정",label:"긍정 😊",group:"sentiment",count:40},
-  {id:"resolution:상담원처리",label:"상담원처리",group:"resolution",count:589},
-  {id:"resolution:bot_1회해결",label:"챗봇해결",group:"resolution",count:262},
-  {id:"resolution:중도포기",label:"중도포기",group:"resolution",count:130},
-];
-var EDGES=[
-  {source:"product:계정시스템",target:"resolution:상담원처리",weight:203},
-  {source:"intent:계정 복구 요청",target:"resolution:상담원처리",weight:176},
-  {source:"intent:계정 복구 요청",target:"sentiment:불만",weight:174},
-  {source:"event:계정 제재",target:"product:제재시스템",weight:160},
-  {source:"intent:제재 이의 신청",target:"sentiment:불만",weight:156},
-  {source:"product:제재시스템",target:"resolution:상담원처리",weight:156},
-  {source:"intent:제재 이의 신청",target:"resolution:상담원처리",weight:151},
-  {source:"intent:정보/정책 문의",target:"sentiment:중립",weight:143},
-  {source:"event:계정 제재",target:"intent:제재 이의 신청",weight:140},
-  {source:"event:계정 분실/도용",target:"product:계정시스템",weight:132},
-  {source:"event:계정 분실/도용",target:"intent:계정 복구 요청",weight:128},
-  {source:"intent:정보/정책 문의",target:"resolution:bot_1회해결",weight:125},
-  {source:"event:로그인 불가",target:"product:계정시스템",weight:118},
-  {source:"intent:기술 지원 요청",target:"resolution:상담원처리",weight:115},
-  {source:"product:계정시스템",target:"resolution:bot_1회해결",weight:116},
-  {source:"event:로그인 불가",target:"intent:계정 복구 요청",weight:69},
-  {source:"event:로그인 불가",target:"intent:기술 지원 요청",weight:51},
-  {source:"product:신고시스템",target:"resolution:상담원처리",weight:65},
-  {source:"intent:신고 접수",target:"resolution:상담원처리",weight:65},
-  {source:"event:소셜계정 연동 오류",target:"product:계정시스템",weight:61},
-  {source:"event:소셜계정 연동 오류",target:"intent:계정 복구 요청",weight:38},
-  {source:"product:결제시스템",target:"resolution:상담원처리",weight:59},
-  {source:"product:인게임시스템",target:"resolution:bot_1회해결",weight:40},
-  {source:"event:실행/설치 오류",target:"intent:기술 지원 요청",weight:39},
-  {source:"product:제재시스템",target:"resolution:bot_1회해결",weight:37},
-  {source:"intent:기술 지원 요청",target:"sentiment:불만",weight:50},
-  {source:"event:환불 요청",target:"intent:환불/취소 요청",weight:17},
-  {source:"product:기술시스템",target:"resolution:중도포기",weight:27},
-];
-
-var NODE_DET={
-  "product:계정시스템":{
-    sentiment:{"불만 😡":210,"중립 😐":160,"긍정 😊":6},
-    event:{"계정 분실/도용":134,"로그인 불가":118,"소셜계정 연동":61,"기타":63},
-    resolution:{상담원처리:203,챗봇해결:116,중도포기:53},
-    lang:{EN:362,KO:10,JA:4},
-    top3:[{name:"계정 복구 요청",badges:["Intent","Product"],pct:63},{name:"정보/정책 문의",badges:["Intent","Product"],pct:31},{name:"기술 지원 요청",badges:["Intent","Product"],pct:22}],
-    analysis:"계정시스템 관련 문의는 총 376건(37.6%)이 접수됐습니다. 영어권 유저(362건)가 압도적으로 많으며, 계정 분실/도용과 로그인 불가가 핵심 Event입니다. 상담원 처리(203건)와 챗봇 해결(116건)이 공존하며, 정보/정책 문의는 자동화 확장 여지가 큽니다.",
-    sents:{"불만":{"product":{상담원처리:165,챗봇해결:32},"event":{"계정 분실/도용":119,"로그인 불가":72,"소셜계정 연동":38}},"중립":{"product":{상담원처리:28,챗봇해결:80},"event":{"로그인 불가":41,"기타":55}}}
-  },
-  "product:제재시스템":{
-    sentiment:{"불만 😡":181,"중립 😐":18,"긍정 😊":3},
-    event:{"계정 제재":160,"제재 이의":30,"기타":12},
-    resolution:{상담원처리:156,챗봇해결:37,중도포기:4},
-    lang:{EN:191,KO:9,JA:2},
-    top3:[{name:"제재 이의 신청",badges:["Intent","Event"],pct:69},{name:"계정 제재",badges:["Event"],pct:79},{name:"정보/정책 문의",badges:["Intent"],pct:5}],
-    analysis:"제재시스템은 불만 Sentiment가 89.6%로 전체 중 가장 높습니다. 계정 제재(160건)가 주요 Event이며, 제재 이의 신청(173건)과 강하게 연결됩니다. 케이스별 내부 조사가 필수로 자동화는 거의 불가능합니다.",
-    sents:{"불만":{"product":{상담원처리:150,챗봇해결:22},"event":{"계정 제재":144,"제재 이의":27}}}
-  },
-  "product:결제시스템":{
-    sentiment:{"불만 😡":45,"중립 😐":40,"긍정 😊":4},
-    event:{"환불 요청":17,"결제 후 미지급":16,"이중/오류 결제":20,"기타":36},
-    resolution:{상담원처리:59,챗봇해결:13,중도포기:16},
-    lang:{EN:58,KO:27,JA:4},
-    top3:[{name:"환불/취소 요청",badges:["Intent","Product"],pct:19},{name:"정보/정책 문의",badges:["Intent"],pct:22},{name:"보상/복구 요청",badges:["Intent"],pct:18}],
-    analysis:"KO 유저 비중(27건)이 상대적으로 높습니다. 환불/미지급/오류 결제가 주요 패턴이며, 정보/정책 문의는 85%가 자동화 가능합니다. 실제 환불 처리는 상담원 필수입니다.",
-    sents:{"불만":{"product":{상담원처리:35,챗봇해결:5},"event":{"이중/오류 결제":18,"결제 후 미지급":12}}}
-  },
-  "intent:계정 복구 요청":{
-    sentiment:{"불만 😡":174,"중립 😐":58,"긍정 😊":5},
-    event:{"계정 분실/도용":128,"로그인 불가":69,"소셜계정 연동 오류":38,"기타":2},
-    resolution:{상담원처리:176,챗봇해결:47,중도포기:14},
-    lang:{EN:210,KO:24,JA:3},
-    top3:[{name:"계정시스템",badges:["Product"],pct:69},{name:"계정 분실/도용",badges:["Event"],pct:54},{name:"로그인 불가",badges:["Event"],pct:29}],
-    analysis:"가장 많은 Intent(23.7%). 불만 73.4%로 감정적 케이스 집중. 상담원 처리가 176건으로 압도적. SNS 연동 절차 등 정보 안내는 자동화 가능하지만 실제 복구는 DB 조회 + 본인인증이 필수입니다.",
-    sents:{"불만":{"product":{계정시스템:138,제재시스템:20,기타:16},"event":{"계정 분실/도용":110,"로그인 불가":45}}}
-  },
-  "intent:제재 이의 신청":{
-    sentiment:{"불만 😡":156,"중립 😐":14,"긍정 😊":3},
-    event:{"계정 제재":140,"제재 이의":30,"기타":3},
-    resolution:{상담원처리:151,챗봇해결:20,중도포기:2},
-    lang:{EN:160,KO:9,JA:4},
-    top3:[{name:"제재시스템",badges:["Product"],pct:76},{name:"계정 제재",badges:["Event"],pct:81},{name:"불만",badges:["Sentiment"],pct:90}],
-    analysis:"예상보다 높은 17.3% 비중. 불만 Sentiment 90.2%로 전체 Intent 중 가장 높습니다. 10년 밴 이의신청 등 케이스별 내부 조사 필수. 처리 속도가 CSAT에 직결됩니다.",
-    sents:{"불만":{"product":{제재시스템:145,계정시스템:8},"event":{"계정 제재":130,"제재 이의":25}}}
-  },
-  "intent:정보/정책 문의":{
-    sentiment:{"불만 😡":22,"중립 😐":143,"긍정 😊":0},
-    event:{"기타":122,"소셜계정 연동 오류":14,"계정 제재":10,"실행/설치":9},
-    resolution:{상담원처리:38,챗봇해결:125,중도포기:2},
-    lang:{EN:130,KO:30,JA:5},
-    top3:[{name:"계정시스템",badges:["Product"],pct:37},{name:"챗봇 1회 해결",badges:["Resolution"],pct:76},{name:"중립",badges:["Sentiment"],pct:87}],
-    analysis:"자동화 가능 비율 80%+ 로 가장 높은 Intent. 챗봇 1회 해결 125건으로 이미 잘 작동 중. 중립 Sentiment(87%)가 압도적. FAQ 강화만으로 상담원 전환을 크게 줄일 수 있습니다.",
-    sents:{"중립":{"product":{계정시스템:50,결제시스템:20,인게임:17},"event":{"기타":100,"소셜계정 연동":12}}}
-  },
-  "sentiment:불만":{
-    sentiment:{"불만 😡":499},
-    event:{"제재 이의 신청":156,"계정 복구 요청":174,"기술 지원 요청":92,"신고 접수":41},
-    resolution:{상담원처리:387,챗봇해결:36,중도포기:65},
-    lang:{EN:380,KO:95,JA:24},
-    top3:[{name:"상담원처리",badges:["Resolution"],pct:78},{name:"제재시스템",badges:["Product"],pct:36},{name:"계정시스템",badges:["Product"],pct:42}],
-    analysis:"유저 절반(49.9%)이 불만 상태. 불만 유저의 77.6%가 상담원으로 전달됩니다. 제재 이의(156건)와 계정 복구(174건)가 불만의 핵심. 불만 감지 시 즉시 우선 배정 라우팅이 필요합니다.",
-    sents:{"불만":{"product":{제재시스템:181,계정시스템:210,신고:14},"event":{"계정 제재":144,"계정 분실/도용":119,"제재 이의 신청":156}}}
-  },
-  "resolution:상담원처리":{
-    sentiment:{"불만 😡":387,"중립 😐":198,"긍정 😊":4},
-    event:{"계정시스템":203,"제재시스템":156,"신고시스템":65,"결제시스템":59},
-    resolution:{상담원처리:589},
-    lang:{EN:518,KO:70,JA:1},
-    top3:[{name:"계정 복구 요청",badges:["Intent"],pct:30},{name:"제재 이의 신청",badges:["Intent"],pct:26},{name:"계정시스템",badges:["Product"],pct:34}],
-    analysis:"전체의 58.9%가 상담원 처리. KO 핑퐁 평균 4.9회 vs EN 1.5회로 KO가 훨씬 복잡. 불만 Sentiment가 65.7%로 집중. 계정+제재가 핵심이며, 정보/정책 문의(38건)만 자동화 전환 여지가 있습니다.",
-    sents:{"불만":{"product":{계정시스템:165,제재시스템:175,신고:50},"event":{"계정 제재":140,"계정 분실/도용":120}}}
-  },
-  "resolution:bot_1회해결":{
-    sentiment:{"불만 😡":36,"중립 😐":190,"긍정 😊":36},
-    event:{"계정시스템":116,"인게임":40,"제재":37,"기술":29},
-    resolution:{챗봇해결:262},
-    lang:{EN:240,KO:16,JA:6},
-    top3:[{name:"정보/정책 문의",badges:["Intent"],pct:48},{name:"계정시스템",badges:["Product"],pct:44},{name:"긍정",badges:["Sentiment"],pct:14}],
-    analysis:"챗봇 해결(26.2%). 긍정 Sentiment 유저의 90%가 여기 집중. 계정시스템 116건이 최다. 정보/정책 문의(125건)가 자동화의 핵심 경로. 이 수치를 높이는 것이 CSAT 향상의 핵심입니다.",
-    sents:{"중립":{"product":{계정시스템:80,인게임:35,제재:25},"event":{"기타":90,"로그인 불가":40}}}
-  },
-  "resolution:중도포기":{
-    sentiment:{"불만 😡":65,"중립 😐":65},
-    event:{"계정시스템":53,"기술시스템":27,"결제시스템":16,"인게임":14},
-    resolution:{중도포기:130},
-    lang:{EN:130,KO:0,JA:0},
-    top3:[{name:"EN 전용",badges:["Language"],pct:100},{name:"계정시스템",badges:["Product"],pct:41},{name:"기술시스템",badges:["Product"],pct:21}],
-    analysis:"13%(130건)이 중도포기. EN 유저 전용 패턴. 계정 정보 요청 후 무응답(56%)이 주원인. 정보 요청 방식을 '선택사항'으로 변경하면 즉시 효과를 볼 수 있습니다.",
-    sents:{"불만":{"product":{계정시스템:30,결제:12,기술:15},"event":{"로그인 불가":28,"설치오류":20}}}
-  },
-};
-
-// 기본 Top 3 (전체 기준)
-var DEFAULT_TOP3=[
-  {id:"product:계정시스템",name:"계정시스템",badges:["Product"],pct:37.6,color:'#378ADD'},
-  {id:"product:제재시스템",name:"제재시스템",badges:["Product"],pct:20.2,color:'#378ADD'},
-  {id:"intent:계정 복구 요청",name:"계정 복구 요청",badges:["Intent"],pct:23.7,color:'#1D9E75'},
-];
-var DEFAULT_ANALYSIS="1,000건 분석 결과, 계정시스템(37.6%)과 제재시스템(20.2%)이 주요 Product입니다. 불만 Sentiment(49.9%)가 절반을 차지하며, 불만 유저의 77.6%가 상담원으로 전달됩니다. 자동화 가능 비율은 24.7%이며, 정보/정책 문의를 중심으로 FAQ 강화 시 즉시 효과를 기대할 수 있습니다.";
-
-function nodeR(d){var b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
-
-var svgNodeSel, svgLinkSel, currentNode=null;
-
-function initGraph(){
-  var svg=d3.select('#kg-svg');
-  var area=document.querySelector('.graph-area');
-  var w=area.clientWidth, h=area.clientHeight;
-  svg.attr('viewBox',`0 0 ${w} ${h}`);
-  var g=svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',e=>g.attr('transform',e.transform)));
-  var nodes=NODES.map(d=>({...d}));
-  var edges=EDGES.map(d=>({...d}));
-  var sim=d3.forceSimulation(nodes)
-    .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>140-Math.min(d.weight/6,70)).strength(d=>Math.min(d.weight/250,.7)))
-    .force('charge',d3.forceManyBody().strength(-230))
-    .force('center',d3.forceCenter(w/2,h/2))
-    .force('collision',d3.forceCollide().radius(d=>nodeR(d)+10));
-  svgLinkSel=g.append('g').selectAll('line').data(edges).enter().append('line')
-    .attr('stroke','#ddd').attr('stroke-width',d=>Math.max(.8,Math.min(d.weight/60,5))).attr('stroke-opacity',.8);
-  svgNodeSel=g.append('g').selectAll('g').data(nodes).enter().append('g').attr('cursor','pointer')
-    .call(d3.drag()
-      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
-      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
-      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
-    .on('click',(e,d)=>{e.stopPropagation();onNodeClick(d);})
-    .on('mouseover',(e,d)=>showTip(e,d))
-    .on('mouseout',()=>{document.getElementById('kg-tt').style.opacity=0;});
-  svgNodeSel.append('circle').attr('r',d=>nodeR(d))
-    .attr('fill',d=>GC[d.group]).attr('fill-opacity',.9)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('class','nc');
-  svgNodeSel.append('text').text(d=>d.label.length>9?d.label.slice(0,8)+'…':d.label)
-    .attr('dy','0.35em').attr('text-anchor','middle')
-    .attr('font-size',d=>nodeR(d)>20?'11px':nodeR(d)>14?'10px':'9px')
-    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
-  sim.on('tick',()=>{
-    svgLinkSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-    svgNodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
-  });
-  svg.on('click',()=>{resetHighlight();closeInsight();});
-  renderDefaultInsight();
-}
-
-function showTip(e,d){
-  var tt=document.getElementById('kg-tt');
-  var area=document.querySelector('.graph-area').getBoundingClientRect();
-  tt.innerHTML=`<div class="tn" style="color:${GC[d.group]}">${d.label}</div><div class="ts">${GL[d.group]} · ${d.count}건 (${Math.round(d.count/1000*100)}%)</div><div class="ts" style="color:#bbb;margin-top:2px">클릭해서 상세 분석</div>`;
-  tt.style.left=(e.clientX-area.left+14)+'px';
-  tt.style.top=(e.clientY-area.top-10)+'px';
-  tt.style.opacity=1;
-}
-
-function onNodeClick(d){
-  currentNode=d;
-  // 하이라이트
-  svgNodeSel.selectAll('.nc')
-    .attr('stroke',n=>n.id===d.id?'#1a1a1a':'#fff')
-    .attr('stroke-width',n=>n.id===d.id?3.5:2.5)
-    .attr('fill-opacity',n=>n.id===d.id?1:.3);
-  svgLinkSel.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.08)
-    .attr('stroke',l=>(l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#ddd');
-  // 오른쪽 Quick Insight 업데이트
-  renderNodeInsight(d);
-  // 하단 상세 패널
-  renderDetailPanel(d);
-}
-
-function resetHighlight(){
-  svgNodeSel.selectAll('.nc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
-  svgLinkSel.attr('stroke-opacity',.8).attr('stroke','#ddd');
-}
-function closeInsight(){
-  currentNode=null;
-  renderDefaultInsight();
-  closeDp();
-}
-
-// ── 오른쪽 패널 ──
-function renderDefaultInsight(){
-  document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
-  var html='';
-  DEFAULT_TOP3.forEach((item,i)=>{
-    var w=Math.round(item.pct/40*100);
-    html+=`<div class="top-item" onclick="clickTop('${item.id}')">
-      <div style="display:flex;align-items:center">
-        <span class="top-rank">${i+1}.</span>
-        <span class="top-name" style="color:${item.color}">${item.name}</span>
-        <span class="top-pct">${item.pct}%</span>
-      </div>
-      <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${item.color}20;color:${item.color}">${b}</span>`).join('')}</div>
-      <div class="top-bar"><div class="top-bar-fill" style="background:${item.color};width:${w}%"></div></div>
-    </div>`;
-  });
-  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${DEFAULT_ANALYSIS}</div></div>`;
-  document.getElementById('ip-body').innerHTML=html;
-}
-
-function renderNodeInsight(d){
-  var det=NODE_DET[d.id];
-  var col=GC[d.group];
-  var pct=Math.round(d.count/1000*100);
-  document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
-  var html='';
-  if(det && det.top3){
-    det.top3.forEach((item,i)=>{
-      var bColor=item.badges[0]==='Intent'?GC.intent:item.badges[0]==='Product'?GC.product:item.badges[0]==='Event'?GC.event:item.badges[0]==='Resolution'?GC.resolution:GC.sentiment;
-      var w=Math.round(item.pct/100*100);
-      html+=`<div class="top-item">
-        <div style="display:flex;align-items:center">
-          <span class="top-rank">${i+1}.</span>
-          <span class="top-name" style="color:${col}">${item.name}</span>
-          <span class="top-pct">${item.pct}%</span>
-        </div>
-        <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${bColor}20;color:${bColor}">${b}</span>`).join('')}</div>
-        <div class="top-bar"><div class="top-bar-fill" style="background:${col};width:${w}%"></div></div>
-      </div>`;
-    });
-  }
-  if(det){
-    html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${det.analysis}</div></div>`;
-  }
-  document.getElementById('ip-body').innerHTML=html;
-}
-
-function clickTop(nodeId){
-  var node=NODES.find(n=>n.id===nodeId);
-  if(node) onNodeClick(node);
-}
-
-// ── 하단 상세 패널 ──
-function renderDetailPanel(d){
-  var det=NODE_DET[d.id];
-  var col=GC[d.group];
-  var dp=document.getElementById('detail-panel');
-  dp.classList.add('open');
-  document.getElementById('dp-node-name').textContent=d.label;
-  document.getElementById('dp-node-name').style.color=col;
-  var badge=document.getElementById('dp-group-badge');
-  badge.textContent=GL[d.group];
-  badge.style.background=col+'20';
-  badge.style.color=col;
-  document.getElementById('dp-total').textContent=`총 ${d.count}건`;
-  if(!det){document.getElementById('dp-cols').innerHTML='';document.getElementById('dp-filter-section').innerHTML='';return;}
-  // 4컬럼
-  var cols=[
-    {title:'Sentiment',badge:'지표',color:'#BA7517',data:det.sentiment||{}},
-    {title:'Event',badge:'이슈',color:'#D85A30',data:det.event||{}},
-    {title:'Resolution',badge:'지표',color:'#7F77DD',data:det.resolution||{}},
-    {title:'Language',badge:'지표',color:'#D4537E',data:det.lang||{}},
-  ];
-  var colsHtml='';
-  cols.forEach(c=>{
-    colsHtml+=`<div class="dp-col"><div class="dp-col-title"><div class="legend-dot" style="background:${c.color}"></div>${c.title} <span class="dp-col-badge" style="background:${c.color}20;color:${c.color}">${c.badge}</span></div>`;
-    Object.entries(c.data).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-      colsHtml+=`<div class="dp-row"><div class="dp-key">${k}</div><div class="dp-val">${v}건</div></div>`;
-    });
-    colsHtml+='</div>';
-  });
-  document.getElementById('dp-cols').innerHTML=colsHtml;
-  // Sentiment 필터 섹션
-  renderFilterSection(d, det, '불만', col);
-}
-
-function renderFilterSection(d, det, selectedSent, col){
-  var sents=det.sents||{};
-  var sentKeys=Object.keys(sents);
-  if(sentKeys.length===0){document.getElementById('dp-filter-section').innerHTML='';return;}
-  // 버튼
-  var btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
-  sentKeys.forEach(s=>{
-    btnHtml+=`<div class="sfbtn${s===selectedSent?' active':''}" onclick="filterSent(this,'${d.id}','${s}','${col}')">${s}</div>`;
-  });
-  btnHtml+='</div></div>';
-  // 선택된 Sentiment 데이터
-  var sd=sents[selectedSent]||{};
-  var comboHtml='';
-  var cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
-  Object.entries(sd).forEach(([key,val])=>{
-    var maxV=Math.max(...Object.values(val));
-    var barCol=key==='event'?GC.event:key==='lang'?'#D4537E':GC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${sentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
-    Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
-      var w=Math.round(v/maxV*100);
-      comboHtml+=`<div class="filter-bar-row">
-        <div class="filter-bar-label">${k}</div>
-        <div class="filter-bar-wrap"><div class="filter-bar-fill" style="background:${barCol};width:${w}%">${w>20?v+'건':''}</div></div>
-        <div class="filter-bar-cnt">${v}</div>
-      </div>`;
-    });
-    comboHtml+='</div>';
-  });
-  document.getElementById('dp-filter-section').innerHTML=btnHtml+comboHtml;
-}
-
-function filterSent(el, nodeId, sent, col){
-  document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  var d=NODES.find(n=>n.id===nodeId);
-  var det=NODE_DET[nodeId];
-  if(d && det) renderFilterSection(d, det, sent, col);
-}
-
-function closeDp(){document.getElementById('detail-panel').classList.remove('open');}
-
-function lgFilter(group,el){
-  document.querySelectorAll('.legend-item').forEach(l=>l.classList.remove('active'));
-  el.classList.add('active');
-  if(!svgNodeSel) return;
-  svgNodeSel.selectAll('circle').attr('opacity',d=>group==='all'?.9:d.group===group?1:.1);
-  svgNodeSel.selectAll('text').attr('opacity',d=>group==='all'?1:d.group===group?1:.1);
-  svgLinkSel.attr('opacity',d=>{if(group==='all') return .8;return(d.source.group===group||d.target.group===group)?.8:.05;});
-}
-
-
-
-
-
-function swP(id,el){
-  document.querySelectorAll('.pp').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById(id).classList.add('on'); el.classList.add('on');
-}
-function swLang(id,el){
-  document.getElementById('lko').style.display='none';
-  document.getElementById('len').style.display='none';
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
-function swEx(id,el){
-  document.getElementById('ex-auto').style.display='none';
-  document.getElementById('ex-manual').style.display='none';
-  document.getElementById(id).style.display='block';
-  el.parentElement.querySelectorAll('.p-tab').forEach(function(t){t.classList.remove('on');});
-  el.classList.add('on');
-}
-
-
-var KGC={product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD'};
-var KGL={product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
-var kgSentColors={불만:'#D85A30','불만 😡':'#D85A30',중립:'#888','중립 😐':'#888',긍정:'#1D9E75','긍정 😊':'#1D9E75'};
-var kgResColors={상담원처리:'#378ADD',챗봇해결:'#1D9E75',중도포기:'#BA7517'};
-
-// 전체 데이터
-
-
-
-var KG_NODE_DET={
-  "product:계정시스템":{
-    sentiment:{"불만 😡":210,"중립 😐":160,"긍정 😊":6},
-    event:{"계정 분실/도용":134,"로그인 불가":118,"소셜계정 연동":61,"기타":63},
-    resolution:{상담원처리:203,챗봇해결:116,중도포기:53},
-    lang:{EN:362,KO:10,JA:4},
-    top3:[{name:"계정 복구 요청",badges:["Intent","Product"],pct:63},{name:"정보/정책 문의",badges:["Intent","Product"],pct:31},{name:"기술 지원 요청",badges:["Intent","Product"],pct:22}],
-    analysis:"계정시스템 관련 문의는 총 376건(37.6%)이 접수됐습니다. 영어권 유저(362건)가 압도적으로 많으며, 계정 분실/도용과 로그인 불가가 핵심 Event입니다. 상담원 처리(203건)와 챗봇 해결(116건)이 공존하며, 정보/정책 문의는 자동화 확장 여지가 큽니다.",
-    sents:{"불만":{"product":{상담원처리:165,챗봇해결:32},"event":{"계정 분실/도용":119,"로그인 불가":72,"소셜계정 연동":38}},"중립":{"product":{상담원처리:28,챗봇해결:80},"event":{"로그인 불가":41,"기타":55}}}
-  },
-  "product:제재시스템":{
-    sentiment:{"불만 😡":181,"중립 😐":18,"긍정 😊":3},
-    event:{"계정 제재":160,"제재 이의":30,"기타":12},
-    resolution:{상담원처리:156,챗봇해결:37,중도포기:4},
-    lang:{EN:191,KO:9,JA:2},
-    top3:[{name:"제재 이의 신청",badges:["Intent","Event"],pct:69},{name:"계정 제재",badges:["Event"],pct:79},{name:"정보/정책 문의",badges:["Intent"],pct:5}],
-    analysis:"제재시스템은 불만 Sentiment가 89.6%로 전체 중 가장 높습니다. 계정 제재(160건)가 주요 Event이며, 제재 이의 신청(173건)과 강하게 연결됩니다. 케이스별 내부 조사가 필수로 자동화는 거의 불가능합니다.",
-    sents:{"불만":{"product":{상담원처리:150,챗봇해결:22},"event":{"계정 제재":144,"제재 이의":27}}}
-  },
-  "product:결제시스템":{
-    sentiment:{"불만 😡":45,"중립 😐":40,"긍정 😊":4},
-    event:{"환불 요청":17,"결제 후 미지급":16,"이중/오류 결제":20,"기타":36},
-    resolution:{상담원처리:59,챗봇해결:13,중도포기:16},
-    lang:{EN:58,KO:27,JA:4},
-    top3:[{name:"환불/취소 요청",badges:["Intent","Product"],pct:19},{name:"정보/정책 문의",badges:["Intent"],pct:22},{name:"보상/복구 요청",badges:["Intent"],pct:18}],
-    analysis:"KO 유저 비중(27건)이 상대적으로 높습니다. 환불/미지급/오류 결제가 주요 패턴이며, 정보/정책 문의는 85%가 자동화 가능합니다. 실제 환불 처리는 상담원 필수입니다.",
-    sents:{"불만":{"product":{상담원처리:35,챗봇해결:5},"event":{"이중/오류 결제":18,"결제 후 미지급":12}}}
-  },
-  "intent:계정 복구 요청":{
-    sentiment:{"불만 😡":174,"중립 😐":58,"긍정 😊":5},
-    event:{"계정 분실/도용":128,"로그인 불가":69,"소셜계정 연동 오류":38,"기타":2},
-    resolution:{상담원처리:176,챗봇해결:47,중도포기:14},
-    lang:{EN:210,KO:24,JA:3},
-    top3:[{name:"계정시스템",badges:["Product"],pct:69},{name:"계정 분실/도용",badges:["Event"],pct:54},{name:"로그인 불가",badges:["Event"],pct:29}],
-    analysis:"가장 많은 Intent(23.7%). 불만 73.4%로 감정적 케이스 집중. 상담원 처리가 176건으로 압도적. SNS 연동 절차 등 정보 안내는 자동화 가능하지만 실제 복구는 DB 조회 + 본인인증이 필수입니다.",
-    sents:{"불만":{"product":{계정시스템:138,제재시스템:20,기타:16},"event":{"계정 분실/도용":110,"로그인 불가":45}}}
-  },
-  "intent:제재 이의 신청":{
-    sentiment:{"불만 😡":156,"중립 😐":14,"긍정 😊":3},
-    event:{"계정 제재":140,"제재 이의":30,"기타":3},
-    resolution:{상담원처리:151,챗봇해결:20,중도포기:2},
-    lang:{EN:160,KO:9,JA:4},
-    top3:[{name:"제재시스템",badges:["Product"],pct:76},{name:"계정 제재",badges:["Event"],pct:81},{name:"불만",badges:["Sentiment"],pct:90}],
-    analysis:"예상보다 높은 17.3% 비중. 불만 Sentiment 90.2%로 전체 Intent 중 가장 높습니다. 10년 밴 이의신청 등 케이스별 내부 조사 필수. 처리 속도가 CSAT에 직결됩니다.",
-    sents:{"불만":{"product":{제재시스템:145,계정시스템:8},"event":{"계정 제재":130,"제재 이의":25}}}
-  },
-  "intent:정보/정책 문의":{
-    sentiment:{"불만 😡":22,"중립 😐":143,"긍정 😊":0},
-    event:{"기타":122,"소셜계정 연동 오류":14,"계정 제재":10,"실행/설치":9},
-    resolution:{상담원처리:38,챗봇해결:125,중도포기:2},
-    lang:{EN:130,KO:30,JA:5},
-    top3:[{name:"계정시스템",badges:["Product"],pct:37},{name:"챗봇 1회 해결",badges:["Resolution"],pct:76},{name:"중립",badges:["Sentiment"],pct:87}],
-    analysis:"자동화 가능 비율 80%+ 로 가장 높은 Intent. 챗봇 1회 해결 125건으로 이미 잘 작동 중. 중립 Sentiment(87%)가 압도적. FAQ 강화만으로 상담원 전환을 크게 줄일 수 있습니다.",
-    sents:{"중립":{"product":{계정시스템:50,결제시스템:20,인게임:17},"event":{"기타":100,"소셜계정 연동":12}}}
-  },
-  "sentiment:불만":{
-    sentiment:{"불만 😡":499},
-    event:{"제재 이의 신청":156,"계정 복구 요청":174,"기술 지원 요청":92,"신고 접수":41},
-    resolution:{상담원처리:387,챗봇해결:36,중도포기:65},
-    lang:{EN:380,KO:95,JA:24},
-    top3:[{name:"상담원처리",badges:["Resolution"],pct:78},{name:"제재시스템",badges:["Product"],pct:36},{name:"계정시스템",badges:["Product"],pct:42}],
-    analysis:"유저 절반(49.9%)이 불만 상태. 불만 유저의 77.6%가 상담원으로 전달됩니다. 제재 이의(156건)와 계정 복구(174건)가 불만의 핵심. 불만 감지 시 즉시 우선 배정 라우팅이 필요합니다.",
-    sents:{"불만":{"product":{제재시스템:181,계정시스템:210,신고:14},"event":{"계정 제재":144,"계정 분실/도용":119,"제재 이의 신청":156}}}
-  },
-  "resolution:상담원처리":{
-    sentiment:{"불만 😡":387,"중립 😐":198,"긍정 😊":4},
-    event:{"계정시스템":203,"제재시스템":156,"신고시스템":65,"결제시스템":59},
-    resolution:{상담원처리:589},
-    lang:{EN:518,KO:70,JA:1},
-    top3:[{name:"계정 복구 요청",badges:["Intent"],pct:30},{name:"제재 이의 신청",badges:["Intent"],pct:26},{name:"계정시스템",badges:["Product"],pct:34}],
-    analysis:"전체의 58.9%가 상담원 처리. KO 핑퐁 평균 4.9회 vs EN 1.5회로 KO가 훨씬 복잡. 불만 Sentiment가 65.7%로 집중. 계정+제재가 핵심이며, 정보/정책 문의(38건)만 자동화 전환 여지가 있습니다.",
-    sents:{"불만":{"product":{계정시스템:165,제재시스템:175,신고:50},"event":{"계정 제재":140,"계정 분실/도용":120}}}
-  },
-  "resolution:bot_1회해결":{
-    sentiment:{"불만 😡":36,"중립 😐":190,"긍정 😊":36},
-    event:{"계정시스템":116,"인게임":40,"제재":37,"기술":29},
-    resolution:{챗봇해결:262},
-    lang:{EN:240,KO:16,JA:6},
-    top3:[{name:"정보/정책 문의",badges:["Intent"],pct:48},{name:"계정시스템",badges:["Product"],pct:44},{name:"긍정",badges:["Sentiment"],pct:14}],
-    analysis:"챗봇 해결(26.2%). 긍정 Sentiment 유저의 90%가 여기 집중. 계정시스템 116건이 최다. 정보/정책 문의(125건)가 자동화의 핵심 경로. 이 수치를 높이는 것이 CSAT 향상의 핵심입니다.",
-    sents:{"중립":{"product":{계정시스템:80,인게임:35,제재:25},"event":{"기타":90,"로그인 불가":40}}}
-  },
-  "resolution:중도포기":{
-    sentiment:{"불만 😡":65,"중립 😐":65},
-    event:{"계정시스템":53,"기술시스템":27,"결제시스템":16,"인게임":14},
-    resolution:{중도포기:130},
-    lang:{EN:130,KO:0,JA:0},
-    top3:[{name:"EN 전용",badges:["Language"],pct:100},{name:"계정시스템",badges:["Product"],pct:41},{name:"기술시스템",badges:["Product"],pct:21}],
-    analysis:"13%(130건)이 중도포기. EN 유저 전용 패턴. 계정 정보 요청 후 무응답(56%)이 주원인. 정보 요청 방식을 '선택사항'으로 변경하면 즉시 효과를 볼 수 있습니다.",
-    sents:{"불만":{"product":{계정시스템:30,결제:12,기술:15},"event":{"로그인 불가":28,"설치오류":20}}}
-  },
-};
-
-// 기본 Top 3 (전체 기준)
-
-
-
-function nodeR(d){var b={product:14,event:11,intent:11,sentiment:16,resolution:18};return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38));}
-
-var svgNodeSel, svgLinkSel, currentNode=null;
-
-
-
-function showTip(e,d){
-  var tt=document.getElementById('kg-tt');
-  var area=document.querySelector('.graph-area').getBoundingClientRect();
-  tt.innerHTML=`<div class="tn" style="color:${KGC[d.group]}">${d.label}</div><div class="ts">${KGL[d.group]} · ${d.count}건 (${Math.round(d.count/1000*100)}%)</div><div class="ts" style="color:#bbb;margin-top:2px">클릭해서 상세 분석</div>`;
-  tt.style.left=(e.clientX-area.left+14)+'px';
-  tt.style.top=(e.clientY-area.top-10)+'px';
-  tt.style.opacity=1;
-}
-
-function onNodeClick(d){
-  currentNode=d;
-  // 하이라이트
-  svgNodeSel.selectAll('.nc')
-    .attr('stroke',n=>n.id===d.id?'#1a1a1a':'#fff')
-    .attr('stroke-width',n=>n.id===d.id?3.5:2.5)
-    .attr('fill-opacity',n=>n.id===d.id?1:.3);
-  svgLinkSel.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.08)
-    .attr('stroke',l=>(l.source.id===d.id||l.target.id===d.id)?KGC[d.group]:'#ddd');
-  // 오른쪽 Quick Insight 업데이트
-  renderNodeInsight(d);
-  // 하단 상세 패널
-  renderDetailPanel(d);
-}
-
-function resetHighlight(){
-  svgNodeSel.selectAll('.nc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
-  svgLinkSel.attr('stroke-opacity',.8).attr('stroke','#ddd');
-}
-function closeInsight(){
-  currentNode=null;
-  renderDefaultInsight();
-  closeDp();
-}
-
-// ── 오른쪽 패널 ──
-function renderDefaultInsight(){
-  document.getElementById('ip-subtitle').textContent='전체 1,000건 기준';
-  var html='';
-  DEFAULT_TOP3.forEach((item,i)=>{
-    var w=Math.round(item.pct/40*100);
-    html+=`<div class="top-item" onclick="clickTop('${item.id}')">
-      <div style="display:flex;align-items:center">
-        <span class="top-rank">${i+1}.</span>
-        <span class="top-name" style="color:${item.color}">${item.name}</span>
-        <span class="top-pct">${item.pct}%</span>
-      </div>
-      <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${item.color}20;color:${item.color}">${b}</span>`).join('')}</div>
-      <div class="top-bar"><div class="top-bar-fill" style="background:${item.color};width:${w}%"></div></div>
-    </div>`;
-  });
-  html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${DEFAULT_ANALYSIS}</div></div>`;
-  document.getElementById('ip-body').innerHTML=html;
-}
-
-function renderNodeInsight(d){
-  var det=KG_NODE_DET[d.id];
-  var col=KGC[d.group];
-  var pct=Math.round(d.count/1000*100);
-  document.getElementById('ip-subtitle').textContent=`${d.label} 선택 · ${d.count}건 (${pct}%)`;
-  var html='';
-  if(det && det.top3){
-    det.top3.forEach((item,i)=>{
-      var bColor=item.badges[0]==='Intent'?KGC.intent:item.badges[0]==='Product'?KGC.product:item.badges[0]==='Event'?KGC.event:item.badges[0]==='Resolution'?KGC.resolution:KGC.sentiment;
-      var w=Math.round(item.pct/100*100);
-      html+=`<div class="top-item">
-        <div style="display:flex;align-items:center">
-          <span class="top-rank">${i+1}.</span>
-          <span class="top-name" style="color:${col}">${item.name}</span>
-          <span class="top-pct">${item.pct}%</span>
-        </div>
-        <div class="top-badges">${item.badges.map(b=>`<span class="t-badge" style="background:${bColor}20;color:${bColor}">${b}</span>`).join('')}</div>
-        <div class="top-bar"><div class="top-bar-fill" style="background:${col};width:${w}%"></div></div>
-      </div>`;
-    });
-  }
-  if(det){
-    html+=`<div class="analysis-box"><div class="analysis-title">⚡ 종합 분석</div><div class="analysis-text">${det.analysis}</div></div>`;
-  }
-  document.getElementById('ip-body').innerHTML=html;
-}
-
-function clickTop(nodeId){
-  var node=NODES.find(n=>n.id===nodeId);
-  if(node) onNodeClick(node);
-}
-
-// ── 하단 상세 패널 ──
-function renderDetailPanel(d){
-  var det=KG_NODE_DET[d.id];
-  var col=KGC[d.group];
-  var dp=document.getElementById('detail-panel');
-  dp.classList.add('open');
-  document.getElementById('dp-node-name').textContent=d.label;
-  document.getElementById('dp-node-name').style.color=col;
-  var badge=document.getElementById('dp-group-badge');
-  badge.textContent=KGL[d.group];
-  badge.style.background=col+'20';
-  badge.style.color=col;
-  document.getElementById('dp-total').textContent=`총 ${d.count}건`;
-  if(!det){document.getElementById('dp-cols').innerHTML='';document.getElementById('dp-filter-section').innerHTML='';return;}
-  // 4컬럼
-  var cols=[
-    {title:'Sentiment',badge:'지표',color:'#BA7517',data:det.sentiment||{}},
-    {title:'Event',badge:'이슈',color:'#D85A30',data:det.event||{}},
-    {title:'Resolution',badge:'지표',color:'#7F77DD',data:det.resolution||{}},
-    {title:'Language',badge:'지표',color:'#D4537E',data:det.lang||{}},
-  ];
-  var colsHtml='';
-  cols.forEach(c=>{
-    colsHtml+=`<div class="dp-col"><div class="dp-col-title"><div class="legend-dot" style="background:${c.color}"></div>${c.title} <span class="dp-col-badge" style="background:${c.color}20;color:${c.color}">${c.badge}</span></div>`;
-    Object.entries(c.data).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-      colsHtml+=`<div class="dp-row"><div class="dp-key">${k}</div><div class="dp-val">${v}건</div></div>`;
-    });
-    colsHtml+='</div>';
-  });
-  document.getElementById('dp-cols').innerHTML=colsHtml;
-  // Sentiment 필터 섹션
-  renderFilterSection(d, det, '불만', col);
-}
-
-function renderFilterSection(d, det, selectedSent, col){
-  var sents=det.sents||{};
-  var sentKeys=Object.keys(sents);
-  if(sentKeys.length===0){document.getElementById('dp-filter-section').innerHTML='';return;}
-  // 버튼
-  var btnHtml=`<div><div class="filter-label">Sentiment 필터</div><div class="sent-filter-btns">`;
-  sentKeys.forEach(s=>{
-    btnHtml+=`<div class="sfbtn${s===selectedSent?' active':''}" onclick="filterSent(this,'${d.id}','${s}','${col}')">${s}</div>`;
-  });
-  btnHtml+='</div></div>';
-  // 선택된 Sentiment 데이터
-  var sd=sents[selectedSent]||{};
-  var comboHtml='';
-  var cNames={product:'Product 분포',event:'Event 분포',lang:'언어 분포'};
-  Object.entries(sd).forEach(([key,val])=>{
-    var maxV=Math.max(...Object.values(val));
-    var barCol=key==='event'?KGC.event:key==='lang'?'#D4537E':KGC.product;
-    comboHtml+=`<div class="filter-combo"><div class="filter-combo-title" style="color:${col}">${d.label} + <span style="color:${kgSentColors[selectedSent]||'#D85A30'}">${selectedSent}</span> · <span style="color:#888">${cNames[key]||key}</span></div>`;
-    Object.entries(val).sort((a,b)=>b[1]-a[1]).slice(0,4).forEach(([k,v])=>{
-      var w=Math.round(v/maxV*100);
-      comboHtml+=`<div class="filter-bar-row">
-        <div class="filter-bar-label">${k}</div>
-        <div class="filter-bar-wrap"><div class="filter-bar-fill" style="background:${barCol};width:${w}%">${w>20?v+'건':''}</div></div>
-        <div class="filter-bar-cnt">${v}</div>
-      </div>`;
-    });
-    comboHtml+='</div>';
-  });
-  document.getElementById('dp-filter-section').innerHTML=btnHtml+comboHtml;
-}
-
-function filterSent(el, nodeId, sent, col){
-  document.querySelectorAll('.sfbtn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  var d=NODES.find(n=>n.id===nodeId);
-  var det=KG_NODE_DET[nodeId];
-  if(d && det) renderFilterSection(d, det, sent, col);
-}
-
-function closeDp(){document.getElementById('detail-panel').classList.remove('open');}
-
-function lgFilter(group,el){
-  document.querySelectorAll('.legend-item').forEach(l=>l.classList.remove('active'));
-  el.classList.add('active');
-  if(!svgNodeSel) return;
-  svgNodeSel.selectAll('circle').attr('opacity',d=>group==='all'?.9:d.group===group?1:.1);
-  svgNodeSel.selectAll('text').attr('opacity',d=>group==='all'?1:d.group===group?1:.1);
-  svgLinkSel.attr('opacity',d=>{if(group==='all') return .8;return(d.source.group===group||d.target.group===group)?.8:.05;});
-}
-
-
-
-
-// ── 탭3 서브탭 ──
-function swCF(id, el) {
-  ['cf1','cf2','cf3','cf4'].forEach(function(cid) {
-    document.getElementById(cid).style.display = (cid===id?'block':'none');
-  });
-  document.querySelectorAll('#cf-tabs > div').forEach(function(t) {
-    t.style.background = '#fff';
-    t.style.color = '#666';
-    t.style.borderColor = '#ddd';
-    t.style.fontWeight = '500';
-  });
-  el.style.background = '#1a1a1a';
-  el.style.color = '#fff';
-  el.style.borderColor = '#1a1a1a';
-  el.style.fontWeight = '600';
-}
-
-// ── 챗봇 KG 데이터 ──
-var CF_GC = {transfer:'#D85A30', problem:'#7F77DD', resolution:'#378ADD', lang:'#1D9E75'};
-var CF_GL = {transfer:'전환원인', problem:'챗봇문제점', resolution:'해결유형', lang:'언어'};
-
-var CF_NODES = [
-  {id:'t:complex_case',label:'복잡한 케이스',group:'transfer',count:238},
-  {id:'t:language_barrier',label:'언어 장벽',group:'transfer',count:406},
-  {id:'t:info_collection_only',label:'정보수집만',group:'transfer',count:183},
-  {id:'t:user_skip_chatbot',label:'챗봇 무시',group:'transfer',count:104},
-  {id:'t:faq_not_helpful',label:'FAQ 도움안됨',group:'transfer',count:205},
-  {id:'t:info_request_abandoned',label:'정보요청 무응답',group:'transfer',count:114},
-  {id:'t:category_not_found',label:'카테고리 없음',group:'transfer',count:196},
-  {id:'t:wait_timeout',label:'대기 타임아웃',group:'transfer',count:397},
-  {id:'t:no_solution_given',label:'해결책 없이 통보',group:'transfer',count:17},
-  {id:'p:language_mismatch',label:'언어 불일치',group:'problem',count:550},
-  {id:'p:no_alternative',label:'대안 없음',group:'problem',count:270},
-  {id:'p:missing_faq',label:'FAQ 누락',group:'problem',count:255},
-  {id:'p:excessive_info_request',label:'과도한 정보요청',group:'problem',count:212},
-  {id:'p:generic_response',label:'일반적 응답',group:'problem',count:139},
-  {id:'p:none',label:'문제없음',group:'problem',count:432},
-  {id:'p:wrong_category',label:'잘못된 카테고리',group:'problem',count:45},
-  {id:'r:agent',label:'상담원처리',group:'resolution',count:1000},
-  {id:'r:timeout',label:'중도포기',group:'resolution',count:1000},
-  {id:'l:KO',label:'KO 한국어',group:'lang',count:1000},
-  {id:'l:EN',label:'EN 영어',group:'lang',count:1000},
-];
-
-var CF_EDGES = [
-  {source:'t:language_barrier',target:'r:agent',weight:400},
-  {source:'p:language_mismatch',target:'t:language_barrier',weight:413},
-  {source:'p:language_mismatch',target:'l:EN',weight:550},
-  {source:'t:language_barrier',target:'l:EN',weight:406},
-  {source:'t:complex_case',target:'r:agent',weight:238},
-  {source:'t:complex_case',target:'l:KO',weight:174},
-  {source:'t:info_collection_only',target:'r:agent',weight:183},
-  {source:'t:info_collection_only',target:'l:KO',weight:165},
-  {source:'t:user_skip_chatbot',target:'r:agent',weight:104},
-  {source:'t:user_skip_chatbot',target:'l:KO',weight:102},
-  {source:'t:wait_timeout',target:'r:timeout',weight:397},
-  {source:'t:faq_not_helpful',target:'r:timeout',weight:205},
-  {source:'t:category_not_found',target:'r:timeout',weight:196},
-  {source:'t:info_request_abandoned',target:'r:timeout',weight:114},
-  {source:'p:no_alternative',target:'r:timeout',weight:270},
-  {source:'p:no_alternative',target:'l:KO',weight:198},
-  {source:'p:missing_faq',target:'r:agent',weight:123},
-  {source:'p:missing_faq',target:'r:timeout',weight:132},
-  {source:'p:excessive_info_request',target:'r:timeout',weight:158},
-  {source:'p:excessive_info_request',target:'r:agent',weight:54},
-  {source:'p:none',target:'r:agent',weight:325},
-  {source:'t:faq_not_helpful',target:'l:KO',weight:143},
-  {source:'t:category_not_found',target:'l:EN',weight:123},
-];
-
-var CF_NODE_DET = {
-  't:language_barrier': {
-    top3:[{name:'EN 상담원처리',pct:80},{name:'언어 불일치',pct:82},{name:'영어 지원 챗봇 구축',pct:null}],
-    analysis:'EN 상담원 전환의 80%(400건)가 언어 장벽. "Sorry, Korean only" 응답 후 상담원 전환. 영어 지원 챗봇 구축이 단일 최대 임팩트 개선 포인트.',
-    tags:['EN 전용 문제','즉시 해결 가능','영어챗봇 구축 필요'],
-    sent:{KO:6,EN:400}, res:{상담원처리:406}
-  },
-  't:complex_case': {
-    top3:[{name:'KO 상담원처리',pct:35},{name:'복잡한 케이스',pct:100},{name:'DB 연동 필요',pct:null}],
-    analysis:'KO 상담원처리의 35%(174건). 계정 제재, UC 보상 오류 등 DB 조회 없이 처리 불가한 케이스. 상담원 초안 자동생성으로 처리 시간 단축 가능.',
-    tags:['자동화 불가','초안생성 효과 있음','DB연동 필요'],
-    sent:{KO:174,EN:64}, res:{상담원처리:238}
-  },
-  't:info_collection_only': {
-    top3:[{name:'KO 상담원처리',pct:33},{name:'정보수집 후 전달',pct:100},{name:'챗봇 접수기 역할',pct:null}],
-    analysis:'KO 상담원처리의 33%(165건). 챗봇이 UID/문의내용 수집만 하고 실제 처리 없이 상담원 전달. 챗봇이 "접수기" 역할에 머물러 있는 구조적 문제.',
-    tags:['접수기 역할 문제','KO 핵심 이슈','자동처리 연결 필요'],
-    sent:{KO:165,EN:18}, res:{상담원처리:183}
-  },
-  't:wait_timeout': {
-    top3:[{name:'EN 중도포기',pct:48},{name:'KO 중도포기',pct:31},{name:'48시간 자동종료',pct:null}],
-    analysis:'중도포기의 최다 원인(397건). EN 48%, KO 31%. 유저가 응답 없이 방치 → 48시간 후 자동 종료. 응답 대기 시간 안내 및 재참여 유도 강화 필요.',
-    tags:['EN+KO 공통 문제','대기시간 안내 필요','재참여 유도 강화'],
-    sent:{KO:157,EN:240}, res:{중도포기:397}
-  },
-  't:faq_not_helpful': {
-    top3:[{name:'KO 중도포기',pct:29},{name:'FAQ 미스매치',pct:100},{name:'유저 상황 불일치',pct:null}],
-    analysis:'중도포기 원인 2위(205건). FAQ를 제공했지만 유저의 구체적 상황과 맞지 않아 이탈. KO 143건. 일반적 FAQ → 상황별 세분화 필요.',
-    tags:['FAQ 품질 문제','상황별 세분화 필요','KO 주요 이슈'],
-    sent:{KO:143,EN:62}, res:{중도포기:205}
-  },
-  'p:language_mismatch': {
-    top3:[{name:'EN 상담원처리',pct:83},{name:'EN 중도포기',pct:27},{name:'언어 장벽과 연결',pct:null}],
-    analysis:'EN 상담원처리의 82.6%(413건). 챗봇이 한국어만 지원하여 EN 유저에게 "Korean only" 응답. 영어 지원 챗봇 구축이 즉각적 해결책.',
-    tags:['EN 핵심 문제','즉시 해결 가능','다국어 지원 필요'],
-    sent:{상담원처리:413,중도포기:137}, res:{EN:550}
-  },
-  'p:no_alternative': {
-    top3:[{name:'KO 중도포기',pct:39},{name:'대안 없는 통보',pct:100},{name:'게스트계정 문제',pct:null}],
-    analysis:'KO 중도포기의 39%(198건). "복구 불가", "지원 불가" 통보 후 대안 제시 없이 종료. 게스트 계정 복구 불가 → SNS 연동 대안 안내로 개선.',
-    tags:['KO 핵심 문제','대안 제시 필수','즉시 개선 가능'],
-    sent:{KO:198,EN:72}, res:{중도포기:270}
-  },
-  'p:missing_faq': {
-    top3:[{name:'KO 상담원처리',pct:23},{name:'KO 중도포기',pct:13},{name:'신규 시나리오 필요',pct:null}],
-    analysis:'상담원+중도포기 합계 255건. 플랫폼 변경(갤럭시→구글플레이), 미다스바이 결제 등 새로운 시나리오 FAQ 없음. 신규 FAQ 추가로 즉시 해결 가능.',
-    tags:['FAQ 추가로 해결','플랫폼변경 시나리오','미다스바이 FAQ'],
-    sent:{상담원처리:123,중도포기:132}, res:{KO:184,EN:71}
-  },
-  'p:excessive_info_request': {
-    top3:[{name:'EN 중도포기',pct:17},{name:'KO 상담원+중도포기',pct:23},{name:'요청 최소화 필요',pct:null}],
-    analysis:'212건. 주문번호, 스크린샷, UID 동시 요청으로 유저 이탈. 정보 요청을 선택사항으로 변경하고 UID만으로 처리 시작 가능한 플로우로 개선 필요.',
-    tags:['정보요청 최소화','선택사항 변경 필요','즉시 개선 가능'],
-    sent:{상담원처리:54,중도포기:158}, res:{EN:98,KO:114}
-  },
-  'r:agent': {
-    top3:[{name:'언어 장벽',pct:40},{name:'복잡한 케이스',pct:24},{name:'정보수집만',pct:18}],
-    analysis:'상담원처리 1,000건 분석. EN 80%가 언어 장벽으로 즉시 전환. KO는 복잡한 케이스(35%)와 정보수집(33%)이 주요 원인. 자동화가능 비율 상담원처리 중 53%.',
-    tags:['EN=언어장벽','KO=복잡케이스','자동화 53% 가능'],
-    sent:{상담원처리:1000}, res:{EN:500,KO:500}
-  },
-  'r:timeout': {
-    top3:[{name:'대기 타임아웃',pct:40},{name:'FAQ 도움안됨',pct:21},{name:'카테고리 없음',pct:20}],
-    analysis:'중도포기 1,000건. 대기 타임아웃(40%)이 최다. FAQ 제공했지만 도움 안됨(21%). 대안없음(27%), 카테고리없음(20%). 자동화가능 81%로 개선 여지 가장 큼.',
-    tags:['자동화가능 81%','개선효과 최대','FAQ품질+대안제시'],
-    sent:{중도포기:1000}, res:{EN:500,KO:500}
-  },
-};
-
-function cfNodeR(d) {
-  var b = {transfer:12, problem:12, resolution:18, lang:16};
-  return Math.max(9, Math.min((b[d.group]||12)*Math.sqrt(d.count/150), 36));
-}
-
-var cfSvgNode, cfSvgLink;
-
-function initCFGraph() {
-  var svg = d3.select('#cf-kg-svg');
-  var area = document.querySelector('#t4 .graph-canvas') || document.querySelector('#cf-kg-svg').parentElement;
-  var w = area.clientWidth || 700, h = area.clientHeight || 500;
-  svg.attr('viewBox', `0 0 ${w} ${h}`);
-  var g = svg.append('g');
-  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom', e => g.attr('transform', e.transform)));
-
-  var nodes = CF_NODES.map(d=>({...d}));
-  var edges = CF_EDGES.map(d=>({...d}));
-
-  var sim = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(edges).id(d=>d.id).distance(d=>160-Math.min(d.weight/6,80)).strength(d=>Math.min(d.weight/300,.7)))
-    .force('charge', d3.forceManyBody().strength(-250))
-    .force('center', d3.forceCenter(w/2, h/2))
-    .force('collision', d3.forceCollide().radius(d=>cfNodeR(d)+10));
-
-  cfSvgLink = g.append('g').selectAll('line').data(edges).enter().append('line')
-    .attr('stroke','#ddd').attr('stroke-width',d=>Math.max(.8,Math.min(d.weight/80,5))).attr('stroke-opacity',.8);
-
-  cfSvgNode = g.append('g').selectAll('g').data(nodes).enter().append('g').attr('cursor','pointer')
-    .call(d3.drag()
-      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
-      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
-      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
-    .on('click',(e,d)=>{e.stopPropagation();cfNodeClick(d);})
-    .on('mouseover',(e,d)=>showCfTip(e,d))
-    .on('mouseout',()=>{document.getElementById('cf-kg-tt').style.opacity=0;});
-
-  cfSvgNode.append('circle').attr('r',d=>cfNodeR(d))
-    .attr('fill',d=>CF_GC[d.group]).attr('fill-opacity',.9)
-    .attr('stroke','#fff').attr('stroke-width',2.5).attr('class','cfnc');
-
-  cfSvgNode.append('text').text(d=>d.label.length>9?d.label.slice(0,8)+'…':d.label)
-    .attr('dy','0.35em').attr('text-anchor','middle')
-    .attr('font-size',d=>cfNodeR(d)>20?'11px':cfNodeR(d)>14?'10px':'9px')
-    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
-
-  sim.on('tick',()=>{
-    cfSvgLink.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-    cfSvgNode.attr('transform',d=>`translate(${d.x},${d.y})`);
-  });
-
-  svg.on('click',()=>{
-    cfSvgNode.selectAll('.cfnc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
-  });
-
-  renderCfDefaultInsight();
-}
-
-function showCfTip(e,d) {
-  var tt = document.getElementById('cf-kg-tt');
-  var area = document.getElementById('cf-kg-svg').parentElement.getBoundingClientRect();
-  tt.innerHTML = `<div style="font-weight:700;font-size:13px;color:${CF_GC[d.group]};margin-bottom:3px">${d.label}</div><div style="color:#888;font-size:11px">${CF_GL[d.group]} · ${d.count}건</div>`;
-  tt.style.left = (e.clientX-area.left+14)+'px';
-  tt.style.top = (e.clientY-area.top-10)+'px';
-  tt.style.opacity = 1;
-}
-
-function cfNodeClick(d) {
-  cfSvgNode.selectAll('.cfnc')
-    .attr('stroke',n=>n.id===d.id?'#1a1a1a':'#fff')
-    .attr('stroke-width',n=>n.id===d.id?3.5:2.5)
-    .attr('fill-opacity',n=>n.id===d.id?1:.3);
-  cfSvgLink.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.05)
-    .attr('stroke',l=>(l.source.id===d.id||l.target.id===d.id)?CF_GC[d.group]:'#ddd');
-  renderCfNodeInsight(d);
-  renderCfDetailPanel(d);
-}
-
-function renderCfDefaultInsight() {
-  document.getElementById('cf-ip-sub').textContent = '전체 2,000건 기준';
-  var top3 = [
-    {name:'언어 장벽',color:'#D85A30',pct:80,badge:'전환원인'},
-    {name:'대기 타임아웃',color:'#D85A30',pct:40,badge:'전환원인'},
-    {name:'대안 없음',color:'#7F77DD',pct:27,badge:'챗봇문제점'},
-  ];
-  var html = '';
-  top3.forEach((item,i)=>{
-    html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer" onmouseover="this.style.background='#fafaf8'" onmouseout="this.style.background='#fff'">
-      <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${item.color}">${item.name}</span><span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span></div>
-      <div style="margin-top:5px"><span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:3px;background:${item.color}20;color:${item.color}">${item.badge}</span></div>
-      <div style="margin-top:6px;background:#f0f0ee;height:4px;border-radius:2px"><div style="background:${item.color};height:4px;border-radius:2px;width:${item.pct}%"></div></div>
-    </div>`;
-  });
-  html+=`<div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px">
-    <div style="font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px">⚡ 종합 분석</div>
-    <div style="font-size:12px;color:#333;line-height:1.7">EN 상담원 전환의 80%가 언어 장벽 — 영어 지원 챗봇 구축이 단일 최대 임팩트. KO는 정보수집(33%)과 복잡케이스(35%)가 핵심. 자동화가능 비율이 67.4%로 높아 즉각 개선 효과 기대.</div>
-  </div>`;
-  document.getElementById('cf-ip-body').innerHTML = html;
-}
-
-function renderCfNodeInsight(d) {
-  var det = CF_NODE_DET[d.id];
-  var col = CF_GC[d.group];
-  document.getElementById('cf-ip-sub').textContent = `${d.label} · ${d.count}건`;
-  var html = '';
-  if(det) {
-    det.top3.forEach((item,i)=>{
-      html+=`<div style="border:1px solid #e8e8e6;border-radius:8px;padding:10px 12px;margin-bottom:8px">
-        <div style="display:flex;align-items:center"><span style="font-size:13px;font-weight:700;color:#999;margin-right:4px">${i+1}.</span><span style="font-size:13px;font-weight:600;color:${col}">${item.name}</span>${item.pct?`<span style="font-size:12px;color:#888;margin-left:auto">${item.pct}%</span>`:''}
-        </div>
-        ${item.pct?`<div style="margin-top:6px;background:#f0f0ee;height:4px;border-radius:2px"><div style="background:${col};height:4px;border-radius:2px;width:${item.pct}%"></div></div>`:''}
-      </div>`;
-    });
-    html+=`<div style="background:#f0fbf6;border:1px solid #1D9E7530;border-radius:8px;padding:12px 14px;margin-top:4px">
-      <div style="font-size:12px;font-weight:700;color:#0f6e56;margin-bottom:6px">⚡ 종합 분석</div>
-      <div style="font-size:12px;color:#333;line-height:1.7">${det.analysis}</div>
-      <div style="margin-top:8px">${(det.tags||[]).map(t=>`<span style="display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;margin:2px;background:${col}15;color:${col}">${t}</span>`).join('')}</div>
-    </div>`;
-  }
-  document.getElementById('cf-ip-body').innerHTML = html;
-}
-
-function renderCfDetailPanel(d) {
-  var det = CF_NODE_DET[d.id];
-  var dp = document.getElementById('cf-dp');
-  dp.style.height = '220px';
-  var col = CF_GC[d.group];
-  if(!det) {dp.style.height='0';return;}
-
-  var resColors = {상담원처리:'#378ADD',중도포기:'#BA7517'};
-  var left = `<div style="width:200px;padding:14px 16px;border-right:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
-    <div style="font-size:15px;font-weight:700;color:${col};margin-bottom:3px">${d.label}</div>
-    <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;background:${col}20;color:${col};display:inline-block;margin-bottom:8px">${CF_GL[d.group]}</span>
-    <div style="font-size:12px;color:#666;margin-bottom:10px">총 ${d.count}건</div>`;
-
-  var res = det.res||{};
-  var maxR = Math.max(...Object.values(res),1);
-  Object.entries(res).forEach(([k,v])=>{
-    var w = Math.round(v/maxR*100);
-    left+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-      <div style="font-size:11px;color:#888;min-width:60px">${k}</div>
-      <div style="flex:1;background:#f0f0ee;border-radius:2px;height:5px"><div style="background:${resColors[k]||'#888'};height:5px;border-radius:2px;width:${w}%"></div></div>
-      <div style="font-size:11px;color:#888;min-width:24px;text-align:right">${v}</div>
-    </div>`;
-  });
-  left += '</div>';
-
-  // 언어 분포 컬럼
-  var sent = det.sent||{};
-  var cols = `<div style="flex:1;display:grid;grid-template-columns:repeat(2,1fr)">
-    <div style="padding:12px 14px;border-right:1px solid #e8e8e6;overflow-y:auto">
-      <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">언어/그룹별 분포</div>`;
-  Object.entries(sent).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-    cols+=`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f3;font-size:12px"><span style="color:#333">${k}</span><span style="color:#888;font-size:11px">${v}건</span></div>`;
-  });
-  cols += '</div>';
-
-  // 개선방향
-  cols += `<div style="padding:12px 14px;overflow-y:auto">
-    <div style="font-size:10px;font-weight:700;color:#999;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px">핵심 태그</div>`;
-  (det.tags||[]).forEach(t=>{
-    cols+=`<div style="font-size:12px;padding:5px 10px;background:${col}10;border-radius:5px;color:${col};font-weight:500;margin-bottom:4px">${t}</div>`;
-  });
-  cols += '</div></div>';
-
-  // 종합분석
-  var analysis = `<div style="width:240px;padding:14px 16px;background:#f8f8f6;border-left:1px solid #e8e8e6;flex-shrink:0;overflow-y:auto">
-    <div style="font-size:12px;font-weight:700;margin-bottom:8px">⚡ 종합 분석</div>
-    <div style="font-size:12px;color:#444;line-height:1.7">${det.analysis}</div>
-  </div>`;
-
-  document.getElementById('cf-dp-inner').innerHTML = left + cols + analysis;
-}
-
-function closeCfDp() {
-  document.getElementById('cf-dp').style.height='0';
-}
-
-function cfKgFilter(group, el) {
-  document.querySelectorAll('#t4 .legend-item-cf').forEach(l=>{l.style.background='';l.style.fontWeight='400';});
-  if(el) {el.style.background='#f0f0ee';el.style.fontWeight='600';}
-  if(!cfSvgNode) return;
-  cfSvgNode.selectAll('circle').attr('opacity',d=>group==='all'?.9:d.group===group?1:.1);
-  cfSvgNode.selectAll('text').attr('opacity',d=>group==='all'?1:d.group===group?1:.1);
-  if(cfSvgLink) cfSvgLink.attr('opacity',d=>{
-    if(group==='all') return .8;
-    return (d.source.group===group||d.target.group===group)?.8:.05;
-  });
-}
-
-
-/* ══════════════════════════════════════
-   라이브 데이터 — Google Sheets 연동
-════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════════ */
 var API_URL = 'https://script.google.com/macros/s/AKfycbwA_6or2CLhGtaJPk-0ND63TYQpBWMB8dzeQwU9HIQINJRZvJLO-HdHJRgnVQ03dYJEVQ/exec';
 
-var COLORS = {
-  product:   '#378ADD',
-  intent:    '#1D9E75',
-  sentiment: '#BA7517',
-  resolution:'#7F77DD',
-  transfer:  '#D85A30',
-  problem:   '#7F77DD',
-};
+var GC = {product:'#378ADD',event:'#D85A30',intent:'#1D9E75',sentiment:'#BA7517',resolution:'#7F77DD',transfer:'#D85A30',problem:'#7F77DD'};
+var SENT_COLORS = {'불만':'#D85A30','중립':'#888','긍정':'#1D9E75','negative':'#D85A30','neutral':'#888','positive':'#1D9E75','dissatisfied':'#D85A30','satisfied':'#1D9E75'};
+var RES_COLORS  = {'챗봇해결':'#1D9E75','상담원처리':'#378ADD','timeout':'#BA7517','미분류':'#bbb'};
 
-var SENT_COLORS = {
-  '불만': '#D85A30', 'dissatisfied': '#D85A30', 'negative': '#D85A30',
-  '중립': '#888',    'neutral': '#888',
-  '긍정': '#1D9E75', 'satisfied': '#1D9E75',  'positive': '#1D9E75',
-};
+var _data = null; // 캐시된 API 데이터
 
+/* ══ 탭 전환 ══ */
+function switchTab(id, el) {
+  ['t1','t2','t3','t4'].forEach(function(t){
+    var p = document.getElementById(t);
+    if(p) { p.style.display = (t===id) ? (t==='t1'||t==='t3' ? 'block' : 'flex') : 'none'; }
+    if(p && (t==='t1'||t==='t3')) p.classList.toggle('on', t===id);
+  });
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+  if(id==='t2' && !window._kgInit && _data) { window._kgInit=1; setTimeout(function(){ buildKG(_data); },300); }
+  if(id==='t4' && !window._cfInit && _data) { window._cfInit=1; setTimeout(function(){ buildCFKG(_data); },300); }
+}
+
+function swOnt(id, el) {
+  ['ont-lang','ont-matrix','ont-scenario','ont-samples','ont-sentiment'].forEach(function(x){
+    document.getElementById(x).style.display = (x===id) ? 'block' : 'none';
+  });
+  document.querySelectorAll('#t1 .sub-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+function swCf(id, el) {
+  ['cf-overview','cf-problem','cf-lang','cf-improve'].forEach(function(x){
+    document.getElementById(x).style.display = (x===id) ? 'block' : 'none';
+  });
+  document.querySelectorAll('#t3 .sub-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+function swSample(type, el) {
+  document.getElementById('samples-auto').style.display   = (type==='auto')   ? 'block' : 'none';
+  document.getElementById('samples-manual').style.display = (type==='manual') ? 'block' : 'none';
+  document.querySelectorAll('#ont-samples .lang-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+}
+
+/* ══ 상태 ══ */
 function setStatus(msg, type) {
   var el = document.getElementById('load-status');
   el.textContent = msg;
-  el.style.color = type === 'ok' ? '#1D9E75' : type === 'err' ? '#D85A30' : type === 'loading' ? '#BA7517' : '#bbb';
+  el.style.color = type==='ok' ? '#1D9E75' : type==='err' ? '#D85A30' : type==='loading' ? '#BA7517' : '#bbb';
 }
 
-function makeBars(containerId, data, color, total) {
+/* ══ 바 차트 렌더 ══ */
+function renderBars(containerId, data, color, total, maxItems) {
   var el = document.getElementById(containerId);
-  if (!el) return;
-  var entries = Object.entries(data || {})
-    .filter(function(e){ return e[0] !== '미분류' && e[0] !== ''; })
+  if(!el) return;
+  maxItems = maxItems || 8;
+  var entries = Object.entries(data||{})
+    .filter(function(e){ return e[0]!=='미분류' && e[0]!==''; })
     .sort(function(a,b){ return b[1]-a[1]; })
-    .slice(0, 7);
-  if (!entries.length) { el.innerHTML = '<div style="font-size:11px;color:#bbb;padding:6px 0">데이터 없음 (분석 진행 중)</div>'; return; }
+    .slice(0, maxItems);
+  if(!entries.length) { el.innerHTML='<div style="font-size:11px;color:#bbb;padding:8px 0">데이터 없음 (분석 진행 중)</div>'; return; }
   var max = entries[0][1];
-  var html = '';
-  entries.forEach(function(e) {
-    var w = Math.round(e[1] / max * 100);
-    var pct = total > 0 ? Math.round(e[1] / total * 100) : 0;
-    var label = e[0].length > 12 ? e[0].slice(0,11)+'…' : e[0];
-    html += '<div class="live-bar-row">' +
-      '<div class="live-bar-label" title="'+e[0]+'">'+label+'</div>' +
-      '<div class="live-bar-wrap"><div class="live-bar-fill" style="background:'+color+';width:'+w+'%">'+(w>25?e[1]+'건':'')+'</div></div>' +
-      '<div class="live-bar-cnt">'+e[1]+'<span style="color:#ccc"> ('+pct+'%)</span></div>' +
+  el.innerHTML = entries.map(function(e) {
+    var w   = Math.round(e[1]/max*100);
+    var pct = total>0 ? Math.round(e[1]/total*1000)/10 : 0;
+    var lbl = e[0].length>14 ? e[0].slice(0,13)+'…' : e[0];
+    return '<div class="bar-row">' +
+      '<div class="bar-label" title="'+e[0]+'">'+lbl+'</div>' +
+      '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+w+'%">'+(w>25?e[1].toLocaleString():'')+'</div></div>' +
+      '<div class="bar-cnt">'+e[1].toLocaleString()+' <span style="color:#ccc">('+pct+'%)</span></div>' +
     '</div>';
-  });
-  el.innerHTML = html;
+  }).join('');
 }
 
-function renderT1(d) {
-  var total = d.meta.total;
-  // KPI
-  document.getElementById('lv1-total').textContent = total.toLocaleString() + '건';
-  document.getElementById('lv1-auto').textContent  = d.kpi.automatable.toLocaleString() + '건';
-  document.getElementById('lv1-auto-pct').textContent = d.kpi.auto_pct + '% 자동화 가능';
-  // Sentiment → 불만 계산
-  var sent = d.ontology.sentiment || {};
-  var badCount = 0, neutralCount = 0, goodCount = 0;
-  Object.entries(sent).forEach(function(e) {
-    var k = e[0].toLowerCase();
-    if (k.includes('불만') || k.includes('dissatisfied') || k.includes('negative')) badCount += e[1];
-    else if (k.includes('긍정') || k.includes('satisfied') || k.includes('positive')) goodCount += e[1];
-    else neutralCount += e[1];
-  });
-  document.getElementById('lv1-bad').textContent = badCount.toLocaleString() + '건';
-  document.getElementById('lv1-bad-pct').textContent = total > 0 ? Math.round(badCount/total*100) + '% 불만' : '';
-  // Resolution → 상담원/챗봇
-  var res = d.chatbot.resolution || {};
-  var agentCnt = 0, botCnt = 0;
-  Object.entries(res).forEach(function(e) {
-    var k = e[0].toLowerCase();
-    if (k.includes('상담원') || k.includes('agent') || k.includes('human') || k.includes('transfer')) agentCnt += e[1];
-    else if (k.includes('챗봇') || k.includes('bot') || k.includes('resolved') || k.includes('1회')) botCnt += e[1];
-  });
-  document.getElementById('lv1-agent').textContent = agentCnt.toLocaleString() + '건';
-  document.getElementById('lv1-agent-pct').textContent = total > 0 ? Math.round(agentCnt/total*100) + '% 상담원 처리' : '';
-  document.getElementById('lv1-bot').textContent = botCnt.toLocaleString() + '건';
-  document.getElementById('lv1-bot-pct').textContent = total > 0 ? Math.round(botCnt/total*100) + '% 챗봇 해결' : '';
-  // Charts
-  makeBars('live-product-bars',  d.ontology.product,   COLORS.product,   total);
-  makeBars('live-intent-bars',   d.ontology.intent,    COLORS.intent,    total);
-  makeBars('live-sentiment-bars',d.ontology.sentiment, COLORS.sentiment, total);
-  // Title
-  document.getElementById('live-t1-title').innerHTML =
-    '라이브 데이터 <span style="font-weight:400;color:#0f6e56"> · ' +
-    document.getElementById('date-start').value + ' ~ ' +
-    document.getElementById('date-end').value +
-    ' · 총 <b>' + total.toLocaleString() + '건</b></span>';
-  document.getElementById('live-t1').style.background = '#f0fbf6';
-}
-
-function renderT3(d) {
-  var total = d.meta.total;
-  document.getElementById('lv3-total').textContent = total.toLocaleString() + '건';
-  // Resolution 분류
-  var res = d.chatbot.resolution || {};
-  var transferCnt = 0, dropCnt = 0, botCnt3 = 0;
-  Object.entries(res).forEach(function(e) {
-    var k = e[0].toLowerCase();
-    if (k.includes('상담원') || k.includes('agent') || k.includes('human') || k.includes('transfer')) transferCnt += e[1];
-    else if (k.includes('포기') || k.includes('drop') || k.includes('abandon') || k.includes('timeout')) dropCnt += e[1];
-    else if (k.includes('챗봇') || k.includes('bot') || k.includes('resolved') || k.includes('1회')) botCnt3 += e[1];
-  });
-  document.getElementById('lv3-transfer').textContent = transferCnt.toLocaleString() + '건';
-  document.getElementById('lv3-transfer-pct').textContent = total > 0 ? Math.round(transferCnt/total*100) + '% 전환율' : '';
-  document.getElementById('lv3-drop').textContent = dropCnt.toLocaleString() + '건';
-  document.getElementById('lv3-drop-pct').textContent = total > 0 ? Math.round(dropCnt/total*100) + '% 이탈율' : '';
-  document.getElementById('lv3-bot').textContent = botCnt3.toLocaleString() + '건';
-  document.getElementById('lv3-bot-pct').textContent = total > 0 ? Math.round(botCnt3/total*100) + '% 해결율' : '';
-  // Charts
-  makeBars('live-transfer-bars', d.chatbot.transfer_reason,  COLORS.transfer, total);
-  makeBars('live-problem-bars',  d.chatbot.chatbot_problem,  COLORS.problem,  total);
-  // Title
-  document.getElementById('live-t3-title').innerHTML =
-    '라이브 데이터 <span style="font-weight:400;color:#185fa5"> · ' +
-    document.getElementById('date-start').value + ' ~ ' +
-    document.getElementById('date-end').value +
-    ' · 총 <b>' + total.toLocaleString() + '건</b></span>';
-}
-
-async function loadLiveData() {
+/* ══ 메인 로드 ══ */
+async function loadData() {
   var start = document.getElementById('date-start').value;
   var end   = document.getElementById('date-end').value;
-  if (!start || !end) { setStatus('날짜를 선택하세요', 'err'); return; }
-  if (start > end)    { setStatus('시작 ≤ 종료 날짜 확인', 'err'); return; }
+  if(!start||!end) { setStatus('날짜를 선택하세요','err'); return; }
+  if(start>end)    { setStatus('시작 ≤ 종료 확인','err'); return; }
 
   var btn = document.getElementById('btn-load');
   btn.disabled = true;
-  setStatus('⏳ 로딩 중...', 'loading');
-
-  // 스켈레톤 표시
-  ['live-product-bars','live-intent-bars','live-sentiment-bars',
-   'live-transfer-bars','live-problem-bars'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.innerHTML = '<div class="skeleton" style="height:14px;margin-bottom:6px"></div><div class="skeleton" style="height:14px;margin-bottom:6px;width:75%"></div><div class="skeleton" style="height:14px;width:55%"></div>';
-  });
+  setStatus('⏳ 로딩 중...','loading');
 
   try {
-    var url = API_URL + '?start=' + start + '&end=' + end;
-    var res = await fetch(url);
+    var res  = await fetch(API_URL+'?start='+start+'&end='+end);
     var data = await res.json();
+    if(data.error) throw new Error(data.error);
 
-    if (data.error) throw new Error(data.error);
+    _data = data;
+    window._kgInit = 0;
+    window._cfInit = 0;
 
-    renderT1(data);
-    renderT3(data);
-    setStatus('✅ ' + data.meta.total.toLocaleString() + '건 로드 완료', 'ok');
+    renderAll(data);
+    setStatus('✅ '+data.meta.total.toLocaleString()+'건 로드 완료','ok');
+
+    // 현재 KG 탭이면 즉시 빌드
+    var activeTab = document.querySelector('.nav-tab.on');
+    if(activeTab) {
+      var idx = Array.from(document.querySelectorAll('.nav-tab')).indexOf(activeTab);
+      if(idx===1) { window._kgInit=1; setTimeout(function(){ buildKG(data); },300); }
+      if(idx===3) { window._cfInit=1; setTimeout(function(){ buildCFKG(data); },300); }
+    }
 
   } catch(e) {
-    setStatus('❌ 오류: ' + e.message, 'err');
-    console.error(e);
+    setStatus('❌ '+e.message,'err');
   } finally {
     btn.disabled = false;
   }
 }
 
-// 페이지 로드 시 자동 실행
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(loadLiveData, 600);
+/* ══ 전체 렌더 ══ */
+function renderAll(d) {
+  var t = d.meta.total;
+  var start = d.meta.start, end = d.meta.end;
+
+  // Nav 업데이트
+  document.getElementById('nav-sub').textContent = start+' ~ '+end+' · '+t.toLocaleString()+'건';
+  document.getElementById('badge-t1').textContent = t.toLocaleString()+'건';
+  document.getElementById('badge-t3').textContent = t.toLocaleString()+'건';
+
+  renderOntology(d);
+  renderChatbot(d);
+}
+
+/* ══════════════ 온톨로지 ══════════════ */
+function renderOntology(d) {
+  var t   = d.meta.total;
+  var ont = d.ontology;
+  var cb  = d.chatbot;
+
+  // Sentiment 집계
+  var badCnt=0, neutralCnt=0, goodCnt=0;
+  Object.entries(ont.sentiment||{}).forEach(function(e){
+    var k=e[0].toLowerCase();
+    if(k.includes('불만')||k.includes('negative')||k.includes('dissatisfied')) badCnt+=e[1];
+    else if(k.includes('긍정')||k.includes('positive')||k.includes('satisfied')) goodCnt+=e[1];
+    else neutralCnt+=e[1];
+  });
+
+  // Resolution 집계
+  var agentCnt=0, botCnt=0, dropCnt=0;
+  Object.entries(cb.resolution||{}).forEach(function(e){
+    var k=e[0].toLowerCase();
+    if(k.includes('상담원')||k.includes('agent')||k.includes('human')||k.includes('transfer')) agentCnt+=e[1];
+    else if(k.includes('챗봇')||k.includes('bot')||k.includes('1회')||k.includes('resolved')) botCnt+=e[1];
+    else if(k.includes('포기')||k.includes('timeout')||k.includes('drop')) dropCnt+=e[1];
+  });
+
+  // KPI
+  document.getElementById('kpi-total').textContent    = t.toLocaleString()+'건';
+  document.getElementById('kpi-period').textContent   = d.meta.start+' ~ '+d.meta.end;
+  document.getElementById('kpi-bad').textContent      = badCnt.toLocaleString()+'건';
+  document.getElementById('kpi-bad-sub').textContent  = t>0?Math.round(badCnt/t*100)+'% 불만':'';
+  document.getElementById('kpi-auto').textContent     = d.kpi.automatable.toLocaleString()+'건';
+  document.getElementById('kpi-auto-sub').textContent = d.kpi.auto_pct+'% 자동화 가능';
+  document.getElementById('kpi-agent').textContent    = agentCnt.toLocaleString()+'건';
+  document.getElementById('kpi-agent-sub').textContent= t>0?Math.round(agentCnt/t*100)+'% 상담원':'';
+  document.getElementById('kpi-bot').textContent      = botCnt.toLocaleString()+'건';
+  document.getElementById('kpi-bot-sub').textContent  = t>0?Math.round(botCnt/t*100)+'% 챗봇 해결':'';
+
+  renderLangPatterns(d);
+  renderMatrix(d);
+  renderScenarios(d);
+  renderSamples(d);
+  renderSentiment(d);
+}
+
+/* ── 언어별 패턴 ── */
+function renderLangPatterns(d) {
+  var lp  = d.lang_patterns || {};
+  var langs = Object.keys(lp).filter(function(l){ return lp[l].total>0; }).sort(function(a,b){ return lp[b].total-lp[a].total; });
+  if(!langs.length) {
+    document.getElementById('lang-tab-btns').innerHTML='';
+    document.getElementById('lang-content').innerHTML='<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
+    return;
+  }
+
+  // 탭 버튼
+  document.getElementById('lang-tab-btns').innerHTML = langs.map(function(lg,i){
+    return '<div class="lang-tab'+(i===0?' on':'')+'" onclick="showLangTab(\''+lg+'\',this)">'+lg+' <span style="font-size:10px;color:#888">('+lp[lg].total.toLocaleString()+'건)</span></div>';
+  }).join('');
+
+  // 첫 번째 언어 표시
+  window._langPatterns = lp;
+  showLangContent(langs[0]);
+}
+
+function showLangTab(lg, el) {
+  document.querySelectorAll('#lang-tab-btns .lang-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+  showLangContent(lg);
+}
+
+function showLangContent(lg) {
+  var lp  = window._langPatterns || {};
+  var d   = lp[lg];
+  if(!d) return;
+  var total = d.total || 0;
+
+  // Resolution 분포
+  var resBars = Object.entries(d.resolution||{}).sort(function(a,b){ return b[1]-a[1]; }).map(function(e){
+    var pct = total>0 ? Math.round(e[1]/total*100) : 0;
+    var color = RES_COLORS[e[0]] || '#888';
+    return '<div class="bar-row"><div class="bar-label">'+e[0]+'</div>' +
+      '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+(total>0?Math.round(e[1]/Object.values(d.resolution)[0]*100):0)+'%">'+e[1].toLocaleString()+'건</div></div>' +
+      '<div class="bar-cnt">'+pct+'%</div></div>';
+  }).join('');
+
+  // 상위 패턴
+  var patternRows = (d.patterns||[]).map(function(p){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<div style="font-size:11px;font-weight:700;color:#378ADD;min-width:40px">'+p.pct+'%</div>' +
+      '<div style="flex:1;font-size:12px;color:#333">'+p.label+'</div>' +
+      '<div style="font-size:11px;color:#888">'+p.count.toLocaleString()+'건</div>' +
+    '</div>';
+  }).join('');
+
+  // 원문 샘플
+  var sampleHtml = (d.samples||[]).map(function(s){
+    var auto = s.auto;
+    return '<div class="sample-card '+(auto?'auto':'manual')+'">' +
+      '<div class="sample-tags">' +
+        (s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+
+        (s.event  ?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+
+        (s.intent ?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+
+        '<span style="font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:'+(auto?'#E8F8F1':'#FAECE7')+';color:'+(auto?'#0f6e56':'#993C1D')+'">'+(auto?'자동화 가능':'상담원 필수')+'</span>' +
+      '</div>' +
+      '<div class="sample-text">"'+s.text+'"</div>' +
+      (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
+    '</div>';
+  }).join('') || '<div style="font-size:11px;color:#bbb;padding:8px 0">원문 없음</div>';
+
+  document.getElementById('lang-content').innerHTML =
+    '<div class="grid2">' +
+      '<div class="section-card"><div class="section-title">'+lg+' 해결 유형 분포<span class="section-sub">총 '+total.toLocaleString()+'건</span></div>'+resBars+'</div>' +
+      '<div class="section-card"><div class="section-title">'+lg+' 주요 패턴 (Product × Event)</div>'+patternRows+'</div>' +
+    '</div>' +
+    '<div class="section-card"><div class="section-title">'+lg+' 원문 예시</div>'+sampleHtml+'</div>';
+}
+
+/* ── 매트릭스 ── */
+function renderMatrix(d) {
+  var matrix = d.matrix || [];
+  if(!matrix.length) {
+    document.getElementById('matrix-table-wrap').innerHTML='<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
+    return;
+  }
+  var rows = matrix.map(function(r){
+    var autoPctClass = r.auto_pct>=50?'pct-low':r.auto_pct>=20?'pct-mid':'pct-high';
+    var badPctClass  = r.bad_pct >=70?'pct-high':r.bad_pct >=40?'pct-mid':'pct-low';
+    var priority = r.bad_pct>=70&&r.auto_pct<10  ? '<span class="badge-priority bp-now">● 즉시</span>'
+                 : r.bad_pct>=40||r.auto_pct>=30 ? '<span class="badge-priority bp-mon">● 모니터링</span>'
+                 : r.auto_pct>=50                ? '<span class="badge-priority bp-auto">● 자동화</span>'
+                 : '<span class="badge-priority bp-mon">● 검토</span>';
+    return '<tr>' +
+      '<td>'+r.product+'</td>' +
+      '<td>'+r.event+'</td>' +
+      '<td>'+r.intent+'</td>' +
+      '<td style="font-weight:700;color:'+(r.count>100?'#D85A30':r.count>50?'#BA7517':'#444')+'">'+r.count.toLocaleString()+'</td>' +
+      '<td class="'+autoPctClass+'">'+r.auto_pct+'%</td>' +
+      '<td class="'+badPctClass+'">'+r.bad_pct+'%</td>' +
+      '<td>'+priority+'</td>' +
+    '</tr>';
+  }).join('');
+
+  document.getElementById('matrix-table-wrap').innerHTML =
+    '<table class="matrix-table">' +
+      '<thead><tr><th>Product</th><th>Event</th><th>Intent</th><th>건수</th><th>자동화%</th><th>불만%</th><th>우선순위</th></tr></thead>' +
+      '<tbody>'+rows+'</tbody>' +
+    '</table>';
+}
+
+/* ── 자동화 시나리오 ── */
+function renderScenarios(d) {
+  var sc = d.scenarios || [];
+  if(!sc.length) {
+    document.getElementById('scenario-content').innerHTML='<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
+    return;
+  }
+  document.getElementById('scenario-content').innerHTML = sc.map(function(s,i){
+    var exHtml = (s.examples||[]).map(function(e){ return '<div class="scenario-quote">"'+e+'"</div>'; }).join('');
+    return '<div class="scenario-card">' +
+      '<div class="scenario-header">' +
+        '<span style="font-size:13px;font-weight:700;color:#1D9E75">'+(i+1)+'순위</span>' +
+        '<span class="scenario-label">'+s.label+'</span>' +
+        '<span class="scenario-cnt">'+s.count.toLocaleString()+'건</span>' +
+      '</div>' +
+      exHtml +
+      (s.improvement?'<div class="scenario-improvement">💡 '+s.improvement+'</div>':'') +
+    '</div>';
+  }).join('');
+}
+
+/* ── 원문 샘플 ── */
+function renderSamples(d) {
+  var sp = d.samples || {};
+  ['auto','manual'].forEach(function(type){
+    var items = sp[type] || [];
+    var html = items.length ? items.map(function(s){
+      return '<div class="sample-card '+type+'">' +
+        '<div class="sample-tags">' +
+          (s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+
+          (s.event  ?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+
+          (s.intent ?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+
+          '<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#f0f0ee;color:#888">'+s.lang+'</span>' +
+        '</div>' +
+        '<div class="sample-text">"'+s.text+'"</div>' +
+        (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
+      '</div>';
+    }).join('') : '<div style="font-size:12px;color:#bbb;padding:8px 0">데이터 없음</div>';
+    document.getElementById('samples-'+type).innerHTML = html;
+  });
+}
+
+/* ── Sentiment 분석 ── */
+function renderSentiment(d) {
+  var sentData = d.ontology.sentiment || {};
+  var total    = d.meta.total;
+
+  // 분포 바
+  var bad=0, neutral=0, good=0;
+  Object.entries(sentData).forEach(function(e){
+    var k=e[0].toLowerCase();
+    if(k.includes('불만')||k.includes('negative')) bad+=e[1];
+    else if(k.includes('긍정')||k.includes('positive')) good+=e[1];
+    else neutral+=e[1];
+  });
+  var tot2 = bad+neutral+good || 1;
+  var bPct = Math.round(bad/tot2*100), nPct = Math.round(neutral/tot2*100), gPct = Math.round(good/tot2*100);
+  document.getElementById('sent-dist-bar').innerHTML =
+    '<div style="background:#D85A30;width:'+bPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;min-width:40px">불만 '+bPct+'%</div>' +
+    '<div style="background:#888;width:'+nPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">중립 '+nPct+'%</div>' +
+    '<div style="background:#1D9E75;width:'+gPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;min-width:'+(gPct>0?'40':'0')+'px">'+(gPct>3?'긍정 '+gPct+'%':'')+'</div>';
+
+  // 크로스탭
+  var sr = d.sentiment_resolution || {};
+  var allRes = new Set();
+  Object.values(sr).forEach(function(v){ Object.keys(v).forEach(function(k){ if(k!=='total') allRes.add(k); }); });
+  allRes = Array.from(allRes).filter(function(k){ return k!=='미분류'; });
+
+  var tableHead = '<tr><th style="padding:7px 10px;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-size:11px;font-weight:600;text-align:left">Sentiment</th>' +
+    allRes.map(function(r){ return '<th style="padding:7px 10px;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-size:11px;font-weight:600;text-align:right">'+r+'</th>'; }).join('') + '</tr>';
+  var tableBody = Object.entries(sr).map(function(e){
+    var s=e[0], v=e[1];
+    var stTotal = v.total || 0;
+    var sentColor = SENT_COLORS[s.toLowerCase()] || '#888';
+    var cells = allRes.map(function(r){
+      var cnt = v[r]||0;
+      var pct = stTotal>0 ? Math.round(cnt/stTotal*100) : 0;
+      var highlight = pct>=50 ? 'background:#fff0f0;color:#D85A30;font-weight:700' : pct>=25 ? 'color:#BA7517;font-weight:600' : '';
+      return '<td style="padding:7px 10px;border-bottom:1px solid #f0f0ee;text-align:right;font-size:12px;'+highlight+'">'+cnt.toLocaleString()+' <span style="color:#ccc;font-size:10px">'+pct+'%</span></td>';
+    }).join('');
+    return '<tr><td style="padding:7px 10px;border-bottom:1px solid #f0f0ee;font-size:12px;font-weight:600;color:'+sentColor+'">'+s+'<br><span style="font-size:10px;color:#aaa;font-weight:400">'+stTotal.toLocaleString()+'건</span></td>'+cells+'</tr>';
+  }).join('');
+
+  document.getElementById('sent-crosstab').innerHTML =
+    '<table style="width:100%;border-collapse:collapse"><thead>'+tableHead+'</thead><tbody>'+tableBody+'</tbody></table>';
+
+  // 인사이트
+  var badPct = total>0?Math.round(bad/total*100):0;
+  document.getElementById('sent-insights').innerHTML =
+    '<div style="display:flex;flex-direction:column;gap:10px">' +
+    '<div style="border-left:3px solid #D85A30;padding:10px 14px;background:#fef8f6;border-radius:0 8px 8px 0">' +
+      '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">불만 유저 집중 분석</div>' +
+      '<div style="font-size:12px;color:#555;line-height:1.6">전체의 <b>'+badPct+'%</b>가 불만 상태. 불만 감지 즉시 우선 배정 라우팅 필요.</div>' +
+    '</div>' +
+    '<div style="border-left:3px solid #1D9E75;padding:10px 14px;background:#f0fbf6;border-radius:0 8px 8px 0">' +
+      '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">챗봇 해결 → CSAT 직결</div>' +
+      '<div style="font-size:12px;color:#555;line-height:1.6">중립 유저의 챗봇 해결율 향상 = CSAT 직접 향상.</div>' +
+    '</div>' +
+    '</div>';
+}
+
+/* ══════════════ 챗봇 ══════════════ */
+function renderChatbot(d) {
+  var t  = d.meta.total;
+  var cb = d.chatbot;
+
+  // KPI
+  var transferCnt=0, dropCnt=0, botCnt=0;
+  Object.entries(cb.resolution||{}).forEach(function(e){
+    var k=e[0].toLowerCase();
+    if(k.includes('상담원')||k.includes('agent')||k.includes('transfer')) transferCnt+=e[1];
+    else if(k.includes('포기')||k.includes('timeout')||k.includes('drop')) dropCnt+=e[1];
+    else if(k.includes('챗봇')||k.includes('bot')||k.includes('1회')) botCnt+=e[1];
+  });
+
+  document.getElementById('cf-kpi-total').textContent        = t.toLocaleString()+'건';
+  document.getElementById('cf-kpi-period').textContent       = d.meta.start+' ~ '+d.meta.end;
+  document.getElementById('cf-kpi-transfer').textContent     = transferCnt.toLocaleString()+'건';
+  document.getElementById('cf-kpi-transfer-sub').textContent = t>0?Math.round(transferCnt/t*100)+'% 전환율':'';
+  document.getElementById('cf-kpi-drop').textContent         = dropCnt.toLocaleString()+'건';
+  document.getElementById('cf-kpi-drop-sub').textContent     = t>0?Math.round(dropCnt/t*100)+'% 이탈율':'';
+  document.getElementById('cf-kpi-bot').textContent          = botCnt.toLocaleString()+'건';
+  document.getElementById('cf-kpi-bot-sub').textContent      = t>0?Math.round(botCnt/t*100)+'% 해결율':'';
+
+  // 바 차트
+  renderBars('cf-resolution-bars', cb.resolution,      '#7F77DD', t);
+  renderBars('cf-transfer-bars',   cb.transfer_reason, '#D85A30', t);
+  renderBars('cf-problem-bars',    cb.chatbot_problem, '#7F77DD', t);
+  renderBars('cf-pingpong-bars',   cb.pingpong,        '#BA7517', t);
+
+  // 언어별 Resolution
+  var lr = d.lang_resolution || {};
+  var langKeys = Object.keys(lr).sort(function(a,b){ return Object.values(lr[b]).reduce(function(s,v){return s+v},0) - Object.values(lr[a]).reduce(function(s,v){return s+v},0); });
+  document.getElementById('cf-lang-resolution').innerHTML = langKeys.length ?
+    '<div class="grid3">'+langKeys.slice(0,6).map(function(lg){
+      var lrData  = lr[lg];
+      var lgTotal = Object.values(lrData).reduce(function(a,b){ return a+b; },0);
+      var bars    = Object.entries(lrData).sort(function(a,b){ return b[1]-a[1]; }).map(function(e){
+        var pct = lgTotal>0?Math.round(e[1]/lgTotal*100):0;
+        var color = RES_COLORS[e[0]] || '#888';
+        return '<div class="bar-row"><div class="bar-label" style="min-width:80px">'+e[0]+'</div>' +
+          '<div class="bar-wrap"><div class="bar-fill" style="background:'+color+';width:'+pct+'%"></div></div>' +
+          '<div class="bar-cnt">'+pct+'%</div></div>';
+      }).join('');
+      return '<div class="section-card" style="padding:12px 14px"><div class="section-title">'+lg+' <span class="section-sub">'+lgTotal.toLocaleString()+'건</span></div>'+bars+'</div>';
+    }).join('')+'</div>'
+  : '<div style="font-size:12px;color:#bbb;padding:8px 0">데이터 없음</div>';
+
+  // 챗봇 언어별 패턴
+  var lp = d.lang_patterns || {};
+  var cfLangs = Object.keys(lp).sort(function(a,b){ return (lp[b].total||0)-(lp[a].total||0); });
+  document.getElementById('cf-lang-tab-btns').innerHTML = cfLangs.map(function(lg,i){
+    return '<div class="lang-tab'+(i===0?' on':'')+'" onclick="showCfLangTab(\''+lg+'\',this)">'+lg+' <span style="font-size:10px;color:#888">('+((lp[lg]||{}).total||0).toLocaleString()+'건)</span></div>';
+  }).join('');
+  window._cfLangPatterns = lp;
+  if(cfLangs.length) showCfLangContent(cfLangs[0]);
+
+  // 개선 제안
+  renderCfImprove(d);
+}
+
+function showCfLangTab(lg, el) {
+  document.querySelectorAll('#cf-lang-tab-btns .lang-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+  showCfLangContent(lg);
+}
+
+function showCfLangContent(lg) {
+  var lp = window._cfLangPatterns || {};
+  var d  = lp[lg];
+  if(!d) return;
+  var total = d.total || 0;
+  var patternRows = (d.patterns||[]).map(function(p){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<div style="font-size:11px;font-weight:700;color:#D85A30;min-width:40px">'+p.pct+'%</div>' +
+      '<div style="flex:1;font-size:12px;color:#333">'+p.label+'</div>' +
+      '<div style="font-size:11px;color:#888">'+p.count.toLocaleString()+'건</div>' +
+    '</div>';
+  }).join('') || '<div style="font-size:11px;color:#bbb">데이터 없음</div>';
+
+  var sampleHtml = (d.samples||[]).map(function(s){
+    return '<div class="sample-card '+(s.auto?'auto':'manual')+'">' +
+      '<div class="sample-tags"><span class="sample-tag tag-product">'+s.product+'</span><span class="sample-tag tag-event">'+s.event+'</span></div>' +
+      '<div class="sample-text">"'+s.text+'"</div>' +
+      (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
+    '</div>';
+  }).join('') || '<div style="font-size:11px;color:#bbb">데이터 없음</div>';
+
+  document.getElementById('cf-lang-content').innerHTML =
+    '<div class="grid2">' +
+      '<div class="section-card"><div class="section-title">'+lg+' 주요 패턴<span class="section-sub">'+total.toLocaleString()+'건</span></div>'+patternRows+'</div>' +
+      '<div class="section-card"><div class="section-title">'+lg+' 원문 예시</div>'+sampleHtml+'</div>' +
+    '</div>';
+}
+
+function renderCfImprove(d) {
+  var sc = d.scenarios || [];
+  document.getElementById('cf-improve-content').innerHTML = sc.length ? sc.map(function(s,i){
+    var exHtml = (s.examples||[]).map(function(e){ return '<div class="scenario-quote">"'+e+'"</div>'; }).join('');
+    return '<div class="scenario-card">' +
+      '<div class="scenario-header"><span style="font-size:13px;font-weight:700;color:#378ADD">'+(i+1)+'순위</span><span class="scenario-label">'+s.label+'</span><span class="scenario-cnt">'+s.count.toLocaleString()+'건</span></div>' +
+      exHtml +
+      (s.improvement?'<div class="scenario-improvement">💡 '+s.improvement+'</div>':'') +
+    '</div>';
+  }).join('') : '<div style="font-size:12px;color:#bbb;padding:20px 0">데이터 없음</div>';
+}
+
+/* ══════════════ Knowledge Graph ══════════════ */
+var GCL = {product:'Product',event:'Event',intent:'Intent',sentiment:'Sentiment',resolution:'Resolution'};
+
+function buildKG(d) {
+  var ont = d.ontology;
+  var cb  = d.chatbot;
+  var t   = d.meta.total || 1;
+
+  // 노드 생성
+  var nodes = [];
+  function addNodes(data, group, maxItems) {
+    Object.entries(data||{}).filter(function(e){ return e[0]!=='미분류'; }).slice(0,maxItems||8).forEach(function(e){
+      nodes.push({id:group+':'+e[0], label:e[0], group:group, count:e[1]});
+    });
+  }
+  addNodes(ont.product,   'product',   7);
+  addNodes(ont.event,     'event',     8);
+  addNodes(ont.intent,    'intent',    7);
+  addNodes(ont.sentiment, 'sentiment', 3);
+  addNodes(cb.resolution, 'resolution',4);
+
+  // 엣지 (크로스 데이터)
+  var edges = [];
+  var cross = d.cross || {};
+  if(cross.product_x_resolution) {
+    Object.entries(cross.product_x_resolution).forEach(function(e){
+      var src = 'product:'+e[0];
+      Object.entries(e[1]).forEach(function(e2){
+        var tgt = 'resolution:'+e2[0];
+        if(nodes.find(function(n){ return n.id===src; }) && nodes.find(function(n){ return n.id===tgt; }))
+          edges.push({source:src, target:tgt, weight:e2[1]});
+      });
+    });
+  }
+  if(cross.product_x_sentiment) {
+    Object.entries(cross.product_x_sentiment).forEach(function(e){
+      var src = 'product:'+e[0];
+      Object.entries(e[1]).forEach(function(e2){
+        var tgt = 'sentiment:'+e2[0];
+        if(nodes.find(function(n){ return n.id===src; }) && nodes.find(function(n){ return n.id===tgt; }))
+          edges.push({source:src, target:tgt, weight:e2[1]});
+      });
+    });
+  }
+
+  renderGraph('kg-svg', nodes, edges, 'kg-tt', 'kg-dp', 'kg-dp-inner', 'kg-ip-sub', 'kg-ip-body', t);
+
+  // 범례 버튼
+  var groups = ['product','event','intent','sentiment','resolution'];
+  document.getElementById('kg-filter-btns').innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="kgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
+    groups.map(function(g){
+      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="kgFilter(\''+g+'\',this)"><div style="width:9px;height:9px;border-radius:50%;background:'+GC[g]+';flex-shrink:0"></div>'+(GCL[g]||g)+'</div>';
+    }).join('');
+
+  // 사이드 KPI
+  document.getElementById('kg-kpi-side').innerHTML = [
+    ['자동화 가능', d.kpi.auto_pct+'%', '#1D9E75'],
+    ['총 문의', d.meta.total.toLocaleString()+'건', '#1a1a1a'],
+  ].map(function(kv){
+    return '<div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
+  }).join('');
+}
+
+function buildCFKG(d) {
+  var cb = d.chatbot;
+  var t  = d.meta.total || 1;
+
+  var nodes = [];
+  function addN(data, group, max) {
+    Object.entries(data||{}).filter(function(e){ return e[0]!=='미분류'; }).slice(0,max||6).forEach(function(e){
+      nodes.push({id:group+':'+e[0], label:e[0], group:group, count:e[1]});
+    });
+  }
+  addN(cb.resolution,      'resolution', 4);
+  addN(cb.transfer_reason, 'transfer',   6);
+  addN(cb.chatbot_problem, 'problem',    5);
+  addN(cb.cf_lang,         'lang',       4);
+
+  var edges = [];
+  // transfer → resolution edges
+  Object.entries(cb.transfer_reason||{}).slice(0,5).forEach(function(e){
+    var src = 'transfer:'+e[0];
+    if(nodes.find(function(n){ return n.id===src; })) {
+      edges.push({source:src, target:'resolution:상담원처리', weight:e[1]});
+    }
+  });
+
+  renderGraph('cf-kg-svg', nodes, edges, 'cf-kg-tt', 'cf-dp', 'cf-dp-inner', 'cf-ip-sub', 'cf-ip-body', t);
+
+  // 범례
+  var groups = ['resolution','transfer','problem','lang'];
+  document.getElementById('cf-kg-filter-btns').innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
+    groups.map(function(g){
+      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter(\''+g+'\',this)"><div style="width:9px;height:9px;border-radius:50%;background:'+GC[g]+';flex-shrink:0"></div>'+g+'</div>';
+    }).join('');
+
+  document.getElementById('cf-kg-kpi-side').innerHTML = [
+    ['상담원 전환', Object.values(cb.resolution)[0]+'건', '#D85A30'],
+    ['챗봇 해결', Object.values(cb.resolution)[1]+'건', '#1D9E75'],
+  ].map(function(kv){
+    return '<div style="background:#f8f8f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #e8e8e6"><div style="font-size:10px;color:#999;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
+  }).join('');
+}
+
+function nodeR(d){ var b={product:14,event:11,intent:11,sentiment:16,resolution:18,transfer:11,problem:11,lang:11}; return Math.max(9,Math.min((b[d.group]||11)*Math.sqrt(d.count/60),38)); }
+
+var _svgNodes={}, _svgLinks={};
+
+function renderGraph(svgId, nodes, edges, ttId, dpId, dpInnerId, ipSubId, ipBodyId, total) {
+  var svg  = d3.select('#'+svgId);
+  svg.selectAll('*').remove();
+  var area = document.getElementById(svgId).closest('.graph-area') || document.getElementById(svgId).parentElement;
+  var w    = area.clientWidth || 800;
+  var h    = area.clientHeight || 500;
+  svg.attr('viewBox','0 0 '+w+' '+h);
+  var g = svg.append('g');
+  svg.call(d3.zoom().scaleExtent([0.3,3.5]).on('zoom',function(e){ g.attr('transform',e.transform); }));
+
+  var ns = nodes.map(function(d){ return Object.assign({},d); });
+  var es = edges.map(function(d){ return Object.assign({},d); });
+
+  var sim = d3.forceSimulation(ns)
+    .force('link', d3.forceLink(es).id(function(d){ return d.id; }).distance(function(d){ return 140-Math.min(d.weight/6,70); }).strength(function(d){ return Math.min(d.weight/250,.7); }))
+    .force('charge', d3.forceManyBody().strength(-230))
+    .force('center', d3.forceCenter(w/2, h/2))
+    .force('collision', d3.forceCollide().radius(function(d){ return nodeR(d)+10; }));
+
+  var linkSel = g.append('g').selectAll('line').data(es).enter().append('line')
+    .attr('stroke','#ddd').attr('stroke-width',function(d){ return Math.max(.8,Math.min(d.weight/60,5)); }).attr('stroke-opacity',.8);
+
+  var nodeSel = g.append('g').selectAll('g').data(ns).enter().append('g').attr('cursor','pointer')
+    .call(d3.drag()
+      .on('start',function(e,d){ if(!e.active) sim.alphaTarget(.3).restart(); d.fx=d.x; d.fy=d.y; })
+      .on('drag', function(e,d){ d.fx=e.x; d.fy=e.y; })
+      .on('end',  function(e,d){ if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }))
+    .on('click', function(e,d){ e.stopPropagation(); onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId); })
+    .on('mouseover', function(e,d){ showTip(e, d, svgId, ttId, total); })
+    .on('mouseout',  function(){ document.getElementById(ttId).style.opacity=0; });
+
+  nodeSel.append('circle').attr('r',nodeR).attr('fill',function(d){ return GC[d.group]||'#888'; })
+    .attr('fill-opacity',.9).attr('stroke','#fff').attr('stroke-width',2.5).attr('class','nc');
+  nodeSel.append('text').text(function(d){ return d.label.length>9?d.label.slice(0,8)+'…':d.label; })
+    .attr('dy','0.35em').attr('text-anchor','middle')
+    .attr('font-size',function(d){ return nodeR(d)>20?'11px':nodeR(d)>14?'10px':'9px'; })
+    .attr('fill','#fff').attr('pointer-events','none').attr('font-weight','600');
+
+  sim.on('tick',function(){
+    linkSel.attr('x1',function(d){ return d.source.x; }).attr('y1',function(d){ return d.source.y; })
+           .attr('x2',function(d){ return d.target.x; }).attr('y2',function(d){ return d.target.y; });
+    nodeSel.attr('transform',function(d){ return 'translate('+d.x+','+d.y+')'; });
+  });
+
+  svg.on('click',function(){
+    nodeSel.selectAll('.nc').attr('stroke','#fff').attr('stroke-width',2.5).attr('fill-opacity',.9);
+    linkSel.attr('stroke-opacity',.8).attr('stroke','#ddd');
+    document.getElementById(dpId).style.height='0';
+  });
+
+  _svgNodes[svgId] = nodeSel;
+  _svgLinks[svgId] = linkSel;
+}
+
+function showTip(e, d, svgId, ttId, total) {
+  var tt   = document.getElementById(ttId);
+  var area = document.getElementById(svgId).closest('.graph-area') || document.getElementById(svgId).parentElement;
+  var rect = area.getBoundingClientRect();
+  tt.innerHTML = '<div style="font-size:13px;font-weight:700;color:'+GC[d.group]+'">'+d.label+'</div>' +
+    '<div style="font-size:11px;color:#888">'+d.group+' · '+d.count.toLocaleString()+'건 ('+(Math.round(d.count/total*100))+'%)</div>' +
+    '<div style="font-size:10px;color:#bbb;margin-top:2px">클릭해서 상세 분석</div>';
+  tt.style.left = (e.clientX-rect.left+14)+'px';
+  tt.style.top  = (e.clientY-rect.top-10)+'px';
+  tt.style.opacity = 1;
+}
+
+function onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId) {
+  nodeSel.selectAll('.nc')
+    .attr('stroke',function(n){ return n.id===d.id?'#1a1a1a':'#fff'; })
+    .attr('stroke-width',function(n){ return n.id===d.id?3.5:2.5; })
+    .attr('fill-opacity',function(n){ return n.id===d.id?1:.3; });
+  linkSel.attr('stroke-opacity',function(l){ return (l.source.id===d.id||l.target.id===d.id)?.9:.08; })
+         .attr('stroke',function(l){ return (l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#ddd'; });
+
+  document.getElementById(ipSubId).textContent = d.label+' ('+d.count.toLocaleString()+'건)';
+  document.getElementById(ipBodyId).innerHTML =
+    '<div style="background:#f8f8f6;border-radius:6px;padding:10px;margin-bottom:8px">' +
+      '<div style="font-size:11px;color:#999;margin-bottom:4px">그룹</div>' +
+      '<div style="font-size:13px;font-weight:700;color:'+GC[d.group]+'">'+d.group+'</div>' +
+    '</div>' +
+    '<div style="background:#f8f8f6;border-radius:6px;padding:10px">' +
+      '<div style="font-size:11px;color:#999;margin-bottom:4px">건수</div>' +
+      '<div style="font-size:16px;font-weight:700">'+d.count.toLocaleString()+'건</div>' +
+    '</div>';
+}
+
+function kgFilter(type, el) {
+  document.querySelectorAll('#kg-filter-btns div').forEach(function(t){ t.style.background=''; t.style.fontWeight=''; });
+  el.style.background='#f0f0ee'; el.style.fontWeight='600';
+  if(!_svgNodes['kg-svg']) return;
+  _svgNodes['kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.15; });
+}
+
+function cfKgFilter(type, el) {
+  document.querySelectorAll('#cf-kg-filter-btns div').forEach(function(t){ t.style.background=''; t.style.fontWeight=''; });
+  el.style.background='#f0f0ee'; el.style.fontWeight='600';
+  if(!_svgNodes['cf-kg-svg']) return;
+  _svgNodes['cf-kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.15; });
+}
+
+function closeKgDp() { document.getElementById('kg-dp').style.height='0'; }
+function closeCfDp() { document.getElementById('cf-dp').style.height='0'; }
+
+/* ══ 자동 로드 ══ */
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(loadData, 500);
 });
-
-
 </script>
 </body>
 </html>
