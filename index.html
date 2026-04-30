@@ -99,7 +99,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .scenario-card{background:#1e1e1e;border-radius:8px;padding:14px 16px;margin-bottom:10px;border:1px solid #333}
 .scenario-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .scenario-label{font-size:13px;font-weight:700;color:#e8e8e6}
-.scenario-cnt{font-size:11px;background:#1D9E7520;color:#0f6e56;padding:2px 8px;border-radius:10px;font-weight:600}
+.scenario-cnt{font-size:11px;background:#0D2D1E;color:#5DCAA5;padding:2px 8px;border-radius:10px;font-weight:600}
 .scenario-quote{background:#252525;border-radius:6px;padding:8px 12px;font-size:12px;color:#bbb;margin-bottom:4px;border-left:2px solid #444;font-style:italic}
 .scenario-improvement{font-size:12px;color:#85B7EB;background:#0D2040;border-radius:6px;padding:8px 12px;margin-top:8px}
 
@@ -240,7 +240,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
       <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#555;background:#1a1a1a;padding:4px 14px;border-radius:20px;border:1px solid #333;pointer-events:none;white-space:nowrap">노드를 클릭하면 상세 분석이 표시됩니다</div>
     </div>
     <div class="kg-insight">
-      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6">
+      <div style="padding:14px 16px;border-bottom:1px solid #333">
         <div style="font-size:13px;font-weight:700">⚡ Quick Insight</div>
         <div style="font-size:11px;color:#555" id="kg-ip-sub">노드를 선택하세요</div>
       </div>
@@ -248,7 +248,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     </div>
   </div>
   <div class="kg-dp" id="kg-dp">
-    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeKgDp()">✕</div>
+    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#2a2a2a;z-index:10" onclick="closeKgDp()">✕</div>
     <div style="display:flex;height:100%" id="kg-dp-inner"></div>
   </div>
 </div>
@@ -335,7 +335,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
       <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#555;background:#1a1a1a;padding:4px 14px;border-radius:20px;border:1px solid #333;pointer-events:none;white-space:nowrap">노드를 클릭하면 하단에 상세 분석이 표시됩니다</div>
     </div>
     <div class="kg-insight">
-      <div style="padding:14px 16px;border-bottom:1px solid #e8e8e6">
+      <div style="padding:14px 16px;border-bottom:1px solid #333">
         <div style="font-size:13px;font-weight:700">⚡ Quick Insight</div>
         <div style="font-size:11px;color:#555" id="cf-ip-sub">노드를 선택하세요</div>
       </div>
@@ -343,7 +343,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     </div>
   </div>
   <div class="kg-dp" id="cf-dp">
-    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#f0f0ee;z-index:10" onclick="closeCfDp()">✕</div>
+    <div style="position:absolute;right:16px;top:12px;cursor:pointer;color:#999;font-size:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#2a2a2a;z-index:10" onclick="closeCfDp()">✕</div>
     <div style="display:flex;height:100%" id="cf-dp-inner"></div>
   </div>
 </div>
@@ -684,7 +684,7 @@ async function aiAnalyzeSample(cardId, encodedSample) {
   if(!btn||!resultDiv) return;
   btn.textContent='분석 중...'; btn.disabled=true;
   resultDiv.style.display='block';
-  resultDiv.innerHTML='<span style="color:#555">AI 분석 생성 중...</span>';
+  resultDiv.innerHTML='<span style="color:#888">AI 분석 생성 중...</span>';
   try {
     var s = JSON.parse(decodeURIComponent(encodedSample));
     var prompt = 'PUBG Mobile CS 티켓을 분석해줘. 아래 형식으로 한국어로 답변:\n\n원문: "'+s.text+'"\n분류: Product='+s.product+', Event='+s.event+', Intent='+s.intent+', Sentiment='+s.sentiment+'\n\n1. 유저 요청: (1줄)\n2. 핵심 문제: (1줄)\n3. 처리 방향: (자동화 가능 여부 포함, 1줄)';
@@ -761,7 +761,7 @@ async function aiAnalyzeSentiment() {
   if(!btn||!resultDiv||!_data) return;
   btn.textContent='분석 중...'; btn.disabled=true;
   resultDiv.style.display='block';
-  resultDiv.innerHTML='<span style="color:#555">AI 분석 생성 중...</span>';
+  resultDiv.innerHTML='<span style="color:#888">AI 분석 생성 중...</span>';
   try {
     var t=_data.meta.total, ont=_data.ontology||{}, cb=_data.chatbot||{};
     var sr=_data.sentiment_resolution||{};
@@ -936,7 +936,7 @@ function buildKG(d) {
   //  
   var groups = ['product','event','intent','sentiment','resolution'];
   document.getElementById('kg-filter-btns').innerHTML =
-    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="kgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
+    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#2a2a2a;font-weight:600;color:#e8e8e6" onclick="kgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
     groups.map(function(g){
       return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="kgFilter(\''+g+'\',this)"><div style="width:9px;height:9px;border-radius:50%;background:'+GC[g]+';flex-shrink:0"></div>'+(GCL[g]||g)+'</div>';
     }).join('');
@@ -946,7 +946,7 @@ function buildKG(d) {
     ['자동화 가능', d.kpi.auto_pct+'%', '#1D9E75'],
     ['총 문의', d.meta.total.toLocaleString()+'건', '#1a1a1a'],
   ].map(function(kv){
-    return '<div style="background:#222;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #333"><div style="font-size:10px;color:#999;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
+    return '<div style="background:#222;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #333"><div style="font-size:10px;color:#555;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
   }).join('');
 }
 
@@ -979,7 +979,7 @@ function buildCFKG(d) {
   // 
   var groups = ['resolution','transfer','problem','lang'];
   document.getElementById('cf-kg-filter-btns').innerHTML =
-    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#f0f0ee;font-weight:600" onclick="cfKgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
+    '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer;background:#2a2a2a;font-weight:600;color:#e8e8e6" onclick="cfKgFilter(\'all\',this)"><div style="width:9px;height:9px;border-radius:50%;background:#888;flex-shrink:0"></div>전체</div>' +
     groups.map(function(g){
       return '<div style="display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 6px;border-radius:5px;cursor:pointer" onclick="cfKgFilter(\''+g+'\',this)"><div style="width:9px;height:9px;border-radius:50%;background:'+GC[g]+';flex-shrink:0"></div>'+g+'</div>';
     }).join('');
@@ -988,7 +988,7 @@ function buildCFKG(d) {
     ['상담원 전환', Object.values(cb.resolution)[0]+'건', '#D85A30'],
     ['챗봇 해결', Object.values(cb.resolution)[1]+'건', '#1D9E75'],
   ].map(function(kv){
-    return '<div style="background:#222;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #333"><div style="font-size:10px;color:#999;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
+    return '<div style="background:#222;border-radius:6px;padding:8px 10px;margin-bottom:6px;border:1px solid #333"><div style="font-size:10px;color:#555;margin-bottom:2px">'+kv[0]+'</div><div style="font-size:14px;font-weight:700;color:'+kv[2]+'">'+kv[1]+'</div></div>';
   }).join('');
 }
 
@@ -1010,10 +1010,12 @@ function renderGraph(svgId, nodes, edges, ttId, dpId, dpInnerId, ipSubId, ipBody
   var es = edges.map(function(d){ return Object.assign({},d); });
 
   var sim = d3.forceSimulation(ns)
-    .force('link', d3.forceLink(es).id(function(d){ return d.id; }).distance(function(d){ return 80-Math.min(d.weight/8,50); }).strength(0.6))
-    .force('charge', d3.forceManyBody().strength(-120))
+    .force('link', d3.forceLink(es).id(function(d){ return d.id; }).distance(function(d){ return Math.max(25, 50-Math.min(d.weight/5,30)); }).strength(0.95))
+    .force('charge', d3.forceManyBody().strength(-30))
     .force('center', d3.forceCenter(w/2, h/2))
-    .force('collision', d3.forceCollide().radius(function(d){ return nodeR(d)+10; }));
+    .force('x', d3.forceX(w/2).strength(0.05))
+    .force('y', d3.forceY(h/2).strength(0.05))
+    .force('collision', d3.forceCollide().radius(function(d){ return nodeR(d)+3; }));
 
   var linkSel = g.append('g').selectAll('line').data(es).enter().append('line')
     .attr('stroke','#333').attr('stroke-width',function(d){ return Math.max(.8,Math.min(d.weight/60,5)); }).attr('stroke-opacity',.8);
