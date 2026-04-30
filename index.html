@@ -98,7 +98,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 /* ── 자동화 시나리오 ── */
 .scenario-card{background:#1e1e1e;border-radius:8px;padding:14px 16px;margin-bottom:10px;border:1px solid #333}
 .scenario-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.scenario-label{font-size:13px;font-weight:700;color:#1a1a1a}
+.scenario-label{font-size:13px;font-weight:700;color:#e8e8e6}
 .scenario-cnt{font-size:11px;background:#1D9E7520;color:#0f6e56;padding:2px 8px;border-radius:10px;font-weight:600}
 .scenario-quote{background:#252525;border-radius:6px;padding:8px 12px;font-size:12px;color:#bbb;margin-bottom:4px;border-left:2px solid #444;font-style:italic}
 .scenario-improvement{font-size:12px;color:#85B7EB;background:#0D2040;border-radius:6px;padding:8px 12px;margin-top:8px}
@@ -570,7 +570,7 @@ function showLangContent(lg) {
   var patternRows = (d.patterns||[]).map(function(p){
     return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
       '<div style="font-size:11px;font-weight:700;color:#378ADD;min-width:40px">'+p.pct+'%</div>' +
-      '<div style="flex:1;font-size:12px;color:#333">'+p.label+'</div>' +
+      '<div style="flex:1;font-size:12px;color:#ccc">'+p.label+'</div>' +
       '<div style="font-size:11px;color:#888">'+p.count.toLocaleString()+'건</div>' +
     '</div>';
   }).join('');
@@ -688,9 +688,9 @@ async function aiAnalyzeSample(cardId, encodedSample) {
   try {
     var s = JSON.parse(decodeURIComponent(encodedSample));
     var prompt = 'PUBG Mobile CS 티켓을 분석해줘. 아래 형식으로 한국어로 답변:\n\n원문: "'+s.text+'"\n분류: Product='+s.product+', Event='+s.event+', Intent='+s.intent+', Sentiment='+s.sentiment+'\n\n1. 유저 요청: (1줄)\n2. 핵심 문제: (1줄)\n3. 처리 방향: (자동화 가능 여부 포함, 1줄)';
-    var res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+    var res = await fetch(API_URL+'?action=analyze&atype=ticket&atext='+encodeURIComponent(prompt));
     var json = await res.json();
-    var analysis = json.content&&json.content[0] ? json.content[0].text : '분석 실패';
+    var analysis = json.analysis || json.error || '분석 실패';
     resultDiv.innerHTML = '<div style="font-size:10px;font-weight:700;color:#5DCAA5;margin-bottom:5px">AI 분석 결과</div>'+analysis.replace(/\n/g,'<br>');
     btn.textContent='재분석'; btn.disabled=false;
   } catch(e) {
@@ -769,9 +769,9 @@ async function aiAnalyzeSentiment() {
     Object.entries(ont.sentiment||{}).forEach(function(e){ lines.push('감정-'+e[0]+': '+e[1]+'건'); });
     Object.entries(sr).forEach(function(e){ var s=e[0],v=e[1]; lines.push('Sentiment '+s+' ('+v.total+'건): '+Object.entries(v).filter(function(x){return x[0]!=='total';}).map(function(x){return x[0]+' '+x[1]+'건';}).join(', ')); });
     var prompt = 'PUBG Mobile CS Sentiment 데이터를 분석해줘. 데이터:\n\n'+lines.join('\n')+'\n\n분석 항목:\n1. 전반적인 유저 감정 상태 (2줄)\n2. 불만 유저 패턴과 주요 원인 (2줄)\n3. 즉시 개선 가능한 액션 아이템 3가지\n4. 중장기 개선 방향 (2줄)';
-    var res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    var res = await fetch(API_URL+'?action=analyze&atype=sentiment&atext='+encodeURIComponent(prompt));
     var json = await res.json();
-    var analysis = json.content&&json.content[0]?json.content[0].text:'분석 실패';
+    var analysis = json.analysis||json.error||'분석 실패';
     resultDiv.innerHTML='<div style="font-size:10px;font-weight:700;color:#5DCAA5;margin-bottom:8px">AI 전반 분석</div>'+analysis.replace(/\n/g,'<br>');
     btn.textContent='재분석'; btn.disabled=false;
   } catch(e) {
@@ -854,7 +854,7 @@ function showCfLangContent(lg) {
   var patternRows = (d.patterns||[]).map(function(p){
     return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
       '<div style="font-size:11px;font-weight:700;color:#D85A30;min-width:40px">'+p.pct+'%</div>' +
-      '<div style="flex:1;font-size:12px;color:#333">'+p.label+'</div>' +
+      '<div style="flex:1;font-size:12px;color:#ccc">'+p.label+'</div>' +
       '<div style="font-size:11px;color:#888">'+p.count.toLocaleString()+'건</div>' +
     '</div>';
   }).join('') || '<div style="font-size:11px;color:#bbb">데이터 없음</div>';
@@ -1178,7 +1178,7 @@ async function aiAnalyzeNode(nodeId, label, group, count, bodyId) {
     }
   }
   try {
-    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:'PUBG Mobile CS     . 3   .\n\n: '+label+' (: '+group+')\n'+contextLines.join('\n')+'\n\n :    , ,  '}]})});
+    var res3=await fetch(API_URL+'?action=analyze&atype=node&atext='+encodeURIComponent(contextLines.join('|')));
     var json=await res.json();
     var analysis=json.content&&json.content[0]?json.content[0].text:'분석 실패';
     var el=document.getElementById(bodyId);
