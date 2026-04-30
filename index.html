@@ -100,7 +100,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .scenario-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .scenario-label{font-size:13px;font-weight:700;color:#1a1a1a}
 .scenario-cnt{font-size:11px;background:#1D9E7520;color:#0f6e56;padding:2px 8px;border-radius:10px;font-weight:600}
-.scenario-quote{background:#fff;border-radius:6px;padding:8px 12px;font-size:12px;color:#555;margin-bottom:4px;border-left:2px solid #ddd;font-style:italic}
+.scenario-quote{background:#252525;border-radius:6px;padding:8px 12px;font-size:12px;color:#bbb;margin-bottom:4px;border-left:2px solid #444;font-style:italic}
 .scenario-improvement{font-size:12px;color:#85B7EB;background:#0D2040;border-radius:6px;padding:8px 12px;margin-top:8px}
 
 /* ── Sentiment 크로스탭 ── */
@@ -656,28 +656,53 @@ function renderSamples(d) {
   var sp = d.samples || {};
   ['auto','manual'].forEach(function(type){
     var items = sp[type] || [];
-    var html = items.length ? items.map(function(s){
-      return '<div class="sample-card '+type+'">' +
+    var html = items.length ? items.map(function(s, i){
+      var cardId = 'samp-'+type+'-'+i;
+      var enc = encodeURIComponent(JSON.stringify({text:s.text,product:s.product,event:s.event,intent:s.intent,sentiment:s.sentiment,memo:s.memo}));
+      return '<div class="sample-card '+type+'" id="'+cardId+'">' +
         '<div class="sample-tags">' +
           (s.product?'<span class="sample-tag tag-product">'+s.product+'</span>':'')+
           (s.event  ?'<span class="sample-tag tag-event">'+s.event+'</span>':'')+
           (s.intent ?'<span class="sample-tag tag-intent">'+s.intent+'</span>':'')+
-          '<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#f0f0ee;color:#888">'+s.lang+'</span>' +
+          '<span style="font-size:10px;padding:2px 7px;border-radius:8px;background:#222;color:#555">'+s.lang+'</span>' +
         '</div>' +
         '<div class="sample-text">"'+s.text+'"</div>' +
-        (s.memo?'<div class="sample-memo">→ '+s.memo+'</div>':'') +
+        (s.memo?'<div class="sample-memo">'+s.memo+'</div>':'') +
+        '<div style="margin-top:8px">' +
+          '<button onclick="aiAnalyzeSample(\''+cardId+'\',\''+enc+'\')" style="padding:4px 10px;background:#0D2040;color:#85B7EB;border:1px solid #1a4070;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer">AI 분석</button>' +
+        '</div>' +
+        '<div id="'+cardId+'-ai" style="display:none;margin-top:8px;background:#0D2D1E;border-radius:6px;padding:10px 12px;border:1px solid #1a4030;font-size:12px;color:#9FE1CB;line-height:1.7"></div>' +
       '</div>';
-    }).join('') : '<div style="font-size:12px;color:#bbb;padding:8px 0">데이터 없음</div>';
+    }).join('') : '<div style="font-size:12px;color:#555;padding:8px 0">데이터 없음</div>';
     document.getElementById('samples-'+type).innerHTML = html;
   });
 }
 
-/*  Sentiment   */
+async function aiAnalyzeSample(cardId, encodedSample) {
+  var btn = document.querySelector('#'+cardId+' button');
+  var resultDiv = document.getElementById(cardId+'-ai');
+  if(!btn||!resultDiv) return;
+  btn.textContent='분석 중...'; btn.disabled=true;
+  resultDiv.style.display='block';
+  resultDiv.innerHTML='<span style="color:#555">AI 분석 생성 중...</span>';
+  try {
+    var s = JSON.parse(decodeURIComponent(encodedSample));
+    var prompt = 'PUBG Mobile CS 티켓을 분석해줘. 아래 형식으로 한국어로 답변:\n\n원문: "'+s.text+'"\n분류: Product='+s.product+', Event='+s.event+', Intent='+s.intent+', Sentiment='+s.sentiment+'\n\n1. 유저 요청: (1줄)\n2. 핵심 문제: (1줄)\n3. 처리 방향: (자동화 가능 여부 포함, 1줄)';
+    var res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+    var json = await res.json();
+    var analysis = json.content&&json.content[0] ? json.content[0].text : '분석 실패';
+    resultDiv.innerHTML = '<div style="font-size:10px;font-weight:700;color:#5DCAA5;margin-bottom:5px">AI 분석 결과</div>'+analysis.replace(/\n/g,'<br>');
+    btn.textContent='재분석'; btn.disabled=false;
+  } catch(e) {
+    resultDiv.innerHTML='<span style="color:#D85A30">오류: '+e.message+'</span>';
+    btn.textContent='AI 분석'; btn.disabled=false;
+  }
+}
+
+/* Sentiment  */
 function renderSentiment(d) {
   var sentData = d.ontology.sentiment || {};
   var total    = d.meta.total;
-
-  //  
   var bad=0, neutral=0, good=0;
   Object.entries(sentData).forEach(function(e){
     var k=e[0].toLowerCase();
@@ -689,46 +714,70 @@ function renderSentiment(d) {
   var bPct = Math.round(bad/tot2*100), nPct = Math.round(neutral/tot2*100), gPct = Math.round(good/tot2*100);
   document.getElementById('sent-dist-bar').innerHTML =
     '<div style="background:#D85A30;width:'+bPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;min-width:40px">불만 '+bPct+'%</div>' +
-    '<div style="background:#888;width:'+nPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">중립 '+nPct+'%</div>' +
+    '<div style="background:#555;width:'+nPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#ddd">중립 '+nPct+'%</div>' +
     '<div style="background:#1D9E75;width:'+gPct+'%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;min-width:'+(gPct>0?'40':'0')+'px">'+(gPct>3?'긍정 '+gPct+'%':'')+'</div>';
 
-  // 
+  /*  -   */
   var sr = d.sentiment_resolution || {};
   var allRes = new Set();
-  Object.values(sr).forEach(function(v){ Object.keys(v).forEach(function(k){ if(k!=='total') allRes.add(k); }); });
-  allRes = Array.from(allRes).filter(function(k){ return k!=='미분류'; });
-
-  var tableHead = '<tr><th style="padding:7px 10px;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-size:11px;font-weight:600;text-align:left">Sentiment</th>' +
-    allRes.map(function(r){ return '<th style="padding:7px 10px;background:#f8f8f6;border-bottom:2px solid #e8e8e6;font-size:11px;font-weight:600;text-align:right">'+r+'</th>'; }).join('') + '</tr>';
+  Object.values(sr).forEach(function(v){ Object.keys(v).forEach(function(k){ if(k!=='total'&&k!=='미분류') allRes.add(k); }); });
+  allRes = Array.from(allRes);
+  var SENT_C2 = {'불만':'#D85A30','중립':'#888','긍정':'#1D9E75'};
+  var tableHead = '<tr><th style="padding:7px 10px;background:#222;border-bottom:1px solid #333;font-size:11px;font-weight:600;text-align:left;color:#888">Sentiment</th>' +
+    allRes.map(function(r){ return '<th style="padding:7px 10px;background:#222;border-bottom:1px solid #333;font-size:11px;font-weight:600;text-align:right;color:#888">'+r+'</th>'; }).join('') + '</tr>';
   var tableBody = Object.entries(sr).map(function(e){
-    var s=e[0], v=e[1];
-    var stTotal = v.total || 0;
-    var sentColor = SENT_COLORS[s.toLowerCase()] || '#888';
+    var s=e[0], v=e[1], stTotal=v.total||0;
+    var sc = SENT_C2[s] || '#888';
     var cells = allRes.map(function(r){
-      var cnt = v[r]||0;
-      var pct = stTotal>0 ? Math.round(cnt/stTotal*100) : 0;
-      var highlight = pct>=50 ? 'background:#fff0f0;color:#D85A30;font-weight:700' : pct>=25 ? 'color:#BA7517;font-weight:600' : '';
-      return '<td style="padding:7px 10px;border-bottom:1px solid #f0f0ee;text-align:right;font-size:12px;'+highlight+'">'+cnt.toLocaleString()+' <span style="color:#ccc;font-size:10px">'+pct+'%</span></td>';
+      var cnt=v[r]||0, pct=stTotal>0?Math.round(cnt/stTotal*100):0;
+      var hi = pct>=50?'background:#2D1208;color:#F09575;font-weight:700':pct>=25?'color:#BA7517;font-weight:600':'color:#aaa';
+      return '<td style="padding:7px 10px;border-bottom:1px solid #222;text-align:right;font-size:12px;'+hi+'">'+cnt.toLocaleString()+' <span style="color:#444;font-size:10px">'+pct+'%</span></td>';
     }).join('');
-    return '<tr><td style="padding:7px 10px;border-bottom:1px solid #f0f0ee;font-size:12px;font-weight:600;color:'+sentColor+'">'+s+'<br><span style="font-size:10px;color:#aaa;font-weight:400">'+stTotal.toLocaleString()+'건</span></td>'+cells+'</tr>';
+    return '<tr><td style="padding:7px 10px;border-bottom:1px solid #222;font-size:12px;font-weight:600;color:'+sc+'">'+s+'<br><span style="font-size:10px;color:#555;font-weight:400">'+stTotal.toLocaleString()+'건</span></td>'+cells+'</tr>';
   }).join('');
-
   document.getElementById('sent-crosstab').innerHTML =
     '<table style="width:100%;border-collapse:collapse"><thead>'+tableHead+'</thead><tbody>'+tableBody+'</tbody></table>';
 
-  // 
+  /* AI   */
   var badPct = total>0?Math.round(bad/total*100):0;
   document.getElementById('sent-insights').innerHTML =
     '<div style="display:flex;flex-direction:column;gap:10px">' +
-    '<div style="border-left:3px solid #D85A30;padding:10px 14px;background:#fef8f6;border-radius:0 8px 8px 0">' +
-      '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">불만 유저 집중 분석</div>' +
-      '<div style="font-size:12px;color:#555;line-height:1.6">전체의 <b>'+badPct+'%</b>가 불만 상태. 불만 감지 즉시 우선 배정 라우팅 필요.</div>' +
+    '<div style="border-left:3px solid #D85A30;padding:10px 13px;background:#1e1e1e;border-radius:0 7px 7px 0">' +
+      '<div style="font-size:13px;font-weight:700;margin-bottom:4px">불만 유저 분석</div>' +
+      '<div style="font-size:12px;color:#aaa;line-height:1.6">전체의 <b style="color:#D85A30">'+badPct+'%</b>가 불만 상태. 즉시 우선 배정 라우팅 필요.</div>' +
     '</div>' +
-    '<div style="border-left:3px solid #1D9E75;padding:10px 14px;background:#f0fbf6;border-radius:0 8px 8px 0">' +
-      '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">챗봇 해결 → CSAT 직결</div>' +
-      '<div style="font-size:12px;color:#555;line-height:1.6">중립 유저의 챗봇 해결율 향상 = CSAT 직접 향상.</div>' +
+    '<div style="border-left:3px solid #1D9E75;padding:10px 13px;background:#1e1e1e;border-radius:0 7px 7px 0">' +
+      '<div style="font-size:13px;font-weight:700;margin-bottom:4px">챗봇 해결 → CSAT 직결</div>' +
+      '<div style="font-size:12px;color:#aaa;line-height:1.6">중립 유저 챗봇 해결율 향상 = CSAT 직접 향상.</div>' +
     '</div>' +
+    '<button onclick="aiAnalyzeSentiment()" id="sent-ai-btn" style="padding:8px;background:#0D2040;color:#85B7EB;border:1px solid #1a4070;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;width:100%">AI 전반 분석 생성</button>' +
+    '<div id="sent-ai-result" style="display:none;background:#0D2D1E;border-radius:6px;padding:12px 14px;border:1px solid #1a4030;font-size:12px;color:#9FE1CB;line-height:1.7"></div>' +
     '</div>';
+}
+
+async function aiAnalyzeSentiment() {
+  var btn = document.getElementById('sent-ai-btn');
+  var resultDiv = document.getElementById('sent-ai-result');
+  if(!btn||!resultDiv||!_data) return;
+  btn.textContent='분석 중...'; btn.disabled=true;
+  resultDiv.style.display='block';
+  resultDiv.innerHTML='<span style="color:#555">AI 분석 생성 중...</span>';
+  try {
+    var t=_data.meta.total, ont=_data.ontology||{}, cb=_data.chatbot||{};
+    var sr=_data.sentiment_resolution||{};
+    var lines=['분석 기간: '+_data.meta.start+' ~ '+_data.meta.end,'총 문의: '+t.toLocaleString()+'건'];
+    Object.entries(ont.sentiment||{}).forEach(function(e){ lines.push('감정-'+e[0]+': '+e[1]+'건'); });
+    Object.entries(sr).forEach(function(e){ var s=e[0],v=e[1]; lines.push('Sentiment '+s+' ('+v.total+'건): '+Object.entries(v).filter(function(x){return x[0]!=='total';}).map(function(x){return x[0]+' '+x[1]+'건';}).join(', ')); });
+    var prompt = 'PUBG Mobile CS Sentiment 데이터를 분석해줘. 데이터:\n\n'+lines.join('\n')+'\n\n분석 항목:\n1. 전반적인 유저 감정 상태 (2줄)\n2. 불만 유저 패턴과 주요 원인 (2줄)\n3. 즉시 개선 가능한 액션 아이템 3가지\n4. 중장기 개선 방향 (2줄)';
+    var res = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    var json = await res.json();
+    var analysis = json.content&&json.content[0]?json.content[0].text:'분석 실패';
+    resultDiv.innerHTML='<div style="font-size:10px;font-weight:700;color:#5DCAA5;margin-bottom:8px">AI 전반 분석</div>'+analysis.replace(/\n/g,'<br>');
+    btn.textContent='재분석'; btn.disabled=false;
+  } catch(e) {
+    resultDiv.innerHTML='<span style="color:#D85A30">오류: '+e.message+'</span>';
+    btn.textContent='AI 전반 분석 생성'; btn.disabled=false;
+  }
 }
 
 /*    */
@@ -1013,38 +1062,156 @@ function showTip(e, d, svgId, ttId, total) {
   tt.style.opacity = 1;
 }
 
+/* KG node click - Quick Insight + bottom panel + AI analysis */
 function onNodeClick(d, nodeSel, linkSel, dpId, dpInnerId, ipSubId, ipBodyId) {
   nodeSel.selectAll('.nc')
-    .attr('stroke',function(n){ return n.id===d.id?'#1a1a1a':'#fff'; })
-    .attr('stroke-width',function(n){ return n.id===d.id?3.5:2.5; })
-    .attr('fill-opacity',function(n){ return n.id===d.id?1:.3; });
-  linkSel.attr('stroke-opacity',function(l){ return (l.source.id===d.id||l.target.id===d.id)?.9:.08; })
-         .attr('stroke',function(l){ return (l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#ddd'; });
+    .attr('stroke',function(n){ return n.id===d.id?'#fff':'#111'; })
+    .attr('stroke-width',function(n){ return n.id===d.id?3:1.5; })
+    .attr('fill-opacity',function(n){ return n.id===d.id?1:.2; });
+  linkSel
+    .attr('stroke-opacity',function(l){ return (l.source.id===d.id||l.target.id===d.id)?.9:.04; })
+    .attr('stroke',function(l){ return (l.source.id===d.id||l.target.id===d.id)?GC[d.group]:'#333'; });
 
-  document.getElementById(ipSubId).textContent = d.label+' ('+d.count.toLocaleString()+'건)';
-  document.getElementById(ipBodyId).innerHTML =
-    '<div style="background:#f8f8f6;border-radius:6px;padding:10px;margin-bottom:8px">' +
-      '<div style="font-size:11px;color:#999;margin-bottom:4px">그룹</div>' +
-      '<div style="font-size:13px;font-weight:700;color:'+GC[d.group]+'">'+d.group+'</div>' +
-    '</div>' +
-    '<div style="background:#f8f8f6;border-radius:6px;padding:10px">' +
-      '<div style="font-size:11px;color:#999;margin-bottom:4px">건수</div>' +
-      '<div style="font-size:16px;font-weight:700">'+d.count.toLocaleString()+'건</div>' +
+  var total = _data ? _data.meta.total : 1;
+  var pct = Math.round(d.count/total*100);
+
+  document.getElementById(ipSubId).textContent = d.label+' ('+d.count.toLocaleString()+'건 / '+pct+'%)';
+
+  /* Quick Insight - related nodes from cross data */
+  var related = getRelated(d);
+  var relHtml = related.map(function(r,i){
+    var rPct = Math.round(r.cnt/d.count*100);
+    return '<div style="background:#222;border-radius:6px;padding:9px 11px;margin-bottom:5px;border:1px solid #333">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">' +
+        '<span style="font-size:12px;font-weight:600;color:'+GC[r.group]+'">'+r.label+'</span>' +
+        '<span style="font-size:11px;color:#4f8ef7;font-weight:700">'+rPct+'%</span>' +
+      '</div>' +
+      '<div style="height:3px;background:#333;border-radius:2px"><div style="height:3px;border-radius:2px;background:'+GC[r.group]+';width:'+Math.min(rPct,100)+'%"></div></div>' +
+      '<div style="font-size:10px;color:#555;margin-top:4px">'+r.cnt.toLocaleString()+'건</div>' +
     '</div>';
+  }).join('');
+
+  document.getElementById(ipBodyId).innerHTML =
+    '<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px">연관 Top '+(related.length||0)+'</div>' +
+    (relHtml || '<div style="font-size:11px;color:#555;padding:8px 0">연관 데이터 분석 중</div>') +
+    '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #333">' +
+      '<button onclick="aiAnalyzeNode(\''+d.id+'\',\''+d.label+'\',\''+d.group+'\','+d.count+',\''+ipBodyId+'\')" style="width:100%;padding:7px;background:#0D2040;color:#85B7EB;border:1px solid #1a4070;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer">AI 분석 생성</button>' +
+    '</div>';
+
+  /* Bottom panel */
+  var dpData = buildDpData(d);
+  var dpHtml = Object.entries(dpData).map(function(entry){
+    var colName=entry[0], items=entry[1];
+    var colTotal = items.reduce(function(s,x){return s+x.cnt;},0)||1;
+    return '<div style="border-right:1px solid #333;overflow-y:auto;padding:12px">' +
+      '<div style="font-size:10px;font-weight:700;color:'+GC[colName.toLowerCase()]+';text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">'+colName+'</div>' +
+      items.slice(0,10).map(function(item){
+        var ip=Math.round(item.cnt/colTotal*100);
+        return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">' +
+          '<div style="flex:1;font-size:12px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+item.label+'">'+item.label+'</div>' +
+          '<div style="font-size:11px;color:#555;flex-shrink:0">'+item.cnt+'건</div>' +
+          '<div style="width:40px;height:3px;background:#333;border-radius:2px;flex-shrink:0"><div style="height:3px;border-radius:2px;background:'+GC[colName.toLowerCase()]+';width:'+ip+'%"></div></div>' +
+        '</div>';
+      }).join('') +
+    '</div>';
+  }).join('');
+  document.getElementById(dpInnerId).innerHTML = dpHtml||'<div style="padding:12px;font-size:12px;color:#555">데이터 없음</div>';
+  document.getElementById(dpId).style.height = '220px';
+}
+
+/*    */
+function getRelated(d) {
+  if(!_data) return [];
+  var result=[], cr=_data.cross||{}, ont=_data.ontology||{}, cb=_data.chatbot||{};
+  if(d.group==='product') {
+    var px=cr.product_x_resolution||{}; var px2=cr.product_x_sentiment||{};
+    var resData=px[d.label]||{}; var sentData=px2[d.label]||{};
+    Object.entries(resData).sort(function(a,b){return b[1]-a[1];}).slice(0,3).forEach(function(e){ result.push({label:e[0],group:'resolution',cnt:e[1]}); });
+    Object.entries(sentData).sort(function(a,b){return b[1]-a[1];}).slice(0,2).forEach(function(e){ result.push({label:e[0],group:'sentiment',cnt:e[1]}); });
+  } else {
+    var allData=Object.assign({},ont,cb);
+    Object.entries(allData).forEach(function(entry){
+      var gName=entry[0],gData=entry[1];
+      if(gName===d.group||typeof gData!=='object') return;
+      Object.entries(gData).filter(function(e){return e[0]!=='undefined'&&e[0]!=='';}).sort(function(a,b){return b[1]-a[1];}).slice(0,2).forEach(function(e){
+        if(result.length<5) result.push({label:e[0],group:gName,cnt:e[1]});
+      });
+    });
+  }
+  return result.sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+}
+
+/*    */
+function buildDpData(d) {
+  if(!_data) return {};
+  var ont=_data.ontology||{}, cb=_data.chatbot||{};
+  var colMap={product:['intent','event','sentiment','resolution'],event:['product','intent','sentiment'],intent:['product','event','sentiment','resolution'],sentiment:['product','intent','resolution'],resolution:['product','intent','sentiment'],transfer:['resolution','problem'],problem:['transfer','resolution'],lang:['resolution','transfer']};
+  var relCols=colMap[d.group]||['product','intent','sentiment'];
+  var allSrc=Object.assign({},ont,cb);
+  var result={};
+  relCols.forEach(function(col){
+    var src=allSrc[col]||{};
+    if(typeof src==='object'&&Object.keys(src).length){
+      var colName=col.charAt(0).toUpperCase()+col.slice(1);
+      result[colName]=Object.entries(src).filter(function(e){return e[0]!=='undefined'&&e[0]!=='';}).sort(function(a,b){return b[1]-a[1];}).slice(0,8).map(function(e){return {label:e[0],cnt:e[1]};});
+    }
+  });
+  return result;
+}
+
+/* KG  AI  */
+async function aiAnalyzeNode(nodeId, label, group, count, bodyId) {
+  var btn = document.querySelector('[onclick*="aiAnalyzeNode"]');
+  if(btn){ btn.textContent='분석 중...'; btn.disabled=true; }
+  var total=_data?_data.meta.total:1;
+  var pct=Math.round(count/total*100);
+  var contextLines=[];
+  if(_data){
+    var ont=_data.ontology||{}, cb=_data.chatbot||{};
+    contextLines.push('전체 문의: '+total.toLocaleString()+'건');
+    contextLines.push(label+' 건수: '+count.toLocaleString()+'건 ('+pct+'%)');
+    if(group==='product'&&_data.cross){
+      var rx=(_data.cross.product_x_resolution||{})[label]||{};
+      var sx=(_data.cross.product_x_sentiment||{})[label]||{};
+      contextLines.push('해결유형: '+Object.entries(rx).map(function(e){return e[0]+' '+e[1]+'건';}).join(', '));
+      contextLines.push('감정: '+Object.entries(sx).map(function(e){return e[0]+' '+e[1]+'건';}).join(', '));
+    }
+  }
+  try {
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:'PUBG Mobile CS     . 3   .\n\n: '+label+' (: '+group+')\n'+contextLines.join('\n')+'\n\n :    , ,  '}]})});
+    var json=await res.json();
+    var analysis=json.content&&json.content[0]?json.content[0].text:'분석 실패';
+    var el=document.getElementById(bodyId);
+    if(el){
+      var aiDiv=el.querySelector('.ai-analysis-result');
+      if(!aiDiv){
+        aiDiv=document.createElement('div');
+        aiDiv.className='ai-analysis-result';
+        el.appendChild(aiDiv);
+      }
+      aiDiv.style.cssText='margin-top:8px;background:#0D2D1E;border-radius:6px;padding:10px 12px;border:1px solid #1a4030;font-size:12px;color:#9FE1CB;line-height:1.7';
+      aiDiv.innerHTML='<div style="font-size:10px;font-weight:700;color:#5DCAA5;margin-bottom:5px">AI 분석</div>'+analysis.replace(/\n/g,'<br>');
+    }
+  } catch(e) {
+    var el2=document.getElementById(bodyId);
+    if(el2){ var d2=el2.querySelector('.ai-analysis-result'); if(d2) d2.innerHTML='분석 오류: '+e.message; }
+  }
+  var btn2=document.querySelector('[onclick*="aiAnalyzeNode"]');
+  if(btn2){ btn2.textContent='AI 분석 생성'; btn2.disabled=false; }
 }
 
 function kgFilter(type, el) {
   document.querySelectorAll('#kg-filter-btns div').forEach(function(t){ t.style.background=''; t.style.fontWeight=''; });
-  el.style.background='#f0f0ee'; el.style.fontWeight='600';
+  el.style.background='#2a2a2a'; el.style.fontWeight='600'; el.style.color='#e8e8e6';
   if(!_svgNodes['kg-svg']) return;
-  _svgNodes['kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.15; });
+  _svgNodes['kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.1; });
 }
 
 function cfKgFilter(type, el) {
   document.querySelectorAll('#cf-kg-filter-btns div').forEach(function(t){ t.style.background=''; t.style.fontWeight=''; });
-  el.style.background='#f0f0ee'; el.style.fontWeight='600';
+  el.style.background='#2a2a2a'; el.style.fontWeight='600'; el.style.color='#e8e8e6';
   if(!_svgNodes['cf-kg-svg']) return;
-  _svgNodes['cf-kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.15; });
+  _svgNodes['cf-kg-svg'].selectAll('.nc').attr('fill-opacity',function(d){ return type==='all'||d.group===type?1:.1; });
 }
 
 function closeKgDp() { document.getElementById('kg-dp').style.height='0'; }
